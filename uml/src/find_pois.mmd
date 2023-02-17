@@ -1,0 +1,31 @@
+%% @backgroundColor(Silver)
+
+sequenceDiagram
+	actor Admin as Admin
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+
+	Admin->>+Trip: findPOIs(accessToken, poiOpts)
+
+		Trip->>Trip: verifyAuthentication(accessToken)
+		opt Authorization isn't correct
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: (ErrNotAuthorizated, nil)
+			end
+		end
+
+		Trip->>Trip: verifyPOIOpts(poiOpts)
+
+		alt poiOpts aren't correct
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: ErrInvalidOpts, nil
+			end
+
+		else poiOpts are correct
+			Trip->>+DB: findPOIs(poiOpts)
+		end
+
+		DB->>DB: aggregatePOIs
+
+		DB-->>-Trip: List<POI>
+		Trip-->>-Admin: nil, List<POI>
