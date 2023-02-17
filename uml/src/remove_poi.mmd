@@ -1,0 +1,27 @@
+%% @backgroundColor(Silver)
+sequenceDiagram
+	actor Admin as Admin
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+
+	Admin->>+Trip: removePOI(accessToken, poiID)
+
+		Trip->>Trip: verifyAuthentication(accessToken)
+		opt Authorization isn't correct
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: (ErrNotAuthorizated, nil)
+			end
+		end
+
+		Trip->>+DB: removePOIByID(poiID)
+
+		DB->>DB: removePOI
+		alt POI doesn't exist
+			rect rgba(255, 0, 0, 0.3)
+				DB-->>Trip: ErrNotExist
+				Trip-->>Admin: ErrNotExist
+			end
+		else POI exists
+			DB-->>-Trip: nil
+			Trip-->>-Admin: nil
+		end
