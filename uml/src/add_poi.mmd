@@ -1,4 +1,5 @@
 %% @backgroundColor(Gray)
+
 sequenceDiagram
 	actor Admin as Admin
 	participant Trip as TripAdvisor
@@ -6,32 +7,30 @@ sequenceDiagram
 
 	Admin->>+Trip: addPOI(accessToken, poi)
 
-		Trip->>Trip: verifyAuthentication(accessToken)
-		opt Authorization isn't correct
+		Trip->>Trip: verifyAuthorization(accessToken)
+		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: (ErrNotAuthorizated, nil)
+				Trip-->>Admin: (ErrNotAuthorized, nil)
 			end
+		else Authorized
+			Trip->>Trip: verifyPOI(poi)
 		end
 
-
-
-		Trip->>Trip: verifyPOI(poi)
-		alt POI isn't correct
+		alt Invalid POI
 			rect rgba(255, 0, 0, 0.3)
 				Trip-->>Admin: (ErrInvalidPOI, nil)
 			end
 
-		else POI is correct
+		else Valid POI
 			Trip->>+DB: insertPOI(poi)
 		end
 
-		DB->>DB: insertPOI
-		alt POI already exists
+		alt POI found
 			rect rgba(255, 0, 0, 0.3)
 				DB-->>Trip: (ErrAlreadyExists, existingPOI)
-				Trip-->>Admin: (ErrAlreadyExists, existingPOI)
+				Trip-->>Admin: (ErrPOIAlreadyExists, existingPOI)
 			end
-		else POI doesn't exist
+		else POI not found
 			DB-->>-Trip: (nil, nil)
 			Trip-->>-Admin: (nil, nil)
 		end

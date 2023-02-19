@@ -7,25 +7,24 @@ sequenceDiagram
 
 	Admin->>+Trip: findPOIs(accessToken, poiOpts)
 
-		Trip->>Trip: verifyAuthentication(accessToken)
-		opt Authorization isn't correct
+		Trip->>Trip: verifyAuthorization(accessToken)
+		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: (ErrNotAuthorizated, nil)
+				Trip-->>Admin: (ErrNotAuthorized, nil)
 			end
+		else Authorized
+			Trip->>Trip: verifyPOIOpts(poiOpts)
 		end
 
-		Trip->>Trip: verifyPOIOpts(poiOpts)
-
-		alt poiOpts aren't correct
+		alt Invalid poiOpts
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: ErrInvalidOpts, nil
+				Trip-->>Admin: ErrInvalidPOIOpts, nil
 			end
 
-		else poiOpts are correct
+		else Valid poiOpts
 			Trip->>+DB: findPOIs(poiOpts)
 		end
 
-		DB->>DB: aggregatePOIs
 
 		DB-->>-Trip: List<POI>
 		Trip-->>-Admin: nil, List<POI>
