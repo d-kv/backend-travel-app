@@ -8,35 +8,42 @@ sequenceDiagram
 
 	Client->>+Trip: findPOIs(accessToken, poiOpts, GeoLoc)
 
-		Trip->>Trip: verifyAuthentication(accessToken)
-		opt Authorization isn't correct
+		Trip->>Trip: verifyAuthorization(accessToken)
+		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Client: (ErrNotAuthorizated, nil)
+				Trip-->>Client: (ErrNotAuthorized, nil)
 			end
+		else Authorized
+			Trip->>Trip: verifyPOIOpts(poiOpts)
 		end
 
-		Trip->>Trip: verifyPOIOpts(poiOpts)
-
-		alt poiOpts aren't correct
+		alt Invalid poiOpts
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Client: ErrInvalidOpts, nil
+				Trip-->>Client: ErrInvalidPOIOpts, nil
 			end
-		else poiOpts are correct
+		else Valid poiOpts
 			Trip->>+DB: findPOIs(poiOpts)
 		end
 
-		DB->>DB: aggregatePOIs
-
-        alt POIs aren't found
-            rect rgba(255, 0, 0, 0.3)
+        alt POIs not found
+		rect rgba(255, 0, 0, 0.3)
                 DB-->>Trip: nil
-                Trip-->>Client: ErrNoSuitablePOI, nil
+                Trip-->>Client: ErrNoSuitablePOIs, nil
             end
-        else POIs are found
+        else POIs found
             DB-->>-Trip: List<POI>
         end
 
-        Trip->>+Map: createRoute(GeoLoc, List<POI>)        
+        Trip->>+Map: createRoute(GeoLoc, List<POI>)
 
-        Map-->>-Trip: List<POI>
-		Trip-->>-Client: nil, List<POI>
+		alt Route creation error
+			rect rgba(255, 0, 0, 0.3)
+                Map-->>Trip: nil
+                Trip-->>Client: ErrRouteCreation, nil
+            end
+        else Route created
+		    Map-->>-Trip: List<POI>
+			Trip-->>-Client: nil, List<POI>
+        end     
+
+
