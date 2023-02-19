@@ -1,0 +1,42 @@
+%% @backgroundColor(Silver)
+
+sequenceDiagram
+	actor Client as Client
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+    participant Map as MapAPI
+
+	Client->>+Trip: findPOIs(accessToken, poiOpts, GeoLoc)
+
+		Trip->>Trip: verifyAuthentication(accessToken)
+		opt Authorization isn't correct
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Client: (ErrNotAuthorizated, nil)
+			end
+		end
+
+		Trip->>Trip: verifyPOIOpts(poiOpts)
+
+		alt poiOpts aren't correct
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Client: ErrInvalidOpts, nil
+			end
+		else poiOpts are correct
+			Trip->>+DB: findPOIs(poiOpts)
+		end
+
+		DB->>DB: aggregatePOIs
+
+        alt POIs aren't found
+            rect rgba(255, 0, 0, 0.3)
+                DB-->>Trip: nil
+                Trip-->>Client: ErrNoSuitablePOI, nil
+            end
+        else POIs are found
+            DB-->>-Trip: List<POI>
+        end
+
+        Trip->>+Map: createRoute(GeoLoc, List<POI>)        
+
+        Map-->>-Trip: List<POI>
+		Trip-->>-Client: nil, List<POI>
