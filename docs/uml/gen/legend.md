@@ -1,10 +1,3 @@
-# Structures
-### accessToken
-A typical AccessToken, e.g. **JWT**.
-Must provide role(Admin/Client) & be valid i.e be not expired
-### poi
-A point of interest. Must have the following fields:
-
 ```protobuf
 
 message PointOfInterest{
@@ -20,19 +13,19 @@ message PointOfInterest{
 
 	enum Category {
 		UNDEFINED = 0;
-		italian = 1;
-		russian = 2;
-		japanese = 3;
-		georgian = 4;
-		american = 5;
-		kafe = 6;
-		steak = 7;
-		confectionery = 8;
-		bar = 9;
-		pab = 10;
-		coffee_house = 11;
-		beer_house = 12;
-		vegan_menu = 13;
+		ITALIAN = 1;
+		RUSSIAN = 2;
+		JAPANESE = 3;
+		GEORGIAN = 4;
+		AMERICAN = 5;
+		KAFE = 6;
+		STEAK = 7;
+		CONFECTIONERY = 8;
+		BAR = 9;
+		PAB = 10;
+		COFFEE_HOUSE = 11;
+		BEER_HOUSE = 12;
+		VEGAN_MENU = 13;
 	}
 	Category category = 4;
 	google.type.Latlng lat_lng = 5;
@@ -51,21 +44,3 @@ message PointOfInterest{
 	WorkingHours working_hours = 7;
 }
 ```
-
-# Status codes
-HTTP status codes for each response are added as they are more common; however the service itself uses gRPC well-defined status codes as the main ones and all HTTP requests & responses are going through gRPC-Gateway, so what you can see on the diagrams is just the [*gRPC-HTTP status codes mapping*](https://chromium.googlesource.com/external/github.com/grpc/grpc/+/refs/tags/v1.21.4-pre1/doc/statuscodes.md).
-
-By this reason, it might be some non-critical violations, e.g: **Code 200 instead of 201 for successful create request and etc**
-
-# Arguments
-
-All arguments on every request only show the need to send this argument with the request, but this argument may not be in the request body
-
-## Arguments in UML diagrams
-![diagram](./legend-1.svg)
-
-For instance all accessToken for both HTTP & gRPC calls must be provided in the corresponding header:
-**Authorization: Bearer {accessToken}**, but not in the request body
-
-## Arguments in real methods
-![diagram](./legend-2.svg)
