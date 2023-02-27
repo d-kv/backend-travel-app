@@ -20,19 +20,19 @@ message PointOfInterest{
 
 	enum Category {
 		UNDEFINED = 0;
-		italian = 1;
-		russian = 2;
-		japanese = 3;
-		georgian = 4;
-		american = 5;
-		kafe = 6;
-		steak = 7;
-		confectionery = 8;
-		bar = 9;
-		pab = 10;
-		coffee_house = 11;
-		beer_house = 12;
-		vegan_menu = 13;
+		ITALIAN = 1;
+		RUSSIAN = 2;
+		JAPANESE = 3;
+		GEORGIAN = 4;
+		AMERICAN = 5;
+		KAFE = 6;
+		STEAK = 7;
+		CONFECTIONERY = 8;
+		BAR = 9;
+		PAB = 10;
+		COFFEE_HOUSE = 11;
+		BEER_HOUSE = 12;
+		VEGAN_MENU = 13;
 	}
 	Category category = 4;
 	google.type.Latlng lat_lng = 5;
