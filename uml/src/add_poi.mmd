@@ -1,16 +1,24 @@
-%% @backgroundColor(Gray)
-
 sequenceDiagram
 	actor Admin as Admin
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
 	Admin->>+Trip: addPOI(accessToken, poi)
+	Note over Admin,Trip: POST api/v1/places
 
-		Trip->>Trip: verifyAuthorization(accessToken)
+		Trip->>Trip: verifyAuthentication(accessToken)
+		alt Not authenticated
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: 16: UNAUTHENTICATED
+				Note over Admin,Trip: 401: Unauthorized
+			end
+		else Authenticated
+			Trip->>Trip: verifyAuthorization(accessToken.payload)
+		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: (ErrNotAuthorized, nil)
+				Trip-->>Admin: 7: PERMISSION_DENIED
+				Note over Admin,Trip: 403: Forbidden
 			end
 		else Authorized
 			Trip->>Trip: verifyPOI(poi)
@@ -18,19 +26,22 @@ sequenceDiagram
 
 		alt Invalid POI
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: (ErrInvalidPOI, nil)
+				Trip-->>Admin: 3: INVALID_ARGUMENT
+				Note over Admin,Trip: 400: Bad Request
 			end
 
 		else Valid POI
 			Trip->>+DB: insertPOI(poi)
 		end
 
-		alt POI found
+		alt POI already exists
 			rect rgba(255, 0, 0, 0.3)
-				DB-->>Trip: (ErrAlreadyExists, existingPOI)
-				Trip-->>Admin: (ErrPOIAlreadyExists, existingPOI)
+				DB-->>Trip: (ALREADY_EXISTS, existingPOI)
+				Trip-->>Admin: (6: ALREADY_EXISTS, existingPOI)
+				Note over Admin,Trip: (409: Conflict, existingPOI)
 			end
-		else POI not found
-			DB-->>-Trip: (nil, nil)
-			Trip-->>-Admin: (nil, nil)
+		else Successful insert
+			DB-->>-Trip: (OK, insertedPOI)
+			Trip-->>-Admin: (0: OK, insertedPOI)
+			Note over Admin,Trip: (200: OK, insertedPOI)
 		end

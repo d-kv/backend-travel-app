@@ -1,29 +1,37 @@
-%% @backgroundColor(Gray)
-
 sequenceDiagram
 	actor Admin as Admin
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
 	Admin->>+Trip: removePOI(accessToken, poiID)
+	Note over Admin,Trip: DELETE api/v1/places/{id}
 
-		Trip->>Trip: verifyAuthorization(accessToken)
+Trip->>Trip: verifyAuthentication(accessToken)
+		alt Not authenticated
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: 16: UNAUTHENTICATED
+				Note over Admin,Trip: 401: Unauthorized
+			end
+		else Authenticated
+			Trip->>Trip: verifyAuthorization(accessToken.payload)
+		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: ErrNotAuthorized
+				Trip-->>Admin: 7: PERMISSION_DENIED
+				Note over Admin,Trip: 403: Forbidden
 			end
 		else Authorized
 			Trip->>+DB: removePOIByID(poiID)
 		end
 
-
-
 		alt POI not found
 			rect rgba(255, 0, 0, 0.3)
-				DB-->>Trip: ErrNotFound
-				Trip-->>Admin: ErrPOINotFound
+				DB-->>Trip: NOT_FOUND
+				Trip-->>Admin: 5: NOT_FOUND
+				Note over Admin,Trip: 404: Not Found
 			end
-		else POI found
-			DB-->>-Trip: nil
-			Trip-->>-Admin: nil
+		else POI found & deleted
+			DB-->>-Trip: (OK, deletedPOI)
+			Trip-->>-Admin: (0: OK, deletedPOI)
+			Note over Admin,Trip: (200: OK, deletedPOI)
 		end

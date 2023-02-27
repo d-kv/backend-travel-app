@@ -1,10 +1,10 @@
 sequenceDiagram
-	actor Admin as Admin
+	actor Admin as Admin/Client
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
-	Admin->>+Trip: updatePOI(accessToken, poi)
-	Note over Admin,Trip: PUT api/v1/places/{id}
+	Admin->>+Trip: getPOI(accessToken, id)
+	Note over Admin,Trip: GET api/v1/places/{id}
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
@@ -21,27 +21,17 @@ sequenceDiagram
 				Note over Admin,Trip: 403: Forbidden
 			end
 		else Authorized
-			Trip->>Trip: verifyPOI(poi)
+			Trip->>+DB: getPOI(id)
 		end
 
-
-		alt Invalid POI
-			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 3: INVALID_ARGUMENT
-				Note over Admin,Trip: 400: Bad Request
-			end
-		else Valid POI
-			Trip->>+DB: updatePOIByID(poi.ID, poi)
-		end
-
-		alt POI not found
+		alt Not found
 			rect rgba(255, 0, 0, 0.3)
 				DB-->>Trip: NOT_FOUND
 				Trip-->>Admin: 5: NOT_FOUND
 				Note over Admin,Trip: 404: Not Found
 			end
-		else POI found & updated
-			DB-->>-Trip: (OK, updatedPOI)
-			Trip-->>-Admin: (0: OK, updatedPOI)
-			Note over Admin,Trip: (200: OK, updatedPOI)
+		else Found
+			DB-->>-Trip: (OK, POI)
+			Trip-->>-Admin: (0: OK, POI)
+			Note over Admin,Trip: (200: OK, POI)
 		end
