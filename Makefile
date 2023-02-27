@@ -2,7 +2,7 @@ install-tools:
 	npm install
 
 
-mmd_src := add_poi get_route remove_poi find_pois update_poi
+mmd_src := add_poi get_poi remove_poi search_poi update_poi
 
 .SILENT: generate-uml
 generate-uml:

@@ -1,0 +1,53 @@
+* {
+    background: #808080 !important;
+}
+
+.actor-line {
+    stroke: #ccccff !important;
+}
+
+
+.messageLine0 {
+    stroke-width: 2 !important;
+    stroke-dasharray: '2 2' !important;
+    marker-end: 'url(#arrowhead)' !important;
+    stroke: black !important;
+}
+
+.messageLine1 {
+    stroke-width: 2 !important;
+    stroke-dasharray: '2 2' !important;
+    stroke: black !important;
+}
+
+.messageText {
+    fill: black !important;
+    stroke: none;
+    font-family: 'trebuchet ms', verdana, arial;
+    font-size: 16px !important;
+}
+
+.labelBox {
+    stroke: #ff8800 !important;
+    fill: #ff8800 !important;
+}
+
+
+.loopLine {
+    stroke-width: 2;
+    stroke-dasharray: '2 2';
+    marker-end: 'url(#arrowhead)';
+    stroke: #ff8800 !important;
+}
+
+.note {
+    stroke: #000000 !important;
+    fill: hsl(60, 100%, 50%, 0.7) !important;
+}
+
+.noteText {
+    fill: #000000;
+    stroke: none;
+    font-family: 'trebuchet ms', verdana, arial;
+    font-size: 16px !important;
+}
