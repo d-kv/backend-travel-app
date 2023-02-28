@@ -11,7 +11,7 @@ message PointOfInterest{
 	google.type.Latlng lat_lng = 5;
 	/* see https://github.com/googleapis/googleapis/blob/master/google/type/latlng.proto */
 
-	oneof Check{
+	oneof check{
 		AverageCheck average_check = 6;
 		/* see bellow */
 
@@ -22,6 +22,21 @@ message PointOfInterest{
 	/* see bellow */
 
 	Rating rating = 9;
+	/* see bellow */
+}
+```
+### SearchOpts
+
+```protobuf
+message SearchOpts{
+	optional Category category = 1;
+	/* see bellow */
+
+	optional uint32 distance = 2;
+	optional BoundedCheck check = 3;
+	/* see bellow */
+
+	optional WorkingHours working_hours = 4;
 	/* see bellow */
 }
 ```
