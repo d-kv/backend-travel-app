@@ -10,4 +10,6 @@ generate-uml:
 	for file in $(mmd_src); do \
 		npx -p @mermaid-js/mermaid-cli mmdc -i uml/src/$$file.mmd -o uml/gen/$$file.svg --cssFile uml/src/style.css;\
 	done
-	npx -p @mermaid-js/mermaid-cli mmdc -i uml/src/legend.md -o uml/gen/legend.md --cssFile uml/src/style.css;\
+
+generate-legend:
+	npx -p @mermaid-js/mermaid-cli mmdc -i uml/src/legend.md -o uml/gen/legend.md --cssFile uml/src/style.css
