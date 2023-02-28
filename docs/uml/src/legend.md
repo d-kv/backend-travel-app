@@ -40,7 +40,6 @@ message PointOfInterest{
 	message AveragePrice{
 		google.type.Money min = 1;
 		google.type.Money max = 2;
-
 	}
 	AveragePrice average_price = 6;
 
@@ -49,6 +48,12 @@ message PointOfInterest{
 		google.protobuf.Timestamp to = 2;
 	}
 	WorkingHours working_hours = 7;
+		
+	message Rating{
+		uint32 dislike = 1;
+		uint32 like = 2;
+	}
+	Rating rating = 8;
 }
 ```
 
