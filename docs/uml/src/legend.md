@@ -45,8 +45,12 @@ message SearchOpts{
 	optional Category category = 1;
 	/* see bellow */
 
-	optional DistanceInterval distance_interval = 2;
-	/* see bellow */
+	message DistanceOpts{
+		DistanceInterval distance_interval = 1;
+		google.type.Latlng search_area_center = 2;
+	}
+	optional DistanceOpts distance_opts = 2;
+	/* see above */
 
 	optional RatingInterval rating_interval = 3;
 	/* see bellow */
