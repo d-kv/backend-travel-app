@@ -138,7 +138,8 @@ message WorkingHours{
 
 ```protobuf
 message Rating{
-	uint32 like = 1;
-	uint32 dislike = 2;
+	uint32 visit = 1;
+	uint32 like = 2;
+	uint32 dislike = 3;
 }
 ```
