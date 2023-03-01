@@ -25,7 +25,7 @@ message PointOfInterest{
 		AverageCheck average_check = 6;
 		/* see bellow */
 
-		BoundedCheck bounded_check = 7;
+		CheckInterval check_interval = 7;
 		/* see bellow */
 	}
 	repeated WorkingHours working_hours = 8;
@@ -45,12 +45,34 @@ message SearchOpts{
 	optional Category category = 1;
 	/* see bellow */
 
-	optional uint32 distance = 2;
-	optional BoundedCheck check = 3;
+	optional DistanceInterval distance_interval = 2;
 	/* see bellow */
 
-	optional WorkingHours working_hours = 4;
+	optional RatingInterval rating_interval = 3;
 	/* see bellow */
+
+	optional CheckInterval check_interval = 4;
+	/* see bellow */
+
+	optional WorkingHours working_hours = 5;
+	/* see bellow */
+}
+```
+
+### DistanceInterval
+
+```protobuf
+message DistanceInterval{
+	uint32 start = 1;
+	uint32 stop = 2;
+}
+```
+
+### RatingInterval
+
+```protobuf
+message RatingInterval{
+	// TODO
 }
 ```
 
@@ -69,18 +91,18 @@ message Address{
 ```protobuf
 enum Category {
 	CATEGORY_UNSPECIFIED = 0;
-	ITALIAN = 1;
-	RUSSIAN = 2;
-	JAPANESE = 3;
-	GEORGIAN = 4;
 	AMERICAN = 5;
+	GEORGIAN = 4;
+	ITALIAN = 1;
+	JAPANESE = 3;
+	RUSSIAN = 2;
 	KAFE = 6;
 	STEAK = 7;
 	CONFECTIONERY = 8;
 	BAR = 9;
 	PAB = 10;
-	COFFEE_HOUSE = 11;
 	BEER_HOUSE = 12;
+	COFFEE_HOUSE = 11;
 	VEGAN_MENU = 13;
 }
 ```
@@ -94,10 +116,10 @@ message AverageCheck{
 }
 ```
 
-### BoundedCheck
+### CheckInterval
 
 ```protobuf
-message BoundedCheck{
+message CheckInterval{
 	optional google.type.Money min = 2;
 	/* see https://github.com/googleapis/googleapis/blob/master/google/type/money.proto */
 
