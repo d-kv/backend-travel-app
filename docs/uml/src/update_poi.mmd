@@ -3,22 +3,22 @@ sequenceDiagram
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
-	Admin->>+Trip: updatePOI(accessToken, poi)
-	Note over Admin,Trip: PUT api/v1/places/{id}
+	Admin->>+Trip: updatePOI(poi)<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: PUT api/v1/places/(id}<br/>Authorization: Bearer {accessToken)
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 16: UNAUTHENTICATED
-				Note over Admin,Trip: 401: Unauthorized
+				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
+				Note over Admin,Trip: Status code: 401::Unauthorized
 			end
 		else Authenticated
 			Trip->>Trip: verifyAuthorization(accessToken.payload)
 		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 7: PERMISSION_DENIED
-				Note over Admin,Trip: 403: Forbidden
+				Trip-->>Admin: Status code: 7::PERMISSION_DENIED
+				Note over Admin,Trip: Status code: 403::Forbidden
 			end
 		else Authorized
 			Trip->>Trip: verifyPOI(poi)
@@ -27,8 +27,8 @@ sequenceDiagram
 
 		alt Invalid POI
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 3: INVALID_ARGUMENT
-				Note over Admin,Trip: 400: Bad Request
+				Trip-->>Admin: Status code: 3::INVALID_ARGUMENT
+				Note over Admin,Trip: Status code: 400::Bad Request
 			end
 		else Valid POI
 			Trip->>+DB: updatePOIByID(poi.ID, poi)
@@ -36,12 +36,12 @@ sequenceDiagram
 
 		alt POI not found
 			rect rgba(255, 0, 0, 0.3)
-				DB-->>Trip: NOT_FOUND
-				Trip-->>Admin: 5: NOT_FOUND
-				Note over Admin,Trip: 404: Not Found
+				DB-->>Trip: Status code: 5::NOT_FOUND
+				Trip-->>Admin: Status code: 5::NOT_FOUND
+				Note over Admin,Trip: Status code: 404::Not Found
 			end
 		else POI found & updated
-			DB-->>-Trip: (OK, updatedPOI)
-			Trip-->>-Admin: (0: OK, updatedPOI)
-			Note over Admin,Trip: (200: OK, updatedPOI)
+			DB-->>-Trip: updatedPOI<br/>Status code: 0::OK
+			Trip-->>-Admin: updatedPOI<br/>Status code: 0::OK
+			Note over Admin,Trip: updatedPOI<br/>Status code: 200::OK
 		end

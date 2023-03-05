@@ -3,22 +3,22 @@ sequenceDiagram
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
-	Admin->>+Trip: removePOI(accessToken, poiID)
-	Note over Admin,Trip: DELETE api/v1/places/{id}
+	Admin->>+Trip: removePOI(poiID)<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: DELETE api/v1/places/(id}<br/>Authorization: Bearer {accessToken)
 
 Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 16: UNAUTHENTICATED
-				Note over Admin,Trip: 401: Unauthorized
+				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
+				Note over Admin,Trip: Status code: 401::Unauthorized
 			end
 		else Authenticated
 			Trip->>Trip: verifyAuthorization(accessToken.payload)
 		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 7: PERMISSION_DENIED
-				Note over Admin,Trip: 403: Forbidden
+				Trip-->>Admin: Status code: 7::PERMISSION_DENIED
+				Note over Admin,Trip: Status code: 403::Forbidden
 			end
 		else Authorized
 			Trip->>+DB: removePOIByID(poiID)
@@ -26,12 +26,12 @@ Trip->>Trip: verifyAuthentication(accessToken)
 
 		alt POI not found
 			rect rgba(255, 0, 0, 0.3)
-				DB-->>Trip: NOT_FOUND
-				Trip-->>Admin: 5: NOT_FOUND
-				Note over Admin,Trip: 404: Not Found
+				DB-->>Trip: Status code: 5::NOT_FOUND
+				Trip-->>Admin: Status code: 5::NOT_FOUND
+				Note over Admin,Trip: Status code: 404::Not Found
 			end
 		else POI found & deleted
-			DB-->>-Trip: (OK, deletedPOI)
-			Trip-->>-Admin: (0: OK, deletedPOI)
-			Note over Admin,Trip: (200: OK, deletedPOI)
+			DB-->>-Trip: deletedPOI<br/>Status code: 0::OK
+			Trip-->>-Admin: deletedPOI<br/>Status code: 0::OK
+			Note over Admin,Trip: deletedPOI<br/>Status code: 200::OK
 		end

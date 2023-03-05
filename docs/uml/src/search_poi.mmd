@@ -1,40 +1,39 @@
 sequenceDiagram
-	actor Admin as Admin
+	actor Client as Client
 	participant Trip as TripAdvisor
-	participant DB as POIDataBase
+	participant DB as POICache
 
-	Admin->>+Trip: searchPOI(accessToken, searchOpts)
-	Note over Admin,Trip: GET api/v1/places
+
+	Client->>+Trip: searchPOI(searchOptions)<br/>Authorization: Bearer (accessToken)
+	Note over Client,Trip: GET api/v1/places<br/>Authorization: Bearer (accessToken)
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 16: UNAUTHENTICATED
-				Note over Admin,Trip: 401: Unauthorized
+				Trip-->>Client: Status code: 16::UNAUTHENTICATED
+				Note over Client,Trip: Status code: 401::Unauthorized
 			end
 		else Authenticated
 			Trip->>Trip: verifyAuthorization(accessToken.payload)
 		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 7: PERMISSION_DENIED
-				Note over Admin,Trip: 403: Forbidden
+				Trip-->>Client: Status code: 7::PERMISSION_DENIED
+				Note over Client,Trip: Status code: 403::Forbidden
 			end
 		else Authorized
-			Trip->>Trip: verifysearchOpts(searchOpts)
+			Trip->>Trip: verifysearchOptions(searchOptions)
 		end
 
-		alt Invalid searchOpts
+		alt Invalid searchOptions
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 3: INVALID_ARGUMENT
-				Note over Admin,Trip: 400: Bad Request
+				Trip-->>Client: Status code: 3::INVALID_ARGUMENT
+				Note over Client,Trip: Status code: 400::Bad Request
 			end
 
-		else Valid searchOpts
-			Trip->>+DB: getPOI(searchOpts)
+		else Valid searchOptions
+			Trip->>+DB: getPOI(searchOptions)
+			DB-->>-Trip: List<POI>?
+			Trip-->>-Client: List<POI>?<br/>Status code: 0::OK
+			Note over Client,Trip: List<POI>?<br/>Status code: 200::OK
 		end
-
-
-		DB-->>-Trip: List<POI>?
-		Trip-->>-Admin: (0: OK, List<POI>?)
-		Note over Admin,Trip: (200: OK, List<POI>?)

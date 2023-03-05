@@ -3,22 +3,22 @@ sequenceDiagram
 	participant Trip as TripAdvisor
 	participant DB as POIDataBase
 
-	Admin->>+Trip: addPOI(accessToken, poi)
-	Note over Admin,Trip: POST api/v1/places
+	Admin->>+Trip: addPOI(poi)<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: POST api/v1/places<br/>Authorization: Bearer (accessToken)
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 16: UNAUTHENTICATED
-				Note over Admin,Trip: 401: Unauthorized
+				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
+				Note over Admin,Trip: StaaccessTokentus Code: 401::Unauthorized
 			end
 		else Authenticated
 			Trip->>Trip: verifyAuthorization(accessToken.payload)
 		end
 		alt Not authorized
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 7: PERMISSION_DENIED
-				Note over Admin,Trip: 403: Forbidden
+				Trip-->>Admin: Status code: 7::PERMISSION_DENIED
+				Note over Admin,Trip: Status code: 403::Forbidden
 			end
 		else Authorized
 			Trip->>Trip: verifyPOI(poi)
@@ -26,8 +26,8 @@ sequenceDiagram
 
 		alt Invalid POI
 			rect rgba(255, 0, 0, 0.3)
-				Trip-->>Admin: 3: INVALID_ARGUMENT
-				Note over Admin,Trip: 400: Bad Request
+				Trip-->>Admin: Status code: 3::INVALID_ARGUMENT
+				Note over Admin,Trip: Status code: 400::Bad Request
 			end
 
 		else Valid POI
@@ -36,12 +36,12 @@ sequenceDiagram
 
 		alt POI already exists
 			rect rgba(255, 0, 0, 0.3)
-				DB-->>Trip: (ALREADY_EXISTS, existingPOI)
-				Trip-->>Admin: (6: ALREADY_EXISTS, existingPOI)
-				Note over Admin,Trip: (409: Conflict, existingPOI)
+				DB-->>Trip: existingPOI<br/>Status code: 6::ALREADY_EXISTS
+				Trip-->>Admin: existingPOI<br/>Status code: 6::ALREADY_EXISTS
+				Note over Admin,Trip: existingPOI<br/>Status code: 409::Conflict
 			end
 		else Successful insert
-			DB-->>-Trip: (OK, insertedPOI)
-			Trip-->>-Admin: (0: OK, insertedPOI)
-			Note over Admin,Trip: (200: OK, insertedPOI)
+			DB-->>-Trip: insertedPOI<br/>Status code: 0::OK
+			Trip-->>-Admin: insertedPOI<br/>Status code: 0::OK
+			Note over Admin,Trip: insertedPOI<br/>Status code: 200::OK
 		end
