@@ -1,4 +1,4 @@
-```protobuf
+```proto3
 message PointOfInterest{
 	optional string uuid = 1; // required
 	optional Address address = 2;
