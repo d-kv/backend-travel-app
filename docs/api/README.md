@@ -1,3 +1,5 @@
+### PointOfInterest
+
 ```proto3
 message PointOfInterest{
 	optional string uuid = 1; // required
@@ -25,19 +27,18 @@ message PointOfInterest{
 	/* see bellow */
 }
 ```
-### SearchOpts
+### SearchOptions
 
 ```proto3
-message SearchOpts{
-	optional Category category = 1;
-	/* see bellow */
+message SearchOptions{
+	oneof category{
+		optional Category category = 1;
+		/* see bellow */
 
-	message DistanceOpts{
-		optional DistanceInterval distance_interval = 1;
-		optional google.type.Latlng search_area_center = 2;
 	}
-	optional DistanceOpts distance_opts = 2;
-	/* see above */
+
+	optional DistanceOptions distance_options = 2;
+	/* see bellow */
 
 	optional RatingInterval rating_interval = 3;
 	/* see bellow */
@@ -47,6 +48,15 @@ message SearchOpts{
 
 	optional WorkingHours working_hours = 5;
 	/* see bellow */
+}
+```
+
+### DistanceOptions
+
+```proto3
+message DistanceOptions{
+	optional DistanceInterval distance_interval = 1;
+	optional google.type.Latlng search_area_center = 2;
 }
 ```
 
@@ -83,18 +93,18 @@ message Address{
 ```proto3
 enum Category {
 	CATEGORY_UNSPECIFIED = 0;
-	AMERICAN = 5;
-	GEORGIAN = 4;
-	ITALIAN = 1;
-	JAPANESE = 3;
-	RUSSIAN = 2;
+	AMERICAN = 1;
+	GEORGIAN = 2;
+	ITALIAN = 3;
+	JAPANESE = 4;
+	RUSSIAN = 5;
 	KAFE = 6;
 	STEAK = 7;
 	CONFECTIONERY = 8;
 	BAR = 9;
 	PAB = 10;
-	BEER_HOUSE = 12;
-	COFFEE_HOUSE = 11;
+	BEER_HOUSE = 11;
+	COFFEE_HOUSE = 12;
 	VEGAN_MENU = 13;
 }
 ```
