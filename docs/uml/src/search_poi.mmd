@@ -2,10 +2,11 @@ sequenceDiagram
 	actor Client as Client
 	participant Trip as TripAdvisor
 	participant DB as POICache
+	participant Map as MapAPI
 
 
-	Client->>+Trip: searchPOI(searchOptions)<br/>Authorization: Bearer (accessToken)
-	Note over Client,Trip: GET api/v1/places<br/>Authorization: Bearer (accessToken)
+	Client->>+Trip: searchPOI(searchOptions, continuationToken)<br/>Authorization: Bearer (accessToken)
+	Note over Client,Trip: GET api/v1/places<br/>Authorization: Bearer (accessToken)<br/>Body: ContinuationToken: (continuationToken)
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
@@ -32,8 +33,20 @@ sequenceDiagram
 			end
 
 		else Valid searchOptions
-			Trip->>+DB: getPOI(searchOptions)
-			DB-->>-Trip: List<POI>?
-			Trip-->>-Client: List<POI>?<br/>Status code: 0::OK
-			Note over Client,Trip: List<POI>?<br/>Status code: 200::OK
+			loop for category in searchOptions.categories
+				Trip->>+DB: getPOI(category)
+				alt Cache miss
+					rect rgba(255, 165, 0, 0.3)
+						DB-->>Trip: Status code: 5::NOT_FOUND
+						Trip->>+Map: getPOI(category)
+						Map-->>-Trip: List<POI><br/>Status code: 0::OK
+						Trip-)DB: storePOI(List<POI>)
+					end
+				else Cache hit
+					DB-->>-Trip: List<POI><br/>Status code: 0::OK
+				end
+			end
 		end
+		Trip->>Trip: List<POI>.sub(continuationToken.List<POI>)
+		Trip-->>-Client: List<POI>?<br/>Status code: 0::OK
+		Note over Client,Trip: List<POI>?<br/>Status code: 200::OK
