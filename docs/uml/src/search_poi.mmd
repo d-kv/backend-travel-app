@@ -36,7 +36,7 @@ sequenceDiagram
 			loop for category in searchOptions.categories
 				Trip->>+DB: getPOI(category)
 				alt Cache miss
-					rect rgba(255, 165, 0, 0.3)
+					rect rgba(255, 165, 0, 0.6)
 						DB-->>Trip: Status code: 5::NOT_FOUND
 						Trip->>+Map: getPOI(category)
 						Map-->>-Trip: List<POI><br/>Status code: 0::OK
@@ -45,6 +45,7 @@ sequenceDiagram
 				else Cache hit
 					DB-->>-Trip: List<POI><br/>Status code: 0::OK
 				end
+				Trip-)Trip: List<POI>.filter(searchOptions)
 			end
 		end
 		Trip->>Trip: List<POI>.sub(continuationToken.List<POI>)

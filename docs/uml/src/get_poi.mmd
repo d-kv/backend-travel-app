@@ -4,7 +4,7 @@ sequenceDiagram
 	participant DB as POIDataBase
 
 	Admin->>+Trip: getPOI(id)<br/>Authorization: Bearer (accessToken)
-	Note over Admin,Trip: GET api/v1/places/(id}<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: GET api/v1/places/{id}<br/>Authorization: Bearer (accessToken)
 
 		Trip->>Trip: verifyAuthentication(accessToken)
 		alt Not authenticated
