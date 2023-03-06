@@ -1,0 +1,42 @@
+sequenceDiagram
+	actor Client as Client
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+
+    # IDEA
+    #
+    # Route external id - Map API integer id to internal uuid to rule out the possibility to litter out ratting
+    # see: https://yandex.ru/dev/maps/geosearch/doc/concepts/response_structure_business.html
+    #
+	Client->>+Trip: ratePOI(id, rating)<br/>Authorization: Bearer (accessToken)
+	Note over Client,Trip: PUT api/v1/places/{id}/rating<br/>Authorization: Bearer (accessToken)
+
+		Trip->>Trip: verifyAuthentication(accessToken)
+		alt Not authenticated
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Client: Status code: 16::UNAUTHENTICATED
+				Note over Client,Trip: Status code: 401::Unauthorized
+			end
+		else Authenticated
+			Trip->>Trip: verifyAuthorization(accessToken.payload)
+		end
+		alt Not authorized
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Client: Status code: 7::PERMISSION_DENIED
+				Note over Client,Trip: Status code: 403::Forbidden
+			end
+		else Authorized
+			Trip->>+DB: updatePOI(id, rating)
+		end
+
+		alt Not found
+			rect rgba(255, 0, 0, 0.3)
+				DB-->>Trip: Status code: 5::NOT_FOUND
+				Trip-->>Client: Status code: 5::NOT_FOUND
+				Note over Client,Trip: Status code: 404::Not Found
+			end
+		else Found
+			DB-->>-Trip: POI<br/>Status code: 0::OK
+			Trip-->>-Client: POI<br/>Status code: 0::OK
+			Note over Client,Trip: POI<br/>Status code: 200::OK
+		end
