@@ -1,0 +1,3 @@
+[submodule "api/afterwork-api"]
+	path = api/afterwork-api
+	url = git@github.com:ruslanSorokin/afterwork-api.git
