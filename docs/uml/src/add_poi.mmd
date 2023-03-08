@@ -1,0 +1,47 @@
+sequenceDiagram
+	actor Admin as Admin
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+
+	Admin->>+Trip: addPOI(poi)<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: POST api/v1/places<br/>Authorization: Bearer (accessToken)
+
+		Trip->>Trip: verifyAuthentication(accessToken)
+		alt Not authenticated
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
+				Note over Admin,Trip: StaaccessTokentus Code: 401::Unauthorized
+			end
+		else Authenticated
+			Trip->>Trip: verifyAuthorization(accessToken.payload)
+		end
+		alt Not authorized
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: Status code: 7::PERMISSION_DENIED
+				Note over Admin,Trip: Status code: 403::Forbidden
+			end
+		else Authorized
+			Trip->>Trip: verifyPOI(poi)
+		end
+
+		alt Invalid POI
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: Status code: 3::INVALID_ARGUMENT
+				Note over Admin,Trip: Status code: 400::Bad Request
+			end
+
+		else Valid POI
+			Trip->>+DB: insertPOI(poi)
+		end
+
+		alt POI already exists
+			rect rgba(255, 0, 0, 0.3)
+				DB-->>Trip: existingPOI<br/>Status code: 6::ALREADY_EXISTS
+				Trip-->>Admin: existingPOI<br/>Status code: 6::ALREADY_EXISTS
+				Note over Admin,Trip: existingPOI<br/>Status code: 409::Conflict
+			end
+		else Successful insert
+			DB-->>-Trip: insertedPOI<br/>Status code: 0::OK
+			Trip-->>-Admin: insertedPOI<br/>Status code: 0::OK
+			Note over Admin,Trip: insertedPOI<br/>Status code: 200::OK
+		end

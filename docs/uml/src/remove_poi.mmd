@@ -1,0 +1,37 @@
+sequenceDiagram
+	actor Admin as Admin
+	participant Trip as TripAdvisor
+	participant DB as POIDataBase
+
+	Admin->>+Trip: removePOI(id)<br/>Authorization: Bearer (accessToken)
+	Note over Admin,Trip: DELETE api/v1/places/{id}<br/>Authorization: Bearer (accessToken)
+
+	Trip->>Trip: verifyAuthentication(accessToken)
+		alt Not authenticated
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
+				Note over Admin,Trip: Status code: 401::Unauthorized
+			end
+		else Authenticated
+			Trip->>Trip: verifyAuthorization(accessToken.payload)
+		end
+		alt Not authorized
+			rect rgba(255, 0, 0, 0.3)
+				Trip-->>Admin: Status code: 7::PERMISSION_DENIED
+				Note over Admin,Trip: Status code: 403::Forbidden
+			end
+		else Authorized
+			Trip->>+DB: removePOIByID(id)
+		end
+
+		alt POI not found
+			rect rgba(255, 0, 0, 0.3)
+				DB-->>Trip: Status code: 5::NOT_FOUND
+				Trip-->>Admin: Status code: 5::NOT_FOUND
+				Note over Admin,Trip: Status code: 404::Not Found
+			end
+		else POI found & deleted
+			DB-->>-Trip: deletedPOI<br/>Status code: 0::OK
+			Trip-->>-Admin: deletedPOI<br/>Status code: 0::OK
+			Note over Admin,Trip: deletedPOI<br/>Status code: 200::OK
+		end
