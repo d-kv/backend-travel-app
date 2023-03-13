@@ -10,7 +10,7 @@ sequenceDiagram
 		alt Not authenticated
 			rect rgba(255, 0, 0, 0.3)
 				Trip-->>Admin: Status code: 16::UNAUTHENTICATED
-				Note over Admin,Trip: StaaccessTokentus Code: 401::Unauthorized
+				Note over Admin,Trip: Status code: 401::Unauthorized
 			end
 		else Authenticated
 			Trip->>Trip: verifyAuthorization(accessToken.payload)
