@@ -3,7 +3,7 @@ package category
 type Hospitality int32
 
 // Don't use iota because it is easier to keep enum in sync with api using
-// explicit numbers
+// explicit numbers.
 const (
 	HC_UNSPECIFIED Hospitality = 0
 	HC_CAMPING     Hospitality = 1

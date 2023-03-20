@@ -3,7 +3,7 @@ package category
 type Culture int32
 
 // Don't use iota because it is easier to keep enum in sync with api using
-// explicit numbers
+// explicit numbers.
 const (
 	CC_UNSPECIFIED             Culture = 0
 	CC_MUSEUM                  Culture = 1

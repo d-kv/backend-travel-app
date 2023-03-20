@@ -3,7 +3,7 @@ package category
 type Food int32
 
 // Don't use iota because it is easier to keep enum in sync with api using
-// explicit numbers
+// explicit numbers.
 const (
 	FC_UNSPECIFIED      Food = 0
 	FC_BEER_HOUSE       Food = 1

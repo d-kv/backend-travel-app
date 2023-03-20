@@ -3,7 +3,7 @@ package category
 type Enterteinment int32
 
 // Don't use iota because it is easier to keep enum in sync with api using
-// explicit numbers
+// explicit numbers.
 const (
 	EC_UNSPECIFIED     Enterteinment = 0
 	EC_NIGHTCLUB       Enterteinment = 1
