@@ -9,6 +9,20 @@ jobs:
   pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v3
-    - uses: pre-commit/action@v3.0.0
+      - uses: actions/checkout@v3
+      - uses: actions/setup-python@v3
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: trailing-whitespace --all-files
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: end-of-file-fixer --all-files
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: check-yaml --all-files
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: detect-private-key --all-files
+      - uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: conventional-pre-commit --all-files
