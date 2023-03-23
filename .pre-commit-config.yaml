@@ -23,8 +23,9 @@ repos:
         stages: [commit-msg]
 
   # initialization with: pre-commit install
-  - repo: https://github.com/golangci/golangci-lint
-    rev: v1.52.0
-    hooks:
-      - id: golangci-lint
-        args: []
+  # TODO: https://github.com/golangci/golangci-lint/issues/536
+  # - repo: https://github.com/golangci/golangci-lint
+  #   rev: v1.52.1
+  #   hooks:
+  #     - id: golangci-lint
+  #       args: []
