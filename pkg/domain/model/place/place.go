@@ -2,6 +2,7 @@ package place
 
 import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 
 	"time"
 )
@@ -13,10 +14,15 @@ type Place struct {
 	Name        string
 	Description string
 	Phone       string
-	Latitude    float64
-	Longitude   float64
-	Category    category.Category
 
+	LatLng   util.LatLng
+	Category category.Category
+
+	lifetime time.Duration
+	Record   record
+}
+
+type record struct {
 	Lifetime  time.Duration
 	CreatedAt time.Time
 	UpdatedAt time.Time
