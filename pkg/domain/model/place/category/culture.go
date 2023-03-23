@@ -1,3 +1,4 @@
+//nolint:revive, stylecheck // Using SNAKE_CASE for enums
 package category
 
 type Culture int32
