@@ -11,12 +11,37 @@ const (
 )
 
 type Category struct {
-	Category ECategory
+	category ECategory
 
-	Culture       Culture
-	Enterteinment Entertainment
-	Food          Food
-	Hospitality   Hospitality
+	value int32
+}
+
+func (c Category) Culture() Culture {
+	if c.category != C_CULTURE {
+		return 0
+	}
+	return Culture(c.value)
+}
+
+func (c Category) Entertainment() Entertainment {
+	if c.category != C_ENTERTAINMENT {
+		return 0
+	}
+	return Entertainment(c.value)
+}
+
+func (c Category) Food() Food {
+	if c.category != C_FOOD {
+		return 0
+	}
+	return Food(c.value)
+}
+
+func (c Category) Hospitality() Hospitality {
+	if c.category != C_HOSPITALITY {
+		return 0
+	}
+	return Hospitality(c.value)
 }
 
 type builderI interface {
@@ -31,46 +56,37 @@ type builderI interface {
 type Builder struct {
 	category ECategory
 
-	culture       Culture
-	enterteinment Entertainment
-	food          Food
-	hospitality   Hospitality
+	value int32
 }
 
 var _ builderI = Builder{}
 
 func (b Builder) Culture(v Culture) builderI {
 	b.category = C_CULTURE
-	b.culture = v
+	b.value = int32(v)
 	return b
 }
 
 func (b Builder) Entertainment(v Entertainment) builderI {
 	b.category = C_ENTERTAINMENT
-	b.enterteinment = v
+	b.value = int32(v)
 	return b
 }
 
 func (b Builder) Food(v Food) builderI {
 	b.category = C_FOOD
-	b.food = v
+	b.value = int32(v)
 	return b
 }
 
 func (b Builder) Hospitality(v Hospitality) builderI {
 	b.category = C_HOSPITALITY
-	b.hospitality = v
+	b.value = int32(v)
 	return b
 }
 
 func (b Builder) Build() Category {
-	return Category{
-		Category:      b.category,
-		Culture:       b.culture,
-		Enterteinment: b.enterteinment,
-		Food:          b.food,
-		Hospitality:   b.hospitality,
-	}
+	return Category(b)
 }
 
 func NewBuilder() builderI {
