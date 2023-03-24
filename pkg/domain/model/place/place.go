@@ -22,101 +22,56 @@ type Place struct {
 	Record   util.Record
 }
 
-type builderI interface {
-	UUID(val string) builderI
-	Address(val string) builderI
-	Name(val string) builderI
-	Description(val string) builderI
-	Phone(val string) builderI
+type PlaceOpts func(*Place)
 
-	LatLng(lat, lng float64) builderI
-	Category(cat category.Category) builderI
-
-	Lifetime(val time.Duration) builderI
-	Record(cAt, uAt time.Time) builderI
+func WithUUID(uuid string) PlaceOpts {
+	return func(p *Place) { p.UUID = uuid }
 }
 
-type builder struct {
-	uuid        string
-	address     string
-	name        string
-	description string
-	phone       string
-
-	latLng   util.LatLng
-	category category.Category
-
-	lifetime time.Duration
-	record   util.Record
+func WithAddress(addr string) PlaceOpts {
+	return func(p *Place) { p.Address = addr }
 }
 
-var _ builderI = builder{}
-
-func NewBuilder() builderI {
-	return builder{}
+func WithName(name string) PlaceOpts {
+	return func(p *Place) { p.Name = name }
 }
 
-func (b builder) UUID(val string) builderI {
-	b.uuid = val
-	return b
+func WithDescription(desc string) PlaceOpts {
+	return func(p *Place) { p.Description = desc }
 }
 
-func (b builder) Address(val string) builderI {
-	b.address = val
-	return b
+func WithPhone(phone string) PlaceOpts {
+	return func(p *Place) { p.Phone = phone }
 }
 
-func (b builder) Name(val string) builderI {
-	b.name = val
-	return b
-}
-
-func (b builder) Description(val string) builderI {
-	b.description = val
-	return b
-}
-
-func (b builder) Phone(val string) builderI {
-	b.phone = val
-	return b
-}
-
-func (b builder) LatLng(lat float64, lng float64) builderI {
-	b.latLng = util.LatLng{
-		Latitude:  lat,
-		Longitude: lng,
+func WithLatLng(lat float64, lng float64) PlaceOpts {
+	return func(p *Place) {
+		p.LatLng.Latitude = lat
+		p.LatLng.Longitude = lng
 	}
-	return b
 }
 
-func (b builder) Category(val category.Category) builderI {
-	b.category = val
-	return b
+func WithCategory(cat category.Category) PlaceOpts {
+	return func(p *Place) { p.Category = cat }
 }
 
-func (b builder) Lifetime(val time.Duration) builderI {
-	b.lifetime = val
-	return b
+func WithLifetime(lt time.Duration) PlaceOpts {
+	return func(p *Place) { p.Lifetime = lt }
 }
 
-func (b builder) Record(cAt, uAt time.Time) builderI {
-	b.record = util.Record{
-		CreatedAt: cAt,
-		UpdatedAt: uAt,
+func WithRecord(cAt, uAt time.Time) PlaceOpts {
+	return func(p *Place) {
+		p.Record.CreatedAt = cAt
+		p.Record.UpdatedAt = uAt
 	}
-	return b
 }
 
-func (b builder) Build() Place {
-	return Place{
-		UUID:        b.uuid,
-		Address:     b.address,
-		Name:        b.name,
-		Description: b.description,
-		Phone:       b.phone,
-		LatLng:      b.latLng,
-		Category:    b.category,
-		Lifetime:    b.lifetime,
-		Record:      b.record,
+func NewPlace(opts ...PlaceOpts) *Place {
+	p := &Place{}
+
+	for _, opt := range opts {
+		opt(p)
 	}
+
+	return p
 }
