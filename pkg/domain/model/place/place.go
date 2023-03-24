@@ -18,12 +18,6 @@ type Place struct {
 	LatLng   util.LatLng
 	Category category.Category
 
-	lifetime time.Duration
-	Record   record
-}
-
-type record struct {
-	Lifetime  time.Duration
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	Lifetime time.Duration
+	Record   util.Record
 }
