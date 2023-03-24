@@ -44,51 +44,30 @@ func (c Category) Hospitality() Hospitality {
 	return Hospitality(c.value)
 }
 
-type builderI interface {
-	Culture(v Culture) builderI
-	Entertainment(v Entertainment) builderI
-	Food(v Food) builderI
-	Hospitality(v Hospitality) builderI
-
-	Build() Category
+func NewCulture(v Culture) *Category {
+	return &Category{
+		category: C_CULTURE,
+		value:    int32(v),
+	}
 }
 
-type Builder struct {
-	category ECategory
-
-	value int32
+func NewEntertainment(v Entertainment) *Category {
+	return &Category{
+		category: C_ENTERTAINMENT,
+		value:    int32(v),
+	}
 }
 
-var _ builderI = Builder{}
-
-func (b Builder) Culture(v Culture) builderI {
-	b.category = C_CULTURE
-	b.value = int32(v)
-	return b
+func NewFood(v Food) *Category {
+	return &Category{
+		category: C_FOOD,
+		value:    int32(v),
+	}
 }
 
-func (b Builder) Entertainment(v Entertainment) builderI {
-	b.category = C_ENTERTAINMENT
-	b.value = int32(v)
-	return b
-}
-
-func (b Builder) Food(v Food) builderI {
-	b.category = C_FOOD
-	b.value = int32(v)
-	return b
-}
-
-func (b Builder) Hospitality(v Hospitality) builderI {
-	b.category = C_HOSPITALITY
-	b.value = int32(v)
-	return b
-}
-
-func (b Builder) Build() Category {
-	return Category(b)
-}
-
-func NewBuilder() builderI {
-	return Builder{}
+func NewHospitality(v Hospitality) *Category {
+	return &Category{
+		category: C_HOSPITALITY,
+		value:    int32(v),
+	}
 }
