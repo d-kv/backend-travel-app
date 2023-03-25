@@ -22,51 +22,51 @@ type Place struct {
 	Record   util.Record
 }
 
-type PlaceOpts func(*Place)
+type Options func(*Place)
 
-func WithUUID(uuid string) PlaceOpts {
+func WithUUID(uuid string) Options {
 	return func(p *Place) { p.UUID = uuid }
 }
 
-func WithAddress(addr string) PlaceOpts {
+func WithAddress(addr string) Options {
 	return func(p *Place) { p.Address = addr }
 }
 
-func WithName(name string) PlaceOpts {
+func WithName(name string) Options {
 	return func(p *Place) { p.Name = name }
 }
 
-func WithDescription(desc string) PlaceOpts {
+func WithDescription(desc string) Options {
 	return func(p *Place) { p.Description = desc }
 }
 
-func WithPhone(phone string) PlaceOpts {
+func WithPhone(phone string) Options {
 	return func(p *Place) { p.Phone = phone }
 }
 
-func WithLatLng(lat float64, lng float64) PlaceOpts {
+func WithLatLng(lat float64, lng float64) Options {
 	return func(p *Place) {
 		p.LatLng.Latitude = lat
 		p.LatLng.Longitude = lng
 	}
 }
 
-func WithCategory(cat category.Category) PlaceOpts {
+func WithCategory(cat category.Category) Options {
 	return func(p *Place) { p.Category = cat }
 }
 
-func WithLifetime(lt time.Duration) PlaceOpts {
+func WithLifetime(lt time.Duration) Options {
 	return func(p *Place) { p.Lifetime = lt }
 }
 
-func WithRecord(cAt, uAt time.Time) PlaceOpts {
+func WithRecord(cAt, uAt time.Time) Options {
 	return func(p *Place) {
 		p.Record.CreatedAt = cAt
 		p.Record.UpdatedAt = uAt
 	}
 }
 
-func NewPlace(opts ...PlaceOpts) *Place {
+func NewPlace(opts ...Options) *Place {
 	p := &Place{}
 
 	for _, opt := range opts {
