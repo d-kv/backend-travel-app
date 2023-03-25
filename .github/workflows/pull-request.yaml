@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+env:
+  GO_VERSION: "1.20"
+
+jobs:
+  # Check if there is any dirty change for go mod tidy
+  go-mod:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          # https://github.com/actions/setup-go#supported-version-syntax
+          # ex:
+          # - 1.18beta1 -> 1.18.0-beta.1
+          # - 1.18rc1 -> 1.18.0-rc.1
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check go mod
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod
+
+  # We already run the current golangci-lint in tests, but here we test
+  # our GitHub action with the latest stable golangci-lint.
+  golangci-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          # https://github.com/actions/setup-go#supported-version-syntax
+          # ex:
+          # - 1.18beta1 -> 1.18.0-beta.1
+          # - 1.18rc1 -> 1.18.0-rc.1
+          go-version: ${{ env.GO_VERSION }}
+      - name: lint
+        uses: golangci/golangci-lint-action@v3.4.0
+        with:
+          version: latest
+          # skip cache because of flaky behaviors
+          skip-build-cache: true
+          skip-pkg-cache: true
+
+  typos:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check [typos]
+        uses: crate-ci/typos@v1.0.4
+
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install Python
+        uses: actions/setup-python@v3
+
+      - name: Check [trailing-whitespace]
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: trailing-whitespace --all-files
+
+      - name: Check [end-of-file-fixer]
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: end-of-file-fixer --all-files
+
+      - name: Check [check-yaml]
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: check-yaml --all-files
+
+      - name: Check [detect-private-key]
+        uses: pre-commit/action@v3.0.0
+        with:
+          extra_args: detect-private-key --all-files
