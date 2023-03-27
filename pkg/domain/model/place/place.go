@@ -4,12 +4,14 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 
+	"github.com/google/uuid"
+
 	"time"
 )
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
-	UUID        string
+	UUID        uuid.UUID
 	Address     string
 	Name        string
 	Description string
@@ -24,7 +26,7 @@ type Place struct {
 
 type Options func(*Place)
 
-func WithUUID(uuid string) Options {
+func WithUUID(uuid uuid.UUID) Options {
 	return func(p *Place) { p.UUID = uuid }
 }
 
