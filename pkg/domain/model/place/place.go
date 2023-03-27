@@ -11,17 +11,18 @@ import (
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
-	UUID        uuid.UUID
-	Address     string
-	Name        string
-	Description string
-	Phone       string
+	// TODO: move all MongoDB related tags to DTO
+	UUID        uuid.UUID `bson:"_id"`
+	Address     string    `bson:"address"`
+	Name        string    `bson:"name"`
+	Description string    `bson:"description,omitempty"`
+	Phone       string    `bson:"phone,omitempty"`
 
-	LatLng   util.LatLng
-	Category category.Category
+	LatLng   util.LatLng       `bson:"lat_lng"`
+	Category category.Category `bson:"category"`
 
-	Lifetime time.Duration
-	Record   util.Record
+	Lifetime time.Duration `bson:"lifetime"`
+	Record   util.Record   `bson:"record"`
 }
 
 type Options func(*Place)
