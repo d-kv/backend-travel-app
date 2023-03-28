@@ -27,9 +27,13 @@ type Config struct {
 	Server Server
 }
 
-func New(p, n string) (*Config, error) {
+func New(path, name string) (*Config, error) {
 	var cfg Config
-	config.Load(&cfg, p, n)
+
+	err := config.Load(&cfg, path, name)
+	if err != nil {
+		return nil, err
+	}
 
 	return &cfg, nil
 }
