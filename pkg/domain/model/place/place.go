@@ -9,18 +9,18 @@ import (
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
-	// TODO: move all MongoDB related tags to DTO
 	UUID        string `bson:"_id"`
 	Address     string `bson:"address"`
 	Name        string `bson:"name"`
 	Description string `bson:"description,omitempty"`
 	Phone       string `bson:"phone,omitempty"`
 
-	LatLng   util.LatLng       `bson:"inline"`
-	Category category.Category `bson:"inline"`
+	LatLng         util.LatLng             `bson:"inline"`
+	Classification category.Classification `bson:"inline"`
 
-	Lifetime time.Duration `bson:"lifetime"`
-	Record   util.Record   `bson:"inline"`
+	Lifetime  time.Duration `bson:"lifetime"`
+	CreatedAt time.Time     `bson:"created_at"`
+	UpdatedAt time.Time     `bson:"updated_at"`
 }
 
 type Options func(*Place)
@@ -52,8 +52,8 @@ func WithLatLng(lat float64, lng float64) Options {
 	}
 }
 
-func WithCategory(cat category.Category) Options {
-	return func(p *Place) { p.Category = cat }
+func WithClassification(cat category.Classification) Options {
+	return func(p *Place) { p.Classification = cat }
 }
 
 func WithLifetime(lt time.Duration) Options {
@@ -62,8 +62,8 @@ func WithLifetime(lt time.Duration) Options {
 
 func WithRecord(cAt, uAt time.Time) Options {
 	return func(p *Place) {
-		p.Record.CreatedAt = cAt
-		p.Record.UpdatedAt = uAt
+		p.CreatedAt = cAt
+		p.UpdatedAt = uAt
 	}
 }
 
