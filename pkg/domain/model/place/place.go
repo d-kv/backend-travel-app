@@ -4,30 +4,28 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 
-	"github.com/google/uuid"
-
 	"time"
 )
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
 	// TODO: move all MongoDB related tags to DTO
-	UUID        uuid.UUID `bson:"_id"`
-	Address     string    `bson:"address"`
-	Name        string    `bson:"name"`
-	Description string    `bson:"description,omitempty"`
-	Phone       string    `bson:"phone,omitempty"`
+	UUID        string `bson:"_id"`
+	Address     string `bson:"address"`
+	Name        string `bson:"name"`
+	Description string `bson:"description,omitempty"`
+	Phone       string `bson:"phone,omitempty"`
 
-	LatLng   util.LatLng       `bson:"lat_lng"`
-	Category category.Category `bson:"category"`
+	LatLng   util.LatLng       `bson:"inline"`
+	Category category.Category `bson:"inline"`
 
 	Lifetime time.Duration `bson:"lifetime"`
-	Record   util.Record   `bson:"record"`
+	Record   util.Record   `bson:"inline"`
 }
 
 type Options func(*Place)
 
-func WithUUID(uuid uuid.UUID) Options {
+func WithUUID(uuid string) Options {
 	return func(p *Place) { p.UUID = uuid }
 }
 

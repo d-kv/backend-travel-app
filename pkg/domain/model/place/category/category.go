@@ -11,9 +11,9 @@ const (
 )
 
 type Category struct {
-	category ECategory
+	Category ECategory `bson:"category"`
 
-	value int32
+	Value int32 `bson:"sub_category"`
 }
 
 func (c Category) Culture() Culture {
