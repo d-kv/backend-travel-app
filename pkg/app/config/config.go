@@ -9,11 +9,13 @@ func Load[T any](cfg *T, path, name string) error {
 	viper.SetConfigName(name)
 	viper.AddConfigPath(path)
 
-	if err := viper.ReadInConfig(); err != nil {
+	err := viper.ReadInConfig()
+	if err != nil {
 		return err
 	}
 
-	if err := viper.Unmarshal(&cfg); err != nil {
+	err = viper.Unmarshal(&cfg)
+	if err != nil {
 		return err
 	}
 
