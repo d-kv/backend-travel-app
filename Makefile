@@ -14,3 +14,9 @@ tools.download:
 .SILENT: tools.install
 tools.install: tools.download
 	@go mod download
+
+docker-compose.up:
+	@(cd deployment && docker-compose up -d)
+
+docker-compose.down:
+	@(cd deployment && docker-compose down)
