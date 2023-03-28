@@ -2,8 +2,8 @@ DB:
   Mongo:
     URI: "mongodb://username:password@host1:port"
     DBName: "MyDBName"
-    CollectionName:
-        Place: "Places"
+    CollName:
+      Place: "Places"
 Server:
   RPC:
     Port: 19005

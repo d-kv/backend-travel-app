@@ -7,9 +7,9 @@ import (
 type (
 	DB struct {
 		Mongo struct {
-			URI            string
-			DBName         string
-			CollectionName struct {
+			URI      string
+			DBName   string
+			CollName struct {
 				Place string
 			}
 		}
