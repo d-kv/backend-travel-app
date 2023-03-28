@@ -44,29 +44,29 @@ func (c Category) Hospitality() Hospitality {
 	return Hospitality(c.value)
 }
 
-func NewCulture(v Culture) *Category {
-	return &Category{
+func NewCulture(v Culture) Category {
+	return Category{
 		category: C_CULTURE,
 		value:    int32(v),
 	}
 }
 
-func NewEntertainment(v Entertainment) *Category {
-	return &Category{
+func NewEntertainment(v Entertainment) Category {
+	return Category{
 		category: C_ENTERTAINMENT,
 		value:    int32(v),
 	}
 }
 
-func NewFood(v Food) *Category {
-	return &Category{
+func NewFood(v Food) Category {
+	return Category{
 		category: C_FOOD,
 		value:    int32(v),
 	}
 }
 
-func NewHospitality(v Hospitality) *Category {
-	return &Category{
+func NewHospitality(v Hospitality) Category {
+	return Category{
 		category: C_HOSPITALITY,
 		value:    int32(v),
 	}
