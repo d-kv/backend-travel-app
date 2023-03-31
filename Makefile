@@ -20,3 +20,6 @@ docker-compose.up:
 
 docker-compose.down:
 	@(cd deployment && docker-compose down)
+
+lint:
+	@goimports-reviser ./... && go vet ./... && golangci-lint run
