@@ -49,8 +49,8 @@ type Category struct {
 }
 
 type bsonStruct struct {
-	MainCategory string
-	SubCategory  string
+	MainCategory string `bson:"main_category"`
+	SubCategory  string `bson:"sub_category"`
 }
 
 func (c Category) String() string {
