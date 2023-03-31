@@ -58,7 +58,7 @@ func TestCreateIntegration(t *testing.T) {
 	dropPlaceStore()
 	assert := assert.New(t)
 
-	p1 := place.NewPlace(
+	p1 := place.New(
 		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
@@ -69,7 +69,7 @@ func TestCreateIntegration(t *testing.T) {
 
 	duplID := uuid.New().String()
 
-	p2 := place.NewPlace(
+	p2 := place.New(
 		place.WithUUID(duplID),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
@@ -78,7 +78,7 @@ func TestCreateIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p2),
 		"must create without any error")
 
-	p3 := place.NewPlace(
+	p3 := place.New(
 		place.WithUUID(duplID),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
@@ -102,7 +102,7 @@ func TestDeleteIntegration(t *testing.T) {
 
 	id := uuid.New().String()
 
-	p := place.NewPlace(
+	p := place.New(
 		place.WithUUID(id),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
@@ -127,7 +127,7 @@ func TestGetByIDIntegration(t *testing.T) {
 
 	id := uuid.New().String()
 
-	p := place.NewPlace(
+	p := place.New(
 		place.WithUUID(id),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
@@ -154,13 +154,13 @@ func TestGetAllIntegration(t *testing.T) {
 	id1 := uuid.New().String()
 	id2 := uuid.New().String()
 
-	p1 := place.NewPlace(
+	p1 := place.New(
 		place.WithUUID(id1),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace1"),
 	)
 
-	p2 := place.NewPlace(
+	p2 := place.New(
 		place.WithUUID(id2),
 		place.WithAddress("Street 2B"),
 		place.WithName("MyPlace2"),

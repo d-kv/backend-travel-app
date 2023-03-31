@@ -72,7 +72,7 @@ func WithRecord(cAt, uAt time.Time) Options {
 	}
 }
 
-func NewPlace(opts ...Options) *Place {
+func New(opts ...Options) *Place {
 	p := &Place{}
 
 	for _, opt := range opts {
