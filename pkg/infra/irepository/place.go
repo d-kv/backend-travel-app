@@ -11,5 +11,5 @@ type PlaceI interface {
 	Create(context.Context, *place.Place) error
 	Delete(context.Context, string) error
 
-	GetByID(context.Context, string) (*place.Place, error)
+	Get(context.Context, string) (*place.Place, error)
 }

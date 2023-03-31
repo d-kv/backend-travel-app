@@ -87,7 +87,7 @@ func TestCreateIntegration(t *testing.T) {
 	assert.True(mongo.IsDuplicateKeyError(plStore.Create(context.Background(), p3)),
 		"must be primitive.ObjectID duplicate error")
 
-	p2Expected, err := plStore.GetByID(context.Background(), duplID)
+	p2Expected, err := plStore.Get(context.Background(), duplID)
 
 	assert.NoError(err, "must return place without error")
 	assert.Equal(p2, p2Expected, "must be the same place which was inserted")
@@ -136,7 +136,7 @@ func TestGetByIDIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p),
 		"must create without any error")
 
-	pExpected, err := plStore.GetByID(context.Background(), id)
+	pExpected, err := plStore.Get(context.Background(), id)
 
 	assert.NoError(err,
 		"must return place without any error")

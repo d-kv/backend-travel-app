@@ -85,7 +85,7 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 }
 
 // GetByID returns place with given UUID.
-func (p *PlaceStore) GetByID(ctx context.Context, uuid string) (*place.Place, error) {
+func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error) {
 	res := p.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
