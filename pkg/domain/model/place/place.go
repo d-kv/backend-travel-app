@@ -1,10 +1,10 @@
 package place
 
 import (
+	"time"
+
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
-
-	"time"
 )
 
 type Place struct {
