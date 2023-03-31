@@ -83,6 +83,9 @@ func (c *Category) UnmarshalBSON(data []byte) error {
 	return nil
 }
 
+var _ bson.Marshaler = (*Category)(nil)
+var _ bson.Unmarshaler = (*Category)(nil)
+
 // NewCategory creates Category object from string value of enum.
 func NewCategory(mainCat, subCat string) Category {
 	var cl Category
