@@ -1,25 +1,27 @@
 package place
 
 import (
+	"time"
+
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
-
-	"time"
 )
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
-	UUID        string
-	Address     string
-	Name        string
-	Description string
-	Phone       string
+	UUID        string `bson:"_id"`
+	Address     string `bson:"address"`
+	Name        string `bson:"name"`
+	Description string `bson:"description,omitempty"`
+	Phone       string `bson:"phone,omitempty"`
+	URL         string `bson:"url, omitempty"`
 
-	LatLng   util.LatLng
-	Category category.Category
+	LatLng         util.LatLng             `bson:"inline"`
+	Classification category.Classification `bson:"inline"`
 
-	Lifetime time.Duration
-	Record   util.Record
+	Lifetime  time.Duration `bson:"lifetime"`
+	CreatedAt time.Time     `bson:"created_at"`
+	UpdatedAt time.Time     `bson:"updated_at"`
 }
 
 type Options func(*Place)
@@ -44,6 +46,10 @@ func WithPhone(phone string) Options {
 	return func(p *Place) { p.Phone = phone }
 }
 
+func WithURL(url string) Options {
+	return func(p *Place) { p.URL = url }
+}
+
 func WithLatLng(lat float64, lng float64) Options {
 	return func(p *Place) {
 		p.LatLng.Latitude = lat
@@ -51,8 +57,8 @@ func WithLatLng(lat float64, lng float64) Options {
 	}
 }
 
-func WithCategory(cat category.Category) Options {
-	return func(p *Place) { p.Category = cat }
+func WithClassification(cat category.Classification) Options {
+	return func(p *Place) { p.Classification = cat }
 }
 
 func WithLifetime(lt time.Duration) Options {
@@ -61,12 +67,12 @@ func WithLifetime(lt time.Duration) Options {
 
 func WithRecord(cAt, uAt time.Time) Options {
 	return func(p *Place) {
-		p.Record.CreatedAt = cAt
-		p.Record.UpdatedAt = uAt
+		p.CreatedAt = cAt
+		p.UpdatedAt = uAt
 	}
 }
 
-func NewPlace(opts ...Options) *Place {
+func New(opts ...Options) *Place {
 	p := &Place{}
 
 	for _, opt := range opts {

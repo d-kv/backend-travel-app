@@ -5,6 +5,6 @@ import (
 )
 
 type Search struct {
-	Categories []category.Category
+	Categories []category.Classification
 	Distance   Distance
 }
