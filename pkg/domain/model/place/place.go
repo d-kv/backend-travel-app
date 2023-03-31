@@ -14,6 +14,7 @@ type Place struct {
 	Name        string `bson:"name"`
 	Description string `bson:"description,omitempty"`
 	Phone       string `bson:"phone,omitempty"`
+	URL         string `bson:"url, omitempty"`
 
 	LatLng         util.LatLng             `bson:"inline"`
 	Classification category.Classification `bson:"inline"`
@@ -43,6 +44,10 @@ func WithDescription(desc string) Options {
 
 func WithPhone(phone string) Options {
 	return func(p *Place) { p.Phone = phone }
+}
+
+func WithURL(url string) Options {
+	return func(p *Place) { p.URL = url }
 }
 
 func WithLatLng(lat float64, lng float64) Options {
