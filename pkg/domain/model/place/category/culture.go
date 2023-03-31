@@ -1,6 +1,7 @@
 //nolint:revive, stylecheck, gochecknoglobals // Using SNAKE_CASE & global maps for enums
 package category
 
+// Culture is a enum type.
 type Culture int32
 
 func (c Culture) String() string {
