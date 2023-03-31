@@ -1,12 +1,7 @@
-//nolint:revive, stylecheck, gochecknoglobals // Using SNAKE_CASE & global maps for enums
+//nolint:revive, stylecheck // Using SNAKE_CASE for enums
 package category
 
-// Food is a enum type.
 type Food int32
-
-func (f Food) String() string {
-	return foodName[f]
-}
 
 // Don't use iota because it is easier to keep enum in sync with api using
 // explicit numbers.
@@ -25,40 +20,4 @@ const (
 	FC_PAB              Food = 11
 	FC_GEORGIAN_CUISINE Food = 12
 	FC_KAFE             Food = 13
-)
-
-// Enum value maps for Food.
-var (
-	foodName = map[Food]string{
-		FC_UNSPECIFIED:      "FC_UNSPECIFIED",
-		FC_BEER_HOUSE:       "FC_BEER_HOUSE",
-		FC_CONFECTIONERY:    "FC_CONFECTIONERY",
-		FC_COFFEE_HOUSE:     "FC_COFFEE_HOUSE",
-		FC_RUSSIAN_CUISINE:  "FC_RUSSIAN_CUISINE",
-		FC_BAR:              "FC_BAR",
-		FC_ITALIAN_CUISINE:  "FC_ITALIAN_CUISINE",
-		FC_JAPANESE_CUISINE: "FC_JAPANESE_CUISINE",
-		FC_STEAK:            "FC_STEAK",
-		FC_AMERICAN_CUISINE: "FC_AMERICAN_CUISINE",
-		FC_VEGAN_MENU:       "FC_VEGAN_MENU",
-		FC_PAB:              "FC_PAB",
-		FC_GEORGIAN_CUISINE: "FC_GEORGIAN_CUISINE",
-		FC_KAFE:             "FC_KAFE",
-	}
-	foodValue = map[string]Food{
-		"FC_UNSPECIFIED":      FC_UNSPECIFIED,
-		"FC_BEER_HOUSE":       FC_BEER_HOUSE,
-		"FC_CONFECTIONERY":    FC_CONFECTIONERY,
-		"FC_COFFEE_HOUSE":     FC_COFFEE_HOUSE,
-		"FC_RUSSIAN_CUISINE":  FC_RUSSIAN_CUISINE,
-		"FC_BAR":              FC_BAR,
-		"FC_ITALIAN_CUISINE":  FC_ITALIAN_CUISINE,
-		"FC_JAPANESE_CUISINE": FC_JAPANESE_CUISINE,
-		"FC_STEAK":            FC_STEAK,
-		"FC_AMERICAN_CUISINE": FC_AMERICAN_CUISINE,
-		"FC_VEGAN_MENU":       FC_VEGAN_MENU,
-		"FC_PAB":              FC_PAB,
-		"FC_GEORGIAN_CUISINE": FC_GEORGIAN_CUISINE,
-		"FC_KAFE":             FC_KAFE,
-	}
 )
