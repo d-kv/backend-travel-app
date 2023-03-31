@@ -12,4 +12,5 @@ type UserI interface {
 	Delete(context.Context, string) error
 
 	GetByID(context.Context, string) (*user.User, error)
+	GetByTinkoffID(context.Context, string) (*user.User, error)
 }
