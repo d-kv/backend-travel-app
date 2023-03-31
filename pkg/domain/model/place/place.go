@@ -16,8 +16,8 @@ type Place struct {
 	Phone       string `bson:"phone,omitempty"`
 	URL         string `bson:"url, omitempty"`
 
-	LatLng         util.LatLng             `bson:"inline"`
-	Classification category.Classification `bson:"inline"`
+	LatLng   util.LatLng       `bson:"inline"`
+	Category category.Category `bson:"inline"`
 
 	Lifetime  time.Duration `bson:"lifetime"`
 	CreatedAt time.Time     `bson:"created_at"`
@@ -57,8 +57,8 @@ func WithLatLng(lat float64, lng float64) Options {
 	}
 }
 
-func WithClassification(cat category.Classification) Options {
-	return func(p *Place) { p.Classification = cat }
+func WithCategory(cat category.Category) Options {
+	return func(p *Place) { p.Category = cat }
 }
 
 func WithLifetime(lt time.Duration) Options {

@@ -6,100 +6,103 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// Category is a enum type.
-type Category int32
+// MainCategory is a enum type.
+type MainCategory int32
 
-func (c Category) string() string {
-	return categoryName[c]
+func (c MainCategory) string() string {
+	return mainCategoryName[c]
 }
 
 //nolint:revive, stylecheck // Using SNAKE_CASE for enums
 const (
-	C_UNSPECIFIED Category = iota + 1
-	C_CULTURE
-	C_ENTERTAINMENT
-	C_FOOD
-	C_HOSPITALITY
+	MC_UNSPECIFIED MainCategory = iota + 1
+	MC_CULTURE
+	MC_ENTERTAINMENT
+	MC_FOOD
+	MC_HOSPITALITY
 )
 
 // Enum value maps for Culture.
 var (
-	categoryName = map[Category]string{ //nolint:gochecknoglobals // Using global maps for enums
-		C_UNSPECIFIED:   "C_UNSPECIFIED",
-		C_CULTURE:       "C_CULTURE",
-		C_ENTERTAINMENT: "C_ENTERTAINMENT",
-		C_FOOD:          "C_FOOD",
-		C_HOSPITALITY:   "C_HOSPITALITY",
+	mainCategoryName = map[MainCategory]string{ //nolint:gochecknoglobals // Using global maps for enums
+		MC_UNSPECIFIED:   "MC_UNSPECIFIED",
+		MC_CULTURE:       "MC_CULTURE",
+		MC_ENTERTAINMENT: "MC_ENTERTAINMENT",
+		MC_FOOD:          "MC_FOOD",
+		MC_HOSPITALITY:   "MC_HOSPITALITY",
 	}
-	categoryValue = map[string]Category{ //nolint:gochecknoglobals // Using global maps for enums
-		"C_UNSPECIFIED":   C_UNSPECIFIED,
-		"C_CULTURE":       C_CULTURE,
-		"C_ENTERTAINMENT": C_ENTERTAINMENT,
-		"C_FOOD":          C_FOOD,
-		"C_HOSPITALITY":   C_HOSPITALITY,
+	mainCategoryValue = map[string]MainCategory{ //nolint:gochecknoglobals // Using global maps for enums
+		"MC_UNSPECIFIED":   MC_UNSPECIFIED,
+		"MC_CULTURE":       MC_CULTURE,
+		"MC_ENTERTAINMENT": MC_ENTERTAINMENT,
+		"MC_FOOD":          MC_FOOD,
+		"MC_HOSPITALITY":   MC_HOSPITALITY,
 	}
 )
 
-// Classification indicates category of a place & sub_category for each category.
+// Category indicates category of a place & sub_category for each category.
 //
 // Use getters to check category.
-type Classification struct {
-	category    Category
-	subCategory int32
+type Category struct {
+	mainCategory MainCategory
+	subCategory  int32
 }
 
 type bsonStruct struct {
-	Category    string
-	SubCategory string
+	MainCategory string `bson:"main_category"`
+	SubCategory  string `bson:"sub_category"`
 }
 
-func (c Classification) String() string {
+func (c Category) String() string {
 	var sb strings.Builder
 
-	sb.WriteString(c.CategoryString())
+	sb.WriteString(c.MainCategoryString())
 	sb.WriteString(" ")
 	sb.WriteString(c.SubCategoryString())
 
 	return sb.String()
 }
 
-func (c Classification) MarshalBSON() ([]byte, error) {
+func (c Category) MarshalBSON() ([]byte, error) {
 	marshalStruct := bsonStruct{
-		Category:    c.CategoryString(),
-		SubCategory: c.SubCategoryString(),
+		MainCategory: c.MainCategoryString(),
+		SubCategory:  c.SubCategoryString(),
 	}
 
 	return bson.Marshal(marshalStruct)
 }
 
-func (c *Classification) UnmarshalBSON(data []byte) error {
+func (c *Category) UnmarshalBSON(data []byte) error {
 	var clss bsonStruct
 
 	if err := bson.Unmarshal(data, &clss); err != nil {
 		return err
 	}
 
-	*c = NewClassification(clss.Category, clss.SubCategory)
+	*c = NewCategory(clss.MainCategory, clss.SubCategory)
 	return nil
 }
 
-// NewClassification creates Classification object from string value of enum.
-func NewClassification(cat, subCat string) Classification {
-	var cl Classification
-	switch categoryValue[cat] {
-	case C_CULTURE:
+var _ bson.Marshaler = (*Category)(nil)
+var _ bson.Unmarshaler = (*Category)(nil)
+
+// NewCategory creates Category object from string value of enum.
+func NewCategory(mainCat, subCat string) Category {
+	var cl Category
+	switch mainCategoryValue[mainCat] {
+	case MC_CULTURE:
 		return NewCulture(cultureValue[subCat])
 
-	case C_ENTERTAINMENT:
+	case MC_ENTERTAINMENT:
 		return NewEntertainment(entertainmentValue[subCat])
 
-	case C_FOOD:
+	case MC_FOOD:
 		return NewFood(foodValue[subCat])
 
-	case C_HOSPITALITY:
+	case MC_HOSPITALITY:
 		return NewHospitality(hospitalityValue[subCat])
 
-	case C_UNSPECIFIED:
+	case MC_UNSPECIFIED:
 		return cl
 
 	default:
@@ -107,27 +110,27 @@ func NewClassification(cat, subCat string) Classification {
 	}
 }
 
-// CategoryString returns string of Category enum.
-func (c Classification) CategoryString() string {
-	return c.category.string()
+// MainCategoryString returns string of Category enum.
+func (c Category) MainCategoryString() string {
+	return c.mainCategory.string()
 }
 
 // SubCategoryString returns string of SubCategory enum.
-func (c Classification) SubCategoryString() string {
-	switch c.category {
-	case C_CULTURE:
+func (c Category) SubCategoryString() string {
+	switch c.mainCategory {
+	case MC_CULTURE:
 		return Culture(c.subCategory).String()
 
-	case C_ENTERTAINMENT:
+	case MC_ENTERTAINMENT:
 		return Entertainment(c.subCategory).String()
 
-	case C_FOOD:
+	case MC_FOOD:
 		return Food(c.subCategory).String()
 
-	case C_HOSPITALITY:
+	case MC_HOSPITALITY:
 		return Hospitality(c.subCategory).String()
 
-	case C_UNSPECIFIED:
+	case MC_UNSPECIFIED:
 		return ""
 
 	default:
@@ -136,65 +139,65 @@ func (c Classification) SubCategoryString() string {
 }
 
 // Culture returns Culture category if specified, otherwise returns 0.
-func (c Classification) Culture() Culture {
-	if c.category != C_CULTURE {
+func (c Category) Culture() Culture {
+	if c.mainCategory != MC_CULTURE {
 		return 0
 	}
 	return Culture(c.subCategory)
 }
 
 // Entertainment returns Entertainment category if specified, otherwise returns 0.
-func (c Classification) Entertainment() Entertainment {
-	if c.category != C_ENTERTAINMENT {
+func (c Category) Entertainment() Entertainment {
+	if c.mainCategory != MC_ENTERTAINMENT {
 		return 0
 	}
 	return Entertainment(c.subCategory)
 }
 
 // Food returns Food category if specified, otherwise returns 0.
-func (c Classification) Food() Food {
-	if c.category != C_FOOD {
+func (c Category) Food() Food {
+	if c.mainCategory != MC_FOOD {
 		return 0
 	}
 	return Food(c.subCategory)
 }
 
 // Hospitality returns Hospitality category if specified, otherwise returns 0.
-func (c Classification) Hospitality() Hospitality {
-	if c.category != C_HOSPITALITY {
+func (c Category) Hospitality() Hospitality {
+	if c.mainCategory != MC_HOSPITALITY {
 		return 0
 	}
 	return Hospitality(c.subCategory)
 }
 
 // NewCulture is a default ctor for Culture category.
-func NewCulture(v Culture) Classification {
-	return Classification{
-		category:    C_CULTURE,
-		subCategory: int32(v),
+func NewCulture(v Culture) Category {
+	return Category{
+		mainCategory: MC_CULTURE,
+		subCategory:  int32(v),
 	}
 }
 
 // NewEntertainment is a default ctor for Entertainment category.
-func NewEntertainment(v Entertainment) Classification {
-	return Classification{
-		category:    C_ENTERTAINMENT,
-		subCategory: int32(v),
+func NewEntertainment(v Entertainment) Category {
+	return Category{
+		mainCategory: MC_ENTERTAINMENT,
+		subCategory:  int32(v),
 	}
 }
 
 // NewFood is a default ctor for Food category.
-func NewFood(v Food) Classification {
-	return Classification{
-		category:    C_FOOD,
-		subCategory: int32(v),
+func NewFood(v Food) Category {
+	return Category{
+		mainCategory: MC_FOOD,
+		subCategory:  int32(v),
 	}
 }
 
 // NewHospitality is a default ctor for Hospitality category.
-func NewHospitality(v Hospitality) Classification {
-	return Classification{
-		category:    C_HOSPITALITY,
-		subCategory: int32(v),
+func NewHospitality(v Hospitality) Category {
+	return Category{
+		mainCategory: MC_HOSPITALITY,
+		subCategory:  int32(v),
 	}
 }
