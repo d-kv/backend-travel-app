@@ -6,3 +6,5 @@
       #TODO: Add tests
 - [ ] (internal/infra/repository/mongo/place.go)
       #TODO: Add aggregation by subCategory
+- [ ] (internal/app/controller/controller.go)
+      #TODO: Add tests
