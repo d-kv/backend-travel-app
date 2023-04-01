@@ -2,7 +2,7 @@
       #TODO: Use a non-std logging
 - [ ] (pkg/domain/model/place/place.go)
       #TODO: Add bill, opening_hours & rating
-- [ ] (internal/infra/repository/mongo/user_test.go)
-      #TODO: Write tests
+- [ ] (internal/infra/repository/mongo/user.go)
+      #TODO: Add tests
 - [ ] (internal/infra/repository/mongo/place.go)
-      #TODO: add aggregation by subCategory
+      #TODO: Add aggregation by subCategory
