@@ -92,19 +92,19 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("PlaceStore.GetByID: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %s\n", err)
 		return nil, irepository.ErrPlaceNotFound
 	}
 
 	if err != nil {
-		log.Printf("PlaceStore.GetByID: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %s\n", err)
 		return nil, err
 	}
 
 	var place *place.Place
 	err = res.Decode(&place)
 	if err != nil {
-		log.Printf("PlaceStore.GetByID: decoding error: %s\n", err)
+		log.Printf("PlaceStore.Get: decoding error: %s\n", err)
 		return nil, err
 	}
 
