@@ -9,7 +9,6 @@ import (
 )
 
 type ControllerI interface {
-	// TODO: move auth to interceptors & refactor Authorize into ?Bootstrap
-	Authorize(context.Context, string, string, util.Version) (*util.Achievements, error)
-	GetPlaces(context.Context, string, string, category.Category, util.LatLng) ([]place.Place, error)
+	GetAchievements(context.Context, string) (*util.Achievements, error)
+	GetPlaces(context.Context, category.Category, util.LatLng) ([]place.Place, error)
 }

@@ -16,42 +16,31 @@ import (
 type Controller struct {
 	placeStore irepository.PlaceI
 	userStore  irepository.UserI
-	minVersion util.Version
 }
 
 var _ icontroller.ControllerI = (*Controller)(nil)
 
 // New is a default ctor for Controller.
-func New(pStore irepository.PlaceI, uStore irepository.UserI,
-	mVersion util.Version) *Controller {
+func New(pStore irepository.PlaceI, uStore irepository.UserI) *Controller {
 	return &Controller{
 		placeStore: pStore,
 		userStore:  uStore,
-		minVersion: mVersion,
 	}
 }
 
-// TODO: move identity check via interceptors on adapter layer
-func (c *Controller) Authorize(_ context.Context,
-	_ string, _ string, _ util.Version) (*util.Achievements, error) {
-	// if ver.Less(c.minVersion) {
-	// 	return nil, icontroller.ErrVersionNotCompatible
-	// }
+// TODO: move identity check to adapter layer using interceptors
+func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*util.Achievements, error) {
+	u, err := c.userStore.GetByID(ctx, userUUID)
+	if err != nil {
+		log.Printf("Controller.Authorize: db error: %s\n", err)
+		return nil, err
+	}
 
-	// u, err := c.userStore.GetByID(ctx, uuid)
-	// if err != nil {
-	// 	log.Printf("Controller.Authorize: db error: %s\n", err)
-	// 	return nil, err
-	// }
-
-	// return &u.Achievements, nil
-	panic("Unimplemented")
+	return &u.Achievements, nil
 }
 
-// TODO: move identity check via interceptors on adapter layer
-func (c *Controller) GetPlaces(ctx context.Context,
-	_ string, _ string, ctg category.Category,
-	_ util.LatLng) ([]place.Place, error) {
+// TODO: move identity check to adapter layer using interceptors
+func (c *Controller) GetPlaces(ctx context.Context, ctg category.Category, gCenter util.LatLng) ([]place.Place, error) {
 	if !ctg.MainCategoryIsSpecified() {
 		return nil, icontroller.ErrCategoryNotSpecified
 	}
