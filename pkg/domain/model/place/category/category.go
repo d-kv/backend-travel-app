@@ -61,6 +61,14 @@ func (c Category) String() string {
 	return sb.String()
 }
 
+func (c Category) MainCategoryIsSpecified() bool {
+	return c.mainCategory != MC_UNSPECIFIED
+}
+
+func (c Category) SubCategoryIsSpecified() bool {
+	return c.mainCategory != MC_UNSPECIFIED && c.subCategory != 0
+}
+
 func (c Category) MarshalBSON() ([]byte, error) {
 	marshalStruct := bsonStruct{
 		MainCategory: c.MainCategoryString(),
