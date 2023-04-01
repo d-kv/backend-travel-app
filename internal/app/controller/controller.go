@@ -32,9 +32,8 @@ func New(pStore irepository.PlaceI, uStore irepository.UserI,
 }
 
 // TODO: move identity check via interceptors on adapter layer
-func (c *Controller) Authorize(ctx context.Context,
-	aToken string, uuid string, ver util.Version) (*util.Achievements, error) {
-
+func (c *Controller) Authorize(_ context.Context,
+	_ string, _ string, _ util.Version) (*util.Achievements, error) {
 	// if ver.Less(c.minVersion) {
 	// 	return nil, icontroller.ErrVersionNotCompatible
 	// }
@@ -51,9 +50,8 @@ func (c *Controller) Authorize(ctx context.Context,
 
 // TODO: move identity check via interceptors on adapter layer
 func (c *Controller) GetPlaces(ctx context.Context,
-	tinkUUID string, aToken string, ctg category.Category,
-	gCenter util.LatLng) ([]place.Place, error) {
-
+	_ string, _ string, ctg category.Category,
+	_ util.LatLng) ([]place.Place, error) {
 	if !ctg.MainCategoryIsSpecified() {
 		return nil, icontroller.ErrCategoryNotSpecified
 	}

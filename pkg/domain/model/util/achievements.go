@@ -1,5 +1,5 @@
 package util
 
 type Achievements struct {
-	string
+	string //nolint:unused // Using dummy way to store achievements
 }
