@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 )
 
 type PlaceI interface {
@@ -12,4 +13,5 @@ type PlaceI interface {
 	Delete(context.Context, string) error
 
 	Get(context.Context, string) (*place.Place, error)
+	GetByCategory(context.Context, category.Category) ([]place.Place, error)
 }
