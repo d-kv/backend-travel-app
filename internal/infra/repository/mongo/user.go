@@ -27,14 +27,14 @@ func NewUserStore(coll *mongo.Collection) *UserStore {
 }
 
 // GetAll returns all users.
-func (u *UserStore) GetAll(ctx context.Context) ([]*user.User, error) {
+func (u *UserStore) GetAll(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
 	if err != nil {
 		log.Printf("UserStore.GetAll: db error: %s\n", err)
 		return nil, err
 	}
 
-	var users []*user.User
+	var users []user.User
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
 		log.Printf("UserStore.GetAll: decoding error: %s\n", err)

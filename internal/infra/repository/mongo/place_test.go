@@ -177,7 +177,7 @@ func TestGetAllIntegration(t *testing.T) {
 	assert.NoError(err,
 		"must return all places without any error")
 
-	ps := []*place.Place{p1, p2}
+	ps := []place.Place{*p1, *p2}
 
 	assert.Equal(ps, psExpected)
 }

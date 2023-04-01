@@ -27,14 +27,14 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 }
 
 // GetAll returns all places.
-func (p *PlaceStore) GetAll(ctx context.Context) ([]*place.Place, error) {
+func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
 	if err != nil {
 		log.Printf("PlaceStore.GetAll: db error: %s\n", err)
 		return nil, err
 	}
 
-	var places []*place.Place
+	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Printf("PlaceStore.GetAll: decoding error: %s\n", err)

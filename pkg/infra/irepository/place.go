@@ -7,7 +7,7 @@ import (
 )
 
 type PlaceI interface {
-	GetAll(context.Context) ([]*place.Place, error)
+	GetAll(context.Context) ([]place.Place, error)
 	Create(context.Context, *place.Place) error
 	Delete(context.Context, string) error
 
