@@ -17,7 +17,7 @@ type Place struct {
 	URL         string `bson:"url, omitempty"`
 
 	LatLng   util.LatLng       `bson:"inline"`
-	Category category.Category `bson:"inline"`
+	Category category.Category `bson:"category"`
 
 	Lifetime  time.Duration `bson:"lifetime"`
 	CreatedAt time.Time     `bson:"created_at"`
