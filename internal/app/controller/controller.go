@@ -40,7 +40,7 @@ func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*uti
 }
 
 // TODO: move identity check to adapter layer using interceptors
-func (c *Controller) GetPlaces(ctx context.Context, ctg category.Category, gCenter util.LatLng) ([]place.Place, error) {
+func (c *Controller) GetPlaces(ctx context.Context, ctg category.Category, _ util.LatLng) ([]place.Place, error) {
 	if !ctg.MainCategoryIsSpecified() {
 		return nil, icontroller.ErrCategoryNotSpecified
 	}
