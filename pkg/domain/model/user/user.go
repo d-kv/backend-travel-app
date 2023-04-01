@@ -2,6 +2,8 @@ package user
 
 import (
 	"time"
+
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 )
 
 type User struct {
@@ -9,10 +11,11 @@ type User struct {
 	TinkoffID          string `bson:"tinkoff_id"`
 	TinkoffAccessToken string `bson:"tinkoff_access_token"`
 
-	Premium bool `bson:"premium"`
-	Tester  bool `bson:"tester"`
-	Admin   bool `bson:"admin"`
-	Blocked bool `bson:"blocked"`
+	Premium      bool              `bson:"premium"`
+	Tester       bool              `bson:"tester"`
+	Admin        bool              `bson:"admin"`
+	Blocked      bool              `bson:"blocked"`
+	Achievements util.Achievements `bson:"achievements"`
 
 	LastActivity time.Time `bson:"last_activity"`
 }
