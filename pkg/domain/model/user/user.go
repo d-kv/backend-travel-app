@@ -70,7 +70,18 @@ func WithLastActivity(lastActivity time.Time) Options {
 }
 
 func New(opts ...Options) *User {
-	u := &User{}
+	u := &User{
+		UUID:                   uuid.New().String(),
+		IdentityProviderID:     "",
+		IdentityProviderAToken: "",
+		Premium:                false,
+		Tester:                 false,
+		Admin:                  false,
+		Blocked:                false,
+		Achievements:           *util.NewAchievements(""),
+		// FIXME: make compatible with MongoDB precision
+		// LastActivity:           time.Time{},
+	}
 
 	for _, opt := range opts {
 		opt(u)
