@@ -14,9 +14,9 @@ type Place struct {
 	Name        string `bson:"name"`
 	Description string `bson:"description,omitempty"`
 	Phone       string `bson:"phone,omitempty"`
-	URL         string `bson:"url, omitempty"`
+	URL         string `bson:"url,omitempty"`
 
-	LatLng   util.LatLng       `bson:"inline"`
+	Location util.Location     `bson:"location"`
 	Category category.Category `bson:"category"`
 
 	Lifetime  time.Duration `bson:"lifetime"`
@@ -52,8 +52,8 @@ func WithURL(url string) Options {
 
 func WithLatLng(lat float64, lng float64) Options {
 	return func(p *Place) {
-		p.LatLng.Latitude = lat
-		p.LatLng.Longitude = lng
+		p.Location.Type = "Point"
+		p.Location.Coordinates = []float64{lng, lat}
 	}
 }
 
