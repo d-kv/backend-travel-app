@@ -9,6 +9,7 @@ import (
 
 type Place struct {
 	// TODO: add bill, opening_hours & rating
+	// TODO: move address to Location field & parse it there into City, Street, etc
 	UUID        string `bson:"_id"`
 	Address     string `bson:"address"`
 	Name        string `bson:"name"`
@@ -52,8 +53,8 @@ func WithURL(url string) Options {
 
 func WithLatLng(lat float64, lng float64) Options {
 	return func(p *Place) {
-		p.Location.Type = "Point"
-		p.Location.Coordinates = []float64{lng, lat}
+		p.Location.Geo.Type = "Point"
+		p.Location.Geo.Coordinates = []float64{lng, lat}
 	}
 }
 
