@@ -4,12 +4,13 @@ import (
 	"time"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	UUID               string `bson:"_id"`
-	TinkoffID          string `bson:"tinkoff_id"`
-	TinkoffAccessToken string `bson:"tinkoff_access_token"`
+	UUID                   string `bson:"_id"`
+	IdentityProviderID     string `bson:"identity_provider_id"`
+	IdentityProviderAToken string `bson:"identity_provider_access_token"`
 
 	Premium      bool              `bson:"premium"`
 	Tester       bool              `bson:"tester"`
@@ -20,18 +21,32 @@ type User struct {
 	LastActivity time.Time `bson:"last_activity"`
 }
 
+func NewDefault(identityProviderID, identityProviderAToken string) *User {
+	return &User{
+		UUID:                   uuid.New().String(),
+		IdentityProviderID:     identityProviderID,
+		IdentityProviderAToken: identityProviderAToken,
+		Premium:                false,
+		Tester:                 false,
+		Admin:                  false,
+		Blocked:                false,
+		Achievements:           util.Achievements{},
+		LastActivity:           time.Now(),
+	}
+}
+
 type Options func(*User)
 
 func WithUUID(uuid string) Options {
 	return func(u *User) { u.UUID = uuid }
 }
 
-func WithTinkoffID(tinkoffID string) Options {
-	return func(u *User) { u.TinkoffID = tinkoffID }
+func WithIdentityProviderID(identityProviderID string) Options {
+	return func(u *User) { u.IdentityProviderID = identityProviderID }
 }
 
-func WithTinkoffAccessToken(tinkoffAccessToken string) Options {
-	return func(u *User) { u.TinkoffAccessToken = tinkoffAccessToken }
+func WithIdentityProviderAToken(identityProviderAToken string) Options {
+	return func(u *User) { u.IdentityProviderAToken = identityProviderAToken }
 }
 
 func WithPremium(premium bool) Options {
