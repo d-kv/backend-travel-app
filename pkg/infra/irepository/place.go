@@ -5,6 +5,7 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 )
 
 type PlaceI interface {
@@ -14,4 +15,5 @@ type PlaceI interface {
 
 	Get(context.Context, string) (*place.Place, error)
 	GetByCategory(context.Context, category.Category) ([]place.Place, error)
+	GetNearby(context.Context, query.Geo) ([]place.Place, error)
 }

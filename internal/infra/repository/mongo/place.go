@@ -10,8 +10,11 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
+
+const IndexCreationTimeout = 10
 
 // PlaceStore with CRUD-like operations on the Place object.
 type PlaceStore struct {
@@ -22,6 +25,18 @@ var _ irepository.PlaceI = (*PlaceStore)(nil)
 
 // NewPlaceStore is a default ctor.
 func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{
+			{"location.geo", "2dsphere"},
+		},
+	}
+	name, err := coll.Indexes().
+		CreateOne(context.Background(),
+			indexModel)
+	log.Println(name)
+	if err != nil {
+		panic("NewPlaceStore: unable to create geoIndex")
+	}
 	return &PlaceStore{
 		coll: coll,
 	}
@@ -126,6 +141,36 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Printf("PlaceStore.GetByCategory: decoding error: %s\n", err)
+		return nil, err
+	}
+
+	return places, nil
+}
+
+func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Place, error) {
+	gCenterJSON := bson.M{
+		"type":        "Point",
+		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
+	}
+
+	cursor, err := p.coll.Find(ctx, bson.M{
+		"location.geo": bson.M{
+			"$near": bson.M{
+				"$geometry":    gCenterJSON,
+				"$minDistance": geoQ.Min,
+				"$maxDistance": geoQ.Max,
+			},
+		},
+	})
+	if err != nil {
+		log.Printf("PlaceStore.GetNearby: db error: %s\n", err)
+		return nil, err
+	}
+
+	var places []place.Place
+	err = cursor.All(ctx, &places) // FIXME: may be an overflow
+	if err != nil {
+		log.Printf("PlaceStore.GetNearby: decoding error: %s\n", err)
 		return nil, err
 	}
 

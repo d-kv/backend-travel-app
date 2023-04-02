@@ -7,11 +7,12 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
 
@@ -23,40 +24,25 @@ const mongoDB = "Afterwork-DB-Test"
 const mongoCollName = "Places"
 
 //nolint:gochecknoinits // Using init() in tests
-func init() {
+func initEmptyPlaceStore() {
 	cl, err := NewClient(mongoURI)
 	if err != nil {
 		panic(fmt.Errorf("init: %w", err))
 	}
-
-	plStore = NewPlaceStore(cl.
+	coll := cl.
 		Database(mongoDB).
-		Collection(mongoCollName),
-	)
+		Collection(mongoCollName)
 
-	docN, err := plStore.coll.CountDocuments(context.Background(), bson.D{})
+	coll.Database().Drop(context.Background())
 
-	if err != nil {
-		panic(fmt.Errorf("init: %w", err))
-	}
-	if docN != 0 {
-		panic(fmt.Errorf("init: collection is not empty"))
-		// Make sure that it is safe to use the collection in tests & erase it manually
-	}
-}
-
-func dropPlaceStore() {
-	err := plStore.coll.Drop(context.Background())
-	if err != nil {
-		panic(fmt.Errorf("dropPlaceStore: %w", err))
-	}
+	plStore = NewPlaceStore(coll)
 }
 
 func TestCreateIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
-	dropPlaceStore()
+	initEmptyPlaceStore()
 	assert := assert.New(t)
 
 	p1 := place.New(
@@ -98,7 +84,7 @@ func TestDeleteIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
-	dropPlaceStore()
+	initEmptyPlaceStore()
 	assert := assert.New(t)
 
 	id := uuid.New().String()
@@ -123,7 +109,7 @@ func TestGetByIDIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
-	dropPlaceStore()
+	initEmptyPlaceStore()
 	assert := assert.New(t)
 
 	id := uuid.New().String()
@@ -149,7 +135,7 @@ func TestGetAllIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
-	dropPlaceStore()
+	initEmptyPlaceStore()
 	assert := assert.New(t)
 
 	id1 := uuid.New().String()
@@ -187,7 +173,7 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
-	dropPlaceStore()
+	initEmptyPlaceStore()
 	assert := assert.New(t)
 
 	p1 := place.New(
@@ -237,4 +223,59 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	foodPlaceWant := []place.Place{*p3}
 
 	assert.Equal(foodPlaceWant, foodPlGot)
+}
+
+func TestGetNearbyIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
+	initEmptyPlaceStore()
+	assert := assert.New(t)
+
+	p1 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2A"),
+		place.WithName("My culture place #1"),
+		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
+		place.WithLatLng(55.0, 55.0),
+	)
+
+	p2 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2B"),
+		place.WithName("My culture place #2"),
+		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
+		place.WithLatLng(50.0, 50.0),
+	)
+
+	p3 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2C"),
+		place.WithName("My food Place"),
+		place.WithCategory(category.NewFood(category.FC_BAR)),
+		place.WithLatLng(60.0, 60.0),
+	)
+
+	assert.NoError(plStore.Create(context.Background(), p1),
+		"must create without any error")
+
+	assert.NoError(plStore.Create(context.Background(), p2),
+		"must create without any error")
+
+	assert.NoError(plStore.Create(context.Background(), p3),
+		"must create without any error")
+
+	geoQ := query.Geo{
+		Center: util.NewLatLng(51, 51),
+		Min:    0,
+		Max:    100000000000,
+	}
+	plsGot, err := plStore.GetNearby(context.Background(), geoQ)
+
+	assert.NoError(err,
+		"must return all places without any error")
+
+	plsWant := []place.Place{*p2, *p1, *p3}
+
+	assert.Equal(plsWant, plsGot)
 }
