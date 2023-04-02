@@ -112,7 +112,7 @@ func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error
 	return user, nil
 }
 
-// GetByIPID returns user with given Identity Provider ID
+// GetByIPID returns user with given Identity Provider ID.
 func (u *UserStore) GetByIPID(ctx context.Context, ipID string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
 		"identity_provider_id": ipID,
@@ -139,8 +139,8 @@ func (u *UserStore) GetByIPID(ctx context.Context, ipID string) (*user.User, err
 	return user, nil
 }
 
-// GetByIPAToken returns user with given Identity Provider Access Token
-func (u UserStore) GetByIPAToken(ctx context.Context, ipAToken string) (*user.User, error){
+// GetByIPAToken returns user with given Identity Provider Access Token.
+func (u UserStore) GetByIPAToken(ctx context.Context, ipAToken string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
 		"identity_provider_access_token": ipAToken,
 	})

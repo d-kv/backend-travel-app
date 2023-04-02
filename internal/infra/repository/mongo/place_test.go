@@ -23,7 +23,6 @@ const mongoURI = "mongodb://localhost:27017"
 const mongoDB = "Afterwork-DB-Test"
 const mongoCollName = "Places"
 
-//nolint:gochecknoinits // Using init() in tests
 func initEmptyPlaceStore() {
 	cl, err := NewClient(mongoURI)
 	if err != nil {
@@ -267,8 +266,6 @@ func TestGetNearbyIntegration(t *testing.T) {
 
 	geoQ := query.Geo{
 		Center: util.NewLatLng(51, 51),
-		Min:    0,
-		Max:    100000000000,
 	}
 	plsGot, err := plStore.GetNearby(context.Background(), geoQ)
 
