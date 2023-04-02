@@ -7,7 +7,6 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/app/icontroller"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
@@ -40,12 +39,8 @@ func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*uti
 }
 
 // TODO: move identity check to adapter layer using interceptors
-func (c *Controller) GetPlaces(ctx context.Context, ctg category.Category, _ util.LatLng) ([]place.Place, error) {
-	if !ctg.MainCategoryIsSpecified() {
-		return nil, icontroller.ErrCategoryNotSpecified
-	}
-
-	places, err := c.placeStore.GetByCategory(ctx, ctg)
+func (c *Controller) GetPlaces(ctx context.Context) ([]place.Place, error) {
+	places, err := c.placeStore.GetAll(ctx)
 	if err != nil {
 		log.Printf("Controller.GetPlaces: db error: %s\n", err)
 		return nil, err
