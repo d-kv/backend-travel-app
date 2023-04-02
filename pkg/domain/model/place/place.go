@@ -79,8 +79,9 @@ func New(opts ...Options) *Place {
 		Location:    *util.NewLocation(*util.NewLatLng(0, 0)),
 		Category:    category.Category{},
 		Lifetime:    0,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		// FIXME: make compatible with MongoDB precision
+		// CreatedAt:   time.Now().UTC(),
+		// UpdatedAt:   time.Now().UTC(),
 	}
 
 	for _, opt := range opts {
