@@ -7,6 +7,7 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/app/icontroller"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
@@ -27,20 +28,24 @@ func New(pStore irepository.PlaceI, uStore irepository.UserI) *Controller {
 	}
 }
 
-// TODO: move identity check to adapter layer using interceptors
 func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*util.Achievements, error) {
 	u, err := c.userStore.GetByID(ctx, userUUID)
 	if err != nil {
-		log.Printf("Controller.Authorize: db error: %s\n", err)
+		log.Printf("Controller.GetAchievements: db error: %s\n", err)
 		return nil, err
 	}
 
 	return &u.Achievements, nil
 }
 
-// TODO: move identity check to adapter layer using interceptors
-func (c *Controller) GetPlaces(ctx context.Context) ([]place.Place, error) {
-	places, err := c.placeStore.GetAll(ctx)
+func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]place.Place, error) {
+	geoQ := query.Geo{ // TODO: receive min & max parameters from request
+		Center: gCenter,
+		Min:    0,
+		Max:    1000,
+	}
+
+	places, err := c.placeStore.GetNearby(ctx, geoQ)
 	if err != nil {
 		log.Printf("Controller.GetPlaces: db error: %s\n", err)
 		return nil, err

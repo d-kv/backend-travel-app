@@ -9,5 +9,5 @@ import (
 
 type ControllerI interface {
 	GetAchievements(context.Context, string) (*util.Achievements, error)
-	GetPlaces(ctx context.Context) ([]place.Place, error)
+	GetPlaces(context.Context, *util.LatLng) ([]place.Place, error)
 }
