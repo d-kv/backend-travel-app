@@ -17,8 +17,17 @@ func NewLatLng(lat, lng float64) *LatLng {
 	}
 }
 
-// ParseLatLngFromString populates LatLng from a string of the form "<latitude>,<longitude>".
-func ParseLatLngFromString(ll *LatLng, rawStr string) error {
+func NewLatLngFromString(llStr string) (*LatLng, error) {
+	ll := &LatLng{}
+	if err := parseLatLngFromString(ll, llStr); err != nil {
+		return nil, err
+	}
+
+	return ll, nil
+}
+
+// parseLatLngFromString populates LatLng from a string of the form "<latitude>,<longitude>".
+func parseLatLngFromString(ll *LatLng, rawStr string) error {
 	parts := strings.Split(rawStr, ",")
 
 	lat, err := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)

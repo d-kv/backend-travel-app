@@ -22,8 +22,7 @@ func TestLatLngParsing(t *testing.T) {
 	}
 
 	for _, tc := range testCases {
-		ll := util.NewLatLng(0, 0)
-		err := util.ParseLatLngFromString(ll, tc.input)
+		ll, err := util.NewLatLngFromString(tc.input)
 		if err != nil {
 			t.Errorf("Test case (%s) failed with error (%v)", tc.input, err)
 			continue

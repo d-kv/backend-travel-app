@@ -27,8 +27,15 @@ func NewVersion(patch uint64) *Version {
 	}
 }
 
-// ParseVersionFromString populates Version from a string of the form "<Patch>".
-func ParseVersionFromString(v *Version, rawStr string) error {
+func NewVersionFromString(patchStr string) (*Version, error) {
+	v := &Version{}
+	if err := parseVersionFromString(v, patchStr); err != nil {
+		return nil, err
+	}
+	return v, nil
+}
+
+func parseVersionFromString(v *Version, rawStr string) error {
 	p, err := strconv.ParseUint(strings.TrimSpace(rawStr), base, bitSize)
 	if err != nil {
 		return err
