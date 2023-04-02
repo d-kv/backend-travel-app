@@ -41,8 +41,6 @@ func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*uti
 func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]place.Place, error) {
 	geoQ := query.Geo{ // TODO: receive min & max parameters from request
 		Center: gCenter,
-		Min:    0,
-		Max:    1000,
 	}
 
 	places, err := c.placeStore.GetNearby(ctx, geoQ)

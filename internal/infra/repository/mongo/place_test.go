@@ -33,7 +33,7 @@ func initEmptyPlaceStore() {
 		Database(mongoDB).
 		Collection(mongoCollName)
 
-	coll.Database().Drop(context.Background())
+	_ = coll.Database().Drop(context.Background())
 
 	plStore = NewPlaceStore(coll)
 }

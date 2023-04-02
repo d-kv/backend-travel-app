@@ -1,7 +1,7 @@
 package util
 
 type Achievements struct {
-	string //nolint:unused // Using dummy way to store achievements
+	string
 }
 
 func NewAchievements(ach string) *Achievements {

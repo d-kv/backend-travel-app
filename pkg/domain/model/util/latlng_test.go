@@ -29,5 +29,4 @@ func TestLatLngParsing(t *testing.T) {
 		}
 		assert.Equal(tc.outputLatLng, ll, "must be the same")
 	}
-
 }

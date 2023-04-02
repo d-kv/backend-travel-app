@@ -156,9 +156,10 @@ func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Pla
 	cursor, err := p.coll.Find(ctx, bson.M{
 		"location.geo": bson.M{
 			"$near": bson.M{
-				"$geometry":    gCenterJSON,
-				"$minDistance": geoQ.Min,
-				"$maxDistance": geoQ.Max,
+				"$geometry": gCenterJSON,
+				// TODO: receive from request
+				// "$minDistance": geoQ.Min,
+				// "$maxDistance": geoQ.Max,
 			},
 		},
 	})

@@ -3,8 +3,9 @@ package user
 import (
 	"time"
 
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 	"github.com/google/uuid"
+
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 )
 
 type User struct {

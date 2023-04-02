@@ -3,9 +3,10 @@ package place
 import (
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
-	"github.com/google/uuid"
 )
 
 type Place struct {
