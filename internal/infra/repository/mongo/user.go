@@ -112,27 +112,54 @@ func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error
 	return user, nil
 }
 
-// GetByTinkoffID returns user with given Tinkoff UUID.
-func (u *UserStore) GetByTinkoffID(ctx context.Context, tinkoffUUID string) (*user.User, error) {
+// GetByIPID returns user with given Identity Provider ID
+func (u *UserStore) GetByIPID(ctx context.Context, ipID string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
-		"tinkoff_id": tinkoffUUID,
+		"identity_provider_id": ipID,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("UserStore.GetByTinkoffID: db error: %s\n", err)
+		log.Printf("UserStore.GetByIPID: db error: %s\n", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Printf("UserStore.GetByTinkoffID: db error: %s\n", err)
+		log.Printf("UserStore.GetByIPID: db error: %s\n", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Printf("UserStore.GetByTinkoffID: decoding error: %s\n", err)
+		log.Printf("UserStore.GetByIPID: decoding error: %s\n", err)
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// GetByIPAToken returns user with given Identity Provider Access Token
+func (u UserStore) GetByIPAToken(ctx context.Context, ipAToken string) (*user.User, error){
+	res := u.coll.FindOne(ctx, bson.M{
+		"identity_provider_access_token": ipAToken,
+	})
+
+	err := res.Err()
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Printf("UserStore.GetByIPAToken: db error: %s\n", err)
+		return nil, irepository.ErrUserNotFound
+	}
+
+	if err != nil {
+		log.Printf("UserStore.GetByIPAToken: db error: %s\n", err)
+		return nil, err
+	}
+
+	var user *user.User
+	err = res.Decode(&user)
+	if err != nil {
+		log.Printf("UserStore.GetByIPAToken: decoding error: %s\n", err)
 		return nil, err
 	}
 
