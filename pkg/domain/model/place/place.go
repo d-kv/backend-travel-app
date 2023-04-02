@@ -5,6 +5,7 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
+	"github.com/google/uuid"
 )
 
 type Place struct {
@@ -62,19 +63,25 @@ func WithCategory(cat category.Category) Options {
 	return func(p *Place) { p.Category = cat }
 }
 
-func WithLifetime(lt time.Duration) Options {
-	return func(p *Place) { p.Lifetime = lt }
+func WithLifetime(ttl time.Duration) Options {
+	return func(p *Place) { p.Lifetime = ttl }
 }
 
-func WithRecord(cAt, uAt time.Time) Options {
-	return func(p *Place) {
-		p.CreatedAt = cAt
-		p.UpdatedAt = uAt
-	}
-}
-
+// New creates a new Place.
 func New(opts ...Options) *Place {
-	p := &Place{}
+	p := &Place{
+		UUID:        uuid.New().String(),
+		Address:     "",
+		Name:        "",
+		Description: "",
+		Phone:       "",
+		URL:         "",
+		Location:    *util.NewLocation(*util.NewLatLng(0, 0)),
+		Category:    category.Category{},
+		Lifetime:    0,
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
 
 	for _, opt := range opts {
 		opt(p)

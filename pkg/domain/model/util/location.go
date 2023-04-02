@@ -8,3 +8,12 @@ type geo struct {
 type Location struct {
 	Geo geo `bson:"geo"`
 }
+
+func NewLocation(ll LatLng) *Location {
+	return &Location{
+		Geo: geo{
+			Type:        "Point",
+			Coordinates: []float64{ll.Longitude, ll.Latitude},
+		},
+	}
+}
