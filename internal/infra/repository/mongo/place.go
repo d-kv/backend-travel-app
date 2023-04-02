@@ -27,7 +27,7 @@ var _ irepository.PlaceI = (*PlaceStore)(nil)
 func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 	indexModel := mongo.IndexModel{
 		Keys: bson.D{
-			{"location.geo", "2dsphere"},
+			{Key: "location.geo", Value: "2dsphere"},
 		},
 	}
 	name, err := coll.Indexes().
