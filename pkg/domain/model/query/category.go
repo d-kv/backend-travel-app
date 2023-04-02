@@ -4,7 +4,6 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 )
 
-type Search struct {
+type Category struct {
 	Categories []category.Category
-	Distance   Distance
 }
