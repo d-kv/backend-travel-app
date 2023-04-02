@@ -9,6 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
 
@@ -27,14 +28,14 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 }
 
 // GetAll returns all places.
-func (p *PlaceStore) GetAll(ctx context.Context) ([]*place.Place, error) {
+func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
 	if err != nil {
 		log.Printf("PlaceStore.GetAll: db error: %s\n", err)
 		return nil, err
 	}
 
-	var places []*place.Place
+	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Printf("PlaceStore.GetAll: decoding error: %s\n", err)
@@ -92,21 +93,41 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("PlaceStore.GetByID: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %s\n", err)
 		return nil, irepository.ErrPlaceNotFound
 	}
 
 	if err != nil {
-		log.Printf("PlaceStore.GetByID: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %s\n", err)
 		return nil, err
 	}
 
 	var place *place.Place
 	err = res.Decode(&place)
 	if err != nil {
-		log.Printf("PlaceStore.GetByID: decoding error: %s\n", err)
+		log.Printf("PlaceStore.Get: decoding error: %s\n", err)
 		return nil, err
 	}
 
 	return place, nil
+}
+
+// GetByCategory returns places with given category.
+func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Category) ([]place.Place, error) {
+	cursor, err := p.coll.Find(ctx, bson.M{
+		"category.main_category": category.MainCategoryString(), // TODO: add aggregation by subCategory
+	})
+	if err != nil {
+		log.Printf("PlaceStore.GetByCategory: db error: %s\n", err)
+		return nil, err
+	}
+
+	var places []place.Place
+	err = cursor.All(ctx, &places) // FIXME: may be an overflow
+	if err != nil {
+		log.Printf("PlaceStore.GetByCategory: decoding error: %s\n", err)
+		return nil, err
+	}
+
+	return places, nil
 }

@@ -41,8 +41,6 @@ var (
 )
 
 // Category indicates category of a place & sub_category for each category.
-//
-// Use getters to check category.
 type Category struct {
 	mainCategory MainCategory
 	subCategory  int32
@@ -61,6 +59,14 @@ func (c Category) String() string {
 	sb.WriteString(c.SubCategoryString())
 
 	return sb.String()
+}
+
+func (c Category) MainCategoryIsSpecified() bool {
+	return c.mainCategory != MC_UNSPECIFIED
+}
+
+func (c Category) SubCategoryIsSpecified() bool {
+	return c.mainCategory != MC_UNSPECIFIED && c.subCategory != 0
 }
 
 func (c Category) MarshalBSON() ([]byte, error) {
@@ -136,38 +142,6 @@ func (c Category) SubCategoryString() string {
 	default:
 		return ""
 	}
-}
-
-// Culture returns Culture category if specified, otherwise returns 0.
-func (c Category) Culture() Culture {
-	if c.mainCategory != MC_CULTURE {
-		return 0
-	}
-	return Culture(c.subCategory)
-}
-
-// Entertainment returns Entertainment category if specified, otherwise returns 0.
-func (c Category) Entertainment() Entertainment {
-	if c.mainCategory != MC_ENTERTAINMENT {
-		return 0
-	}
-	return Entertainment(c.subCategory)
-}
-
-// Food returns Food category if specified, otherwise returns 0.
-func (c Category) Food() Food {
-	if c.mainCategory != MC_FOOD {
-		return 0
-	}
-	return Food(c.subCategory)
-}
-
-// Hospitality returns Hospitality category if specified, otherwise returns 0.
-func (c Category) Hospitality() Hospitality {
-	if c.mainCategory != MC_HOSPITALITY {
-		return 0
-	}
-	return Hospitality(c.subCategory)
 }
 
 // NewCulture is a default ctor for Culture category.

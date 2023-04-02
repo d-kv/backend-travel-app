@@ -7,7 +7,7 @@ import (
 )
 
 type UserI interface {
-	GetAll(context.Context) ([]*user.User, error)
+	GetAll(context.Context) ([]user.User, error)
 	Create(context.Context, *user.User) error
 	Delete(context.Context, string) error
 

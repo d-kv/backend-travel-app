@@ -11,6 +11,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
 
@@ -177,7 +178,63 @@ func TestGetAllIntegration(t *testing.T) {
 	assert.NoError(err,
 		"must return all places without any error")
 
-	ps := []*place.Place{p1, p2}
+	ps := []place.Place{*p1, *p2}
 
 	assert.Equal(ps, psExpected)
+}
+
+func TestGetByCategoryIntegration(t *testing.T) {
+	if testing.Short() {
+		t.Skip()
+	}
+	dropPlaceStore()
+	assert := assert.New(t)
+
+	p1 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2A"),
+		place.WithName("My culture place #1"),
+		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
+	)
+
+	p2 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2B"),
+		place.WithName("My culture place #2"),
+		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
+	)
+
+	p3 := place.New(
+		place.WithUUID(uuid.New().String()),
+		place.WithAddress("Street 2C"),
+		place.WithName("My food Place"),
+		place.WithCategory(category.NewFood(category.FC_BAR)),
+	)
+
+	assert.NoError(plStore.Create(context.Background(), p1),
+		"must create without any error")
+
+	assert.NoError(plStore.Create(context.Background(), p2),
+		"must create without any error")
+
+	assert.NoError(plStore.Create(context.Background(), p3),
+		"must create without any error")
+
+	cultPlGot, err := plStore.GetByCategory(context.Background(), category.NewCulture(category.CC_UNSPECIFIED))
+
+	assert.NoError(err,
+		"must return all places without any error")
+
+	cultPlaceWant := []place.Place{*p1, *p2}
+
+	assert.Equal(cultPlaceWant, cultPlGot)
+
+	foodPlGot, err := plStore.GetByCategory(context.Background(), category.NewFood(category.FC_UNSPECIFIED))
+
+	assert.NoError(err,
+		"must return all places without any error")
+
+	foodPlaceWant := []place.Place{*p3}
+
+	assert.Equal(foodPlaceWant, foodPlGot)
 }
