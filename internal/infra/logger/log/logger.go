@@ -12,9 +12,9 @@ type Logger struct {
 
 var _ ilogger.LoggerI = (*Logger)(nil)
 
-func New(l log.Logger) *Logger {
+func New(l *log.Logger) *Logger {
 	return &Logger{
-		logger: l,
+		logger: *l,
 	}
 }
 
