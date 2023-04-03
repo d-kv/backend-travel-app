@@ -6,7 +6,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-      - id: detect-private-key # see: https://github.com/pre-commit/pre-commit-hooks/blob/main/pre_commit_hooks/detect_private_key.py
+      - id: detect-private-key
 
   # initialization with: pre-commit install
   - repo: https://github.com/crate-ci/typos
@@ -21,6 +21,22 @@ repos:
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
+        args:
+          [
+            build,
+            chore,
+            ci,
+            deploy,
+            dev,
+            docs,
+            feat,
+            fix,
+            perf,
+            refactor,
+            revert,
+            style,
+            test,
+          ]
 
   # initialization with: pre-commit install
   # TODO: https://github.com/golangci/golangci-lint/issues/536
