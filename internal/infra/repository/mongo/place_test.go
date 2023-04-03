@@ -23,7 +23,7 @@ import (
 var plStore *PlaceStore
 
 const mongoURI = "mongodb://localhost:27017"
-const mongoDB = "Afterwork-DB-Test"
+const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
 
 func initEmptyPlaceStore() {
@@ -49,7 +49,6 @@ func TestCreateIntegration(t *testing.T) {
 	assert := assert.New(t)
 
 	p1 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
 	)
@@ -141,17 +140,12 @@ func TestGetAllIntegration(t *testing.T) {
 	initEmptyPlaceStore()
 	assert := assert.New(t)
 
-	id1 := uuid.New().String()
-	id2 := uuid.New().String()
-
 	p1 := place.New(
-		place.WithUUID(id1),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace1"),
 	)
 
 	p2 := place.New(
-		place.WithUUID(id2),
 		place.WithAddress("Street 2B"),
 		place.WithName("MyPlace2"),
 	)
@@ -180,21 +174,18 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	assert := assert.New(t)
 
 	p1 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2A"),
 		place.WithName("My culture place #1"),
 		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
 	)
 
 	p2 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2B"),
 		place.WithName("My culture place #2"),
 		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
 	)
 
 	p3 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2C"),
 		place.WithName("My food Place"),
 		place.WithCategory(category.NewFood(category.FC_BAR)),
@@ -236,7 +227,6 @@ func TestGetNearbyIntegration(t *testing.T) {
 	assert := assert.New(t)
 
 	p1 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2A"),
 		place.WithName("My culture place #1"),
 		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
@@ -244,7 +234,6 @@ func TestGetNearbyIntegration(t *testing.T) {
 	)
 
 	p2 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2B"),
 		place.WithName("My culture place #2"),
 		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
@@ -252,7 +241,6 @@ func TestGetNearbyIntegration(t *testing.T) {
 	)
 
 	p3 := place.New(
-		place.WithUUID(uuid.New().String()),
 		place.WithAddress("Street 2C"),
 		place.WithName("My food Place"),
 		place.WithCategory(category.NewFood(category.FC_BAR)),
