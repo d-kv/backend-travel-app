@@ -9,9 +9,10 @@ import (
 )
 
 type User struct {
-	UUID                   string `bson:"_id"`
-	IdentityProviderID     string `bson:"identity_provider_id"`
-	IdentityProviderAToken string `bson:"identity_provider_access_token"`
+	// TODO: split Account repo & User repo
+	UUID        string `bson:"_id"`
+	OAuthID     string `bson:"oauth_id"`
+	OAuthAToken string `bson:"oauth_access_token"`
 
 	Premium      bool              `bson:"premium"`
 	Tester       bool              `bson:"tester"`
@@ -24,15 +25,15 @@ type User struct {
 
 func NewDefault(identityProviderID, identityProviderAToken string) *User {
 	return &User{
-		UUID:                   uuid.New().String(),
-		IdentityProviderID:     identityProviderID,
-		IdentityProviderAToken: identityProviderAToken,
-		Premium:                false,
-		Tester:                 false,
-		Admin:                  false,
-		Blocked:                false,
-		Achievements:           util.Achievements{},
-		LastActivity:           time.Now(),
+		UUID:         uuid.New().String(),
+		OAuthID:      identityProviderID,
+		OAuthAToken:  identityProviderAToken,
+		Premium:      false,
+		Tester:       false,
+		Admin:        false,
+		Blocked:      false,
+		Achievements: util.Achievements{},
+		LastActivity: time.Now(),
 	}
 }
 
@@ -42,12 +43,12 @@ func WithUUID(uuid string) Options {
 	return func(u *User) { u.UUID = uuid }
 }
 
-func WithIdentityProviderID(identityProviderID string) Options {
-	return func(u *User) { u.IdentityProviderID = identityProviderID }
+func WithOAuthID(oAuthID string) Options {
+	return func(u *User) { u.OAuthID = oAuthID }
 }
 
-func WithIdentityProviderAToken(identityProviderAToken string) Options {
-	return func(u *User) { u.IdentityProviderAToken = identityProviderAToken }
+func WithOAuthAToken(oAuthAToken string) Options {
+	return func(u *User) { u.OAuthAToken = oAuthAToken }
 }
 
 func WithPremium(premium bool) Options {
@@ -72,14 +73,14 @@ func WithLastActivity(lastActivity time.Time) Options {
 
 func New(opts ...Options) *User {
 	u := &User{
-		UUID:                   uuid.New().String(),
-		IdentityProviderID:     "",
-		IdentityProviderAToken: "",
-		Premium:                false,
-		Tester:                 false,
-		Admin:                  false,
-		Blocked:                false,
-		Achievements:           *util.NewAchievements(""),
+		UUID:         uuid.New().String(),
+		OAuthID:      "",
+		OAuthAToken:  "",
+		Premium:      false,
+		Tester:       false,
+		Admin:        false,
+		Blocked:      false,
+		Achievements: *util.NewAchievements(""),
 		// FIXME: make compatible with MongoDB precision
 		// LastActivity:           time.Time{},
 	}

@@ -112,54 +112,54 @@ func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error
 	return user, nil
 }
 
-// GetByIPID returns user with given Identity Provider ID.
-func (u *UserStore) GetByIPID(ctx context.Context, ipID string) (*user.User, error) {
+// GetByOAuthID returns user with given OAuth Provider ID.
+func (u *UserStore) GetByOAuthID(ctx context.Context, oAuthID string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
-		"identity_provider_id": ipID,
+		"oauth_id": oAuthID,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("UserStore.GetByIPID: db error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthID: db error: %s\n", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Printf("UserStore.GetByIPID: db error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthID: db error: %s\n", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Printf("UserStore.GetByIPID: decoding error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthID: decoding error: %s\n", err)
 		return nil, err
 	}
 
 	return user, nil
 }
 
-// GetByIPAToken returns user with given Identity Provider Access Token.
-func (u UserStore) GetByIPAToken(ctx context.Context, ipAToken string) (*user.User, error) {
+// GetByOAuthAToken returns user with given OAuth Provider Access Token.
+func (u UserStore) GetByOAuthAToken(ctx context.Context, oAuthAToken string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
-		"identity_provider_access_token": ipAToken,
+		"oauth_access_token": oAuthAToken,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("UserStore.GetByIPAToken: db error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthAToken: db error: %s\n", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Printf("UserStore.GetByIPAToken: db error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthAToken: db error: %s\n", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Printf("UserStore.GetByIPAToken: decoding error: %s\n", err)
+		log.Printf("UserStore.GetByOAuthAToken: decoding error: %s\n", err)
 		return nil, err
 	}
 
