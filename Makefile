@@ -11,9 +11,18 @@ tools.install: tools.download
 	@go mod download
 	@cd docs && $(MAKE) --no-print-directory install-tools
 
-docker-compose.up:
+.SILENT: docker.build
+docker.build:
+	@docker build \
+		--file Dockerfile \
+		--tag afterwork \
+		.
+
+.SILENT: docker-compose.up
+docker-compose.up: docker.build
 	@(cd deployment && docker-compose up -d)
 
+.SILENT: docker-compose.down
 docker-compose.down:
 	@(cd deployment && docker-compose down)
 
@@ -29,3 +38,7 @@ _lint_golangci:
 	@golangci-lint run
 
 lint: _lint_vet _lint_imports _lint_golangci
+
+.SILENT: build
+build:
+	go build cmd/place-service/main.go
