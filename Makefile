@@ -39,6 +39,12 @@ _lint_golangci:
 
 lint: _lint_vet _lint_imports _lint_golangci
 
+test:
+	go test ./... -short -count=1
+
+test.full:
+	go test ./... -count=1
+
 .SILENT: build
 build:
 	go build cmd/place-service/main.go
