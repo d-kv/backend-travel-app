@@ -46,14 +46,14 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
 	if err != nil {
-		log.Printf("PlaceStore.GetAll: db error: %s\n", err)
+		log.Printf("PlaceStore.GetAll: db error: %v\n", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("PlaceStore.GetAll: decoding error: %s\n", err)
+		log.Printf("PlaceStore.GetAll: decoding error: %v\n", err)
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 
 	_, err := p.coll.InsertOne(ctx, place)
 	if err != nil {
-		log.Printf("PlaceStore.Create: DB error: %s\n", err)
+		log.Printf("PlaceStore.Create: DB error: %v\n", err)
 		return err
 	}
 
@@ -83,17 +83,17 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		log.Printf("PlaceStore.Delete: db error: %s\n", err)
+		log.Printf("PlaceStore.Delete: db error: %v\n", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		log.Printf("PlaceStore.Delete: db error: %s\n", irepository.ErrPlaceNotFound)
+		log.Printf("PlaceStore.Delete: db error: %v\n", irepository.ErrPlaceNotFound)
 		return irepository.ErrPlaceNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		log.Printf("PlaceStore.Delete: db error: %s\n", irepository.ErrUUIDDuplicate)
+		log.Printf("PlaceStore.Delete: db error: %v\n", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
 
@@ -108,19 +108,19 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("PlaceStore.Get: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %v\n", err)
 		return nil, irepository.ErrPlaceNotFound
 	}
 
 	if err != nil {
-		log.Printf("PlaceStore.Get: db error: %s\n", err)
+		log.Printf("PlaceStore.Get: db error: %v\n", err)
 		return nil, err
 	}
 
 	var place *place.Place
 	err = res.Decode(&place)
 	if err != nil {
-		log.Printf("PlaceStore.Get: decoding error: %s\n", err)
+		log.Printf("PlaceStore.Get: decoding error: %v\n", err)
 		return nil, err
 	}
 
@@ -133,14 +133,14 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 		"category.main_category": category.MainCategoryString(), // TODO: add aggregation by subCategory
 	})
 	if err != nil {
-		log.Printf("PlaceStore.GetByCategory: db error: %s\n", err)
+		log.Printf("PlaceStore.GetByCategory: db error: %v\n", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("PlaceStore.GetByCategory: decoding error: %s\n", err)
+		log.Printf("PlaceStore.GetByCategory: decoding error: %v\n", err)
 		return nil, err
 	}
 
@@ -164,14 +164,14 @@ func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Pla
 		},
 	})
 	if err != nil {
-		log.Printf("PlaceStore.GetNearby: db error: %s\n", err)
+		log.Printf("PlaceStore.GetNearby: db error: %v\n", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("PlaceStore.GetNearby: decoding error: %s\n", err)
+		log.Printf("PlaceStore.GetNearby: decoding error: %v\n", err)
 		return nil, err
 	}
 

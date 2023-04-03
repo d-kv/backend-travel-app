@@ -20,7 +20,7 @@ func NewClient(uri string) (*mongo.Client, error) {
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 
 	if err != nil {
-		log.Printf("Connect: mongoDB connection error:, %s\n", err)
+		log.Printf("Connect: mongoDB connection error:, %v\n", err)
 		return nil, err
 	}
 

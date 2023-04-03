@@ -31,7 +31,7 @@ func New(pStore irepository.PlaceI, uStore irepository.UserI) *Controller {
 func (c *Controller) GetAchievements(ctx context.Context, userUUID string) (*util.Achievements, error) {
 	u, err := c.userStore.GetByID(ctx, userUUID)
 	if err != nil {
-		log.Printf("Controller.GetAchievements: db error: %s\n", err)
+		log.Printf("Controller.GetAchievements: repository error: %v\n", err)
 		return nil, err
 	}
 
@@ -45,7 +45,7 @@ func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]pla
 
 	places, err := c.placeStore.GetNearby(ctx, geoQ)
 	if err != nil {
-		log.Printf("Controller.GetPlaces: db error: %s\n", err)
+		log.Printf("Controller.GetPlaces: repository error: %v\n", err)
 		return nil, err
 	}
 
