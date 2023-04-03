@@ -108,7 +108,7 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 	return nil
 }
 
-// GetByID returns place with given UUID.
+// Get returns place with given UUID.
 func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error) {
 	res := p.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
@@ -155,6 +155,7 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 	return places, nil
 }
 
+// GetNearby returns places from nearest to farthest.
 func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Place, error) {
 	gCenterJSON := bson.M{
 		"type":        "Point",
