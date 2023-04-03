@@ -1,5 +1,5 @@
 repos:
-  # initialization with: pre-commit install
+  # pre-commit install
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v3.2.0
     hooks:
@@ -8,14 +8,14 @@ repos:
       - id: check-yaml
       - id: detect-private-key
 
-  # initialization with: pre-commit install
+  # pre-commit install
   - repo: https://github.com/crate-ci/typos
     rev: v1.13.7
     hooks:
       - id: typos
         args: []
 
-  # initialization with: pre-commit install --hook-type commit-msg
+  # pre-commit install --hook-type commit-msg
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v2.1.1
     hooks:
@@ -38,10 +38,10 @@ repos:
             test,
           ]
 
-  # initialization with: pre-commit install
-  # TODO: https://github.com/golangci/golangci-lint/issues/536
-  # - repo: https://github.com/golangci/golangci-lint
-  #   rev: v1.52.1
-  #   hooks:
-  #     - id: golangci-lint
-  #       args: []
+  - repo: https://github.com/TekWizely/pre-commit-golang
+    rev: v1.0.0-rc.1
+    hooks:
+      - id: go-mod-tidy
+        exclude: tools
+      - id: go-fmt
+        exclude: tools
