@@ -7,14 +7,14 @@ import (
 )
 
 type Logger struct {
-	logger log.Logger
+	logger *log.Logger
 }
 
 var _ ilogger.LoggerI = (*Logger)(nil)
 
 func New(l *log.Logger) *Logger {
 	return &Logger{
-		logger: *l,
+		logger: l,
 	}
 }
 
