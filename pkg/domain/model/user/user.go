@@ -23,20 +23,6 @@ type User struct {
 	LastActivity time.Time `bson:"last_activity"`
 }
 
-func NewDefault(identityProviderID, identityProviderAToken string) *User {
-	return &User{
-		UUID:         uuid.New().String(),
-		OAuthID:      identityProviderID,
-		OAuthAToken:  identityProviderAToken,
-		Premium:      false,
-		Tester:       false,
-		Admin:        false,
-		Blocked:      false,
-		Achievements: util.Achievements{},
-		LastActivity: time.Now(),
-	}
-}
-
 type Options func(*User)
 
 func WithUUID(uuid string) Options {
