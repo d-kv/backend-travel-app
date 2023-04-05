@@ -18,19 +18,16 @@ func New(l *log.Logger) *Logger {
 	}
 }
 
-func (l *Logger) Debug(msg string, keyvals ...interface{}) error {
+func (l *Logger) Debug(msg string, keyvals ...interface{}) {
 	l.logger.Print(msg, keyvals)
-	return nil
 }
 
-func (l *Logger) Info(msg string, keyvals ...interface{}) error {
+func (l *Logger) Info(msg string, keyvals ...interface{}) {
 	l.logger.Print(msg, keyvals)
-	return nil
 }
 
-func (l *Logger) Error(msg string, keyvals ...interface{}) error {
+func (l *Logger) Error(msg string, keyvals ...interface{}) {
 	l.logger.Print(msg, keyvals)
-	return nil
 }
 
 func (l *Logger) With(keyvals ...interface{}) ilogger.LoggerI {
