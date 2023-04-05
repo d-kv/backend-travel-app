@@ -5,5 +5,5 @@ import (
 )
 
 type OAuthProviderI interface {
-	GetUserID(context.Context, string) (string, error)
+	GetUserID(ctx context.Context, accessToken string) (string, error)
 }
