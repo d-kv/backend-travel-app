@@ -53,8 +53,12 @@ func NewPlaceStore(l ilogger.LoggerI, coll *mongo.Collection) *PlaceStore {
 // GetAll returns all places.
 func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		p.log.Info("UserStore.GetByID: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
 	if err != nil {
-		p.log.Error("PlaceStore.GetAll: %v", err)
+		p.log.Error("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 

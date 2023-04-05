@@ -15,8 +15,8 @@ import (
 
 // UserStore with CRUD-like operations on the User object.
 type UserStore struct {
-	logger ilogger.LoggerI
-	coll   *mongo.Collection
+	log  ilogger.LoggerI
+	coll *mongo.Collection
 }
 
 var _ irepository.UserI = (*UserStore)(nil)
@@ -24,23 +24,27 @@ var _ irepository.UserI = (*UserStore)(nil)
 // NewUserStore is a default ctor.
 func NewUserStore(l ilogger.LoggerI, coll *mongo.Collection) *UserStore {
 	return &UserStore{
-		logger: l,
-		coll:   coll,
+		log:  l,
+		coll: coll,
 	}
 }
 
 // GetAll returns all users.
 func (u *UserStore) GetAll(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		u.log.Info("UserStore.GetByID: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
 	if err != nil {
-		u.logger.Error("UserStore.GetAll: %v", err)
+		u.log.Error("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
 	var users []user.User
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
-		u.logger.Error("UserStore.GetAll: %v", err)
+		u.log.Error("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
@@ -57,7 +61,7 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 
 	_, err := u.coll.InsertOne(ctx, user)
 	if err != nil {
-		u.logger.Warn("UserStore.Create: %v", err)
+		u.log.Warn("UserStore.Create: %v", err)
 		return err
 	}
 
@@ -70,17 +74,17 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		u.logger.Warn("UserStore.Delete: %v", err)
+		u.log.Warn("UserStore.Delete: %v", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		u.logger.Warn("UserStore.Delete: %v", irepository.ErrUserNotFound)
+		u.log.Warn("UserStore.Delete: %v", irepository.ErrUserNotFound)
 		return irepository.ErrUserNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		u.logger.Error("UserStore.Delete: %v", irepository.ErrUUIDDuplicate)
+		u.log.Error("UserStore.Delete: %v", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
 
@@ -95,19 +99,19 @@ func (u *UserStore) Get(ctx context.Context, uuid string) (*user.User, error) {
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByID: %v", err)
+		u.log.Info("UserStore.GetByID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Warn("UserStore.GetByID: %v", err)
+		u.log.Warn("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Error("UserStore.GetByID: %v", err)
+		u.log.Error("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
@@ -122,19 +126,19 @@ func (u *UserStore) GetByOAuthID(ctx context.Context, oAuthID string) (*user.Use
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByOAuthID: %v", err)
+		u.log.Info("UserStore.GetByOAuthID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Warn("UserStore.GetByOAuthID: %v", err)
+		u.log.Warn("UserStore.GetByOAuthID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Error("UserStore.GetByOAuthID: %v", err)
+		u.log.Error("UserStore.GetByOAuthID: %v", err)
 		return nil, err
 	}
 
@@ -149,19 +153,19 @@ func (u UserStore) GetByOAuthAToken(ctx context.Context, oAuthAToken string) (*u
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByOAuthAToken: %v", err)
+		u.log.Info("UserStore.GetByOAuthAToken: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Warn("UserStore.GetByOAuthAToken: %v", err)
+		u.log.Warn("UserStore.GetByOAuthAToken: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Error("UserStore.GetByOAuthAToken: %v", err)
+		u.log.Error("UserStore.GetByOAuthAToken: %v", err)
 		return nil, err
 	}
 
