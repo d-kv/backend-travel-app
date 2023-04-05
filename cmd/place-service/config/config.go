@@ -7,24 +7,33 @@ import (
 type (
 	DB struct {
 		Mongo struct {
-			URI      string
-			DBName   string
-			CollName struct {
+			URI  string
+			DB   string
+			Coll struct {
 				Place string
+				User  string
 			}
 		}
 	}
 
+	OAuthProvider struct {
+		Tinkoff struct {
+			ID     string
+			Secret string
+		}
+	}
+
 	Server struct {
-		RPC struct {
-			Port int
+		HTTP struct {
+			Port string
 		}
 	}
 )
 
 type Config struct {
-	DB     DB
-	Server Server
+	DB            DB
+	OAuthProvider OAuthProvider
+	Server        Server
 }
 
 func New(path, name string) (*Config, error) {
