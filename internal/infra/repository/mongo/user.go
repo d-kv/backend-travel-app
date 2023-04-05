@@ -87,8 +87,8 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 	return nil
 }
 
-// GetByID returns user with given UUID.
-func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error) {
+// Get returns user with given UUID.
+func (u *UserStore) Get(ctx context.Context, uuid string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
