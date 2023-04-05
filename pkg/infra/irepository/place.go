@@ -8,6 +8,11 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 )
 
+const (
+	DefaultMinDistance = 0
+	DefaultMaxDistance = 5000
+)
+
 type PlaceI interface {
 	GetAll(ctx context.Context) ([]place.Place, error)
 	Create(ctx context.Context, place *place.Place) error
