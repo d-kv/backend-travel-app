@@ -4,8 +4,6 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 )
 
 type User struct {
@@ -14,11 +12,11 @@ type User struct {
 	OAuthID     string `bson:"oauth_id"`
 	OAuthAToken string `bson:"oauth_access_token"`
 
-	Premium      bool              `bson:"premium"`
-	Tester       bool              `bson:"tester"`
-	Admin        bool              `bson:"admin"`
-	Blocked      bool              `bson:"blocked"`
-	Achievements util.Achievements `bson:"achievements"`
+	Premium      bool          `bson:"premium"`
+	Tester       bool          `bson:"tester"`
+	Admin        bool          `bson:"admin"`
+	Blocked      bool          `bson:"blocked"`
+	Achievements []Achievement `bson:"achievements"`
 
 	LastActivity time.Time `bson:"last_activity"`
 }
@@ -53,20 +51,23 @@ func WithBlocked(blocked bool) Options {
 	return func(u *User) { u.Blocked = blocked }
 }
 
+func WithAchievements(achs []Achievement) Options {
+	return func(u *User) { u.Achievements = achs }
+}
+
 func WithLastActivity(lastActivity time.Time) Options {
 	return func(u *User) { u.LastActivity = lastActivity }
 }
 
 func New(opts ...Options) *User {
 	u := &User{
-		UUID:         uuid.New().String(),
-		OAuthID:      "",
-		OAuthAToken:  "",
-		Premium:      false,
-		Tester:       false,
-		Admin:        false,
-		Blocked:      false,
-		Achievements: *util.NewAchievements(""),
+		UUID:        uuid.New().String(),
+		OAuthID:     "",
+		OAuthAToken: "",
+		Premium:     false,
+		Tester:      false,
+		Admin:       false,
+		Blocked:     false,
 		// FIXME: make compatible with MongoDB precision
 		// LastActivity:           time.Time{},
 	}
