@@ -26,8 +26,12 @@ func (l *Logger) Info(msg string, keyvals ...interface{}) {
 	l.logger.Print(msg, keyvals)
 }
 
-func (l *Logger) Error(msg string, keyvals ...interface{}) {
+func (l *Logger) Warn(msg string, keyvals ...interface{}) {
 	l.logger.Print(msg, keyvals)
+}
+
+func (l *Logger) Error(msg string, keyvals ...interface{}) {
+	l.logger.Fatal(msg, keyvals)
 }
 
 func (l *Logger) With(keyvals ...interface{}) ilogger.LoggerI {
