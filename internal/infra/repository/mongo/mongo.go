@@ -12,17 +12,21 @@ import (
 
 func NewClient(l ilogger.LoggerI, uri string, connTimeout time.Duration) (*mongo.Client, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
-
-	l.Info("NewClient: attempt to connect to mongoDB at:", uri)
-
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 
+	l.Info("NewClient: mongoDB uri:", uri)
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		l.Error("NewClient: mongoDB connection error:, %v\n", err)
+		l.Error("NewClient:, %v", err)
 		return nil, err
 	}
 
-	l.Info("NewClient: mongoDB successful connection")
+	err = client.Ping(context.TODO(), nil)
+	if err != nil {
+		l.Error("NewClient: %v", err)
+	}
+
+	l.Info("NewClient: Connected to MongoDB")
 	return client, nil
 }
