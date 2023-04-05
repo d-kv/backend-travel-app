@@ -33,14 +33,14 @@ func NewUserStore(l ilogger.LoggerI, coll *mongo.Collection) *UserStore {
 func (u *UserStore) GetAll(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
 	if err != nil {
-		u.logger.Info("UserStore.GetAll: db error: %v\n", err)
+		u.logger.Error("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
 	var users []user.User
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
-		u.logger.Info("UserStore.GetAll: decoding error: %v\n", err)
+		u.logger.Error("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
@@ -57,7 +57,7 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 
 	_, err := u.coll.InsertOne(ctx, user)
 	if err != nil {
-		u.logger.Info("UserStore.Create: DB error: %v\n", err)
+		u.logger.Warn("UserStore.Create: %v", err)
 		return err
 	}
 
@@ -70,17 +70,17 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		u.logger.Info("UserStore.Delete: db error: %v\n", err)
+		u.logger.Warn("UserStore.Delete: %v", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		u.logger.Info("UserStore.Delete: db error: %v\n", irepository.ErrUserNotFound)
+		u.logger.Warn("UserStore.Delete: %v", irepository.ErrUserNotFound)
 		return irepository.ErrUserNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		u.logger.Info("UserStore.Delete: db error: %v\n", irepository.ErrUUIDDuplicate)
+		u.logger.Error("UserStore.Delete: %v", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
 
@@ -95,19 +95,19 @@ func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByID: db error: %v\n", err)
+		u.logger.Info("UserStore.GetByID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Info("UserStore.GetByID: db error: %v\n", err)
+		u.logger.Warn("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Info("UserStore.GetByID: decoding error: %v\n", err)
+		u.logger.Error("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
@@ -122,19 +122,19 @@ func (u *UserStore) GetByOAuthID(ctx context.Context, oAuthID string) (*user.Use
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByOAuthID: db error: %v\n", err)
+		u.logger.Info("UserStore.GetByOAuthID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Info("UserStore.GetByOAuthID: db error: %v\n", err)
+		u.logger.Warn("UserStore.GetByOAuthID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Info("UserStore.GetByOAuthID: decoding error: %v\n", err)
+		u.logger.Error("UserStore.GetByOAuthID: %v", err)
 		return nil, err
 	}
 
@@ -149,19 +149,19 @@ func (u UserStore) GetByOAuthAToken(ctx context.Context, oAuthAToken string) (*u
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		u.logger.Info("UserStore.GetByOAuthAToken: db error: %v\n", err)
+		u.logger.Info("UserStore.GetByOAuthAToken: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		u.logger.Info("UserStore.GetByOAuthAToken: db error: %v\n", err)
+		u.logger.Warn("UserStore.GetByOAuthAToken: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		u.logger.Info("UserStore.GetByOAuthAToken: decoding error: %v\n", err)
+		u.logger.Error("UserStore.GetByOAuthAToken: %v", err)
 		return nil, err
 	}
 

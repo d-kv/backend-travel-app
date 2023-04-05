@@ -39,7 +39,7 @@ func NewPlaceStore(l ilogger.LoggerI, coll *mongo.Collection) *PlaceStore {
 			indexModel,
 		)
 
-	l.Info("Index building done:", name)
+	l.Info("NewPlaceStore: Index building done:", name)
 	if err != nil {
 		panic(fmt.Sprint("NewPlaceStore: unable to create", name, "index"))
 	}
@@ -54,14 +54,14 @@ func NewPlaceStore(l ilogger.LoggerI, coll *mongo.Collection) *PlaceStore {
 func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
 	if err != nil {
-		p.log.Error("PlaceStore.GetAll: db error: %v\n", err)
+		p.log.Error("PlaceStore.GetAll: %v", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		p.log.Error("PlaceStore.GetAll: decoding error: %v\n", err)
+		p.log.Error("PlaceStore.GetAll: %v", err)
 		return nil, err
 	}
 
@@ -78,7 +78,7 @@ func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 
 	_, err := p.coll.InsertOne(ctx, place)
 	if err != nil {
-		p.log.Error("PlaceStore.Create: DB error: %v\n", err)
+		p.log.Warn("PlaceStore.Create: %v", err)
 		return err
 	}
 
@@ -91,20 +91,19 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		p.log.Error("PlaceStore.Delete: db error: %v\n", err)
+		p.log.Warn("PlaceStore.Delete: %v", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		p.log.Error("PlaceStore.Delete: db error: %v\n", irepository.ErrPlaceNotFound)
+		p.log.Warn("PlaceStore.Delete: %v", irepository.ErrPlaceNotFound)
 		return irepository.ErrPlaceNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		p.log.Error("PlaceStore.Delete: db error: %v\n", irepository.ErrUUIDDuplicate)
+		p.log.Error("PlaceStore.Delete: %v", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
-
 	return nil
 }
 
@@ -116,19 +115,19 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		p.log.Error("PlaceStore.Get: db error: %v\n", err)
+		p.log.Info("PlaceStore.Get: %v", err)
 		return nil, irepository.ErrPlaceNotFound
 	}
 
 	if err != nil {
-		p.log.Info("PlaceStore.Get: db error: %v\n", err)
+		p.log.Warn("PlaceStore.Get: %v", err)
 		return nil, err
 	}
 
 	var place *place.Place
 	err = res.Decode(&place)
 	if err != nil {
-		p.log.Info("PlaceStore.Get: decoding error: %v\n", err)
+		p.log.Error("PlaceStore.Get: %v", err)
 		return nil, err
 	}
 
@@ -140,15 +139,19 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 	cursor, err := p.coll.Find(ctx, bson.M{
 		"category.main_category": category.MainCategoryString(), // TODO: add aggregation by subCategory
 	})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		p.log.Info("PlaceStore.GetByCategory: %v", err)
+		return nil, irepository.ErrPlaceNotFound
+	}
 	if err != nil {
-		p.log.Info("PlaceStore.GetByCategory: db error: %v\n", err)
+		p.log.Warn("PlaceStore.GetByCategory: %v", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		p.log.Info("PlaceStore.GetByCategory: decoding error: %v\n", err)
+		p.log.Error("PlaceStore.GetByCategory: %v", err)
 		return nil, err
 	}
 
@@ -172,15 +175,19 @@ func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Pla
 			},
 		},
 	})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		p.log.Info("PlaceStore.GetNearby: %v", err)
+		return nil, irepository.ErrPlaceNotFound
+	}
 	if err != nil {
-		p.log.Info("PlaceStore.GetNearby: db error: %v\n", err)
+		p.log.Warn("PlaceStore.GetNearby: %v", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		p.log.Info("PlaceStore.GetNearby: decoding error: %v\n", err)
+		p.log.Error("PlaceStore.GetNearby: %v", err)
 		return nil, err
 	}
 
