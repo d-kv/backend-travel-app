@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	mylog "github.com/d-kv/backend-travel-app/internal/infra/logger/log"
+	"github.com/d-kv/backend-travel-app/internal/infra/logger/deflog"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
@@ -27,7 +27,7 @@ const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
 
 func initEmptyPlaceStore() {
-	l := mylog.New(log.Default())
+	l := deflog.New(log.Default())
 	cl, err := NewClient(l, mongoURI, 3*time.Second)
 	if err != nil {
 		panic(fmt.Sprintf("init: %v", err))
