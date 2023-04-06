@@ -39,7 +39,7 @@ func (c *Controller) GetUser(ctx context.Context, oAuthAToken string) (*user.Use
 	if errors.Is(err, irepository.ErrUserNotFound) {
 		oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
 		if err != nil {
-			c.logger.Info("Controller.Auth: %v", err)
+			c.logger.Info("Controller.GetUser: %v", err)
 			return nil, err
 		}
 
@@ -50,11 +50,11 @@ func (c *Controller) GetUser(ctx context.Context, oAuthAToken string) (*user.Use
 
 		err = c.userStore.Create(ctx, newU)
 		if err != nil {
-			c.logger.Info("Controller.Auth: %v", err)
+			c.logger.Info("Controller.GetUser: %v", err)
 		}
 		return newU, nil
 	} else if err != nil {
-		c.logger.Info("Controller.Auth: %v", err)
+		c.logger.Info("Controller.GetUser: %v", err)
 		return nil, err
 	}
 
