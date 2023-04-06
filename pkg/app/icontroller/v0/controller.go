@@ -9,6 +9,6 @@ import (
 )
 
 type ControllerI interface {
-	Auth(ctx context.Context, accessToken string) (*user.User, error)
+	GetUser(ctx context.Context, accessToken string) (*user.User, error)
 	GetPlaces(ctx context.Context, ll *util.LatLng) ([]place.Place, error)
 }

@@ -34,26 +34,29 @@ func New(l ilogger.LoggerI, pStore irepository.PlaceI, uStore irepository.UserI)
 	}
 }
 
-func (c *Controller) Auth(ctx context.Context, oAuthAToken string) (*user.User, error) {
+func (c *Controller) GetUser(ctx context.Context, oAuthAToken string) (*user.User, error) {
 	u, err := c.userStore.GetByOAuthAToken(ctx, oAuthAToken)
-	if errors.Is(err, irepository.ErrUserNotFound) {
-		oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
-		if err != nil {
-			c.logger.Info("Controller.Auth: OAuth gateway error %v", err)
-			return nil, err
-		}
-		newU := user.New(
-			user.WithOAuthAToken(oAuthAToken),
-			user.WithOAuthID(oAuthID),
-		)
-		err = c.userStore.Create(ctx, newU)
-		if err != nil {
-			c.logger.Info("Controller.Auth: %v", err)
-		}
-		return newU, nil
-	}
 	if err != nil {
-		c.logger.Info("Controller.Auth: userStore error: %v", err)
+		if errors.Is(err, irepository.ErrUserNotFound) {
+			oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
+			if err != nil {
+				c.logger.Info("Controller.Auth: %v", err)
+				return nil, err
+			}
+
+			newU := user.New(
+				user.WithOAuthAToken(oAuthAToken),
+				user.WithOAuthID(oAuthID),
+			)
+
+			err = c.userStore.Create(ctx, newU)
+			if err != nil {
+				c.logger.Info("Controller.Auth: %v", err)
+			}
+			return newU, nil
+		}
+
+		c.logger.Info("Controller.Auth: %v", err)
 		return nil, err
 	}
 
@@ -67,7 +70,7 @@ func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]pla
 
 	places, err := c.placeStore.GetNearby(ctx, geoQ)
 	if err != nil {
-		c.logger.Info("Controller.GetPlaces: placeStore error: %v\n", err)
+		c.logger.Info("Controller.GetPlaces: %v\n", err)
 		return nil, err
 	}
 
