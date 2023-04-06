@@ -34,6 +34,6 @@ func (l *Logger) Error(msg string, keyvals ...interface{}) {
 	l.logger.Fatal(msg, keyvals)
 }
 
-func (l *Logger) With(keyvals ...interface{}) ilogger.LoggerI {
+func (l *Logger) With(_ ...interface{}) ilogger.LoggerI {
 	panic("not implemented") // TODO: Implement
 }

@@ -36,26 +36,24 @@ func New(l ilogger.LoggerI, pStore irepository.PlaceI, uStore irepository.UserI)
 
 func (c *Controller) GetUser(ctx context.Context, oAuthAToken string) (*user.User, error) {
 	u, err := c.userStore.GetByOAuthAToken(ctx, oAuthAToken)
-	if err != nil {
-		if errors.Is(err, irepository.ErrUserNotFound) {
-			oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
-			if err != nil {
-				c.logger.Info("Controller.Auth: %v", err)
-				return nil, err
-			}
-
-			newU := user.New(
-				user.WithOAuthAToken(oAuthAToken),
-				user.WithOAuthID(oAuthID),
-			)
-
-			err = c.userStore.Create(ctx, newU)
-			if err != nil {
-				c.logger.Info("Controller.Auth: %v", err)
-			}
-			return newU, nil
+	if errors.Is(err, irepository.ErrUserNotFound) {
+		oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
+		if err != nil {
+			c.logger.Info("Controller.Auth: %v", err)
+			return nil, err
 		}
 
+		newU := user.New(
+			user.WithOAuthAToken(oAuthAToken),
+			user.WithOAuthID(oAuthID),
+		)
+
+		err = c.userStore.Create(ctx, newU)
+		if err != nil {
+			c.logger.Info("Controller.Auth: %v", err)
+		}
+		return newU, nil
+	} else if err != nil {
 		c.logger.Info("Controller.Auth: %v", err)
 		return nil, err
 	}

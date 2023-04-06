@@ -9,5 +9,6 @@ import (
 )
 
 type PlaceProviderI interface {
-	Get(ctx context.Context, category category.Category, ll *util.LatLng, resultN uint32, skipN uint32) ([]place.Place, error)
+	Get(ctx context.Context, category category.Category,
+		ll *util.LatLng, resultN uint32, skipN uint32) ([]place.Place, error)
 }
