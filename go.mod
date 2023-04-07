@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
-	go.mongodb.org/mongo-driver v1.11.3
+	go.mongodb.org/mongo-driver v1.11.4
 )
 
 require (
