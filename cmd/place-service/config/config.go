@@ -24,7 +24,8 @@ type (
 	}
 
 	Server struct {
-		HTTP struct {
+		REST struct {
+			IP   string
 			Port string
 		}
 	}

@@ -10,5 +10,6 @@ OAuthProvider:
     ID: "<ID>"
     Secret: "<Secret>"
 Server:
-  HTTP:
+  REST:
+    IP: "0.0.0.0"
     Port: "9090"
