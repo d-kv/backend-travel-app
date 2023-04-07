@@ -70,7 +70,7 @@ func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, e
 	if err != nil {
 		return "", err
 	}
-	if !respJSON.Active { // HACK: can we rely only on this field?
+	if !respJSON.Active || respJSON.CliendID != p.id {
 		return "", igateway.ErrTokenIsExpired
 	}
 	return respJSON.CliendID, nil
