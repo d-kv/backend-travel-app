@@ -24,7 +24,7 @@ func New(ctrl icontrollerv0.ControllerI, r *gin.Engine) *HTTPHandler {
 
 // TODO: sync API endpoints with the client
 func (h *HTTPHandler) registerRoutes() {
-	h.eng.POST("/api/v0/auth/oauth", h.PostOAuth)
+	h.eng.POST("/api/v0/oauth", h.PostOAuth)
 	h.eng.POST("/api/v0/places/search", h.PostSearchPlaces)
 }
 
