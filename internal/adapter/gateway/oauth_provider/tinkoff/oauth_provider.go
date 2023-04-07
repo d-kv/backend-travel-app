@@ -33,7 +33,7 @@ func New(l ilogger.LoggerI, c *http.Client) *OAuthProvider {
 var _ igateway.OAuthProviderI = (*OAuthProvider)(nil)
 
 func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, error) {
-	bodyRdr := bytes.NewReader([]byte(aToken))
+	bodyRdr := bytes.NewReader([]byte(fmt.Sprintf("token=%s", aToken)))
 	req, err := http.NewRequestWithContext(
 		ctx,
 		"POST", //nolint:usestdlibvars // Using headers with the request
