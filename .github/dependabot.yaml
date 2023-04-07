@@ -19,4 +19,4 @@ updates:
   - package-ecosystem: npm
     directory: "/docs"
     schedule:
-      interval: monthly
+      interval: 'daily'
