@@ -3,15 +3,19 @@ package mongo
 import (
 	"context"
 	"errors"
-	"log"
+	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
+	"github.com/rs/zerolog/log"
 )
+
+const IndexCreationTimeout = 10
 
 // PlaceStore with CRUD-like operations on the Place object.
 type PlaceStore struct {
@@ -22,6 +26,23 @@ var _ irepository.PlaceI = (*PlaceStore)(nil)
 
 // NewPlaceStore is a default ctor.
 func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
+	indexModel := mongo.IndexModel{
+		Keys: bson.D{
+			{Key: "location.geo", Value: "2dsphere"},
+		},
+	}
+	name, err := coll.
+		Indexes().
+		CreateOne(
+			context.Background(),
+			indexModel,
+		)
+
+	log.Info().Msgf("NewPlaceStore: Index building done:", name)
+	if err != nil {
+		panic(fmt.Sprint("NewPlaceStore: unable to create", name, "index"))
+	}
+
 	return &PlaceStore{
 		coll: coll,
 	}
@@ -30,15 +51,19 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 // GetAll returns all places.
 func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("UserStore.GetByID: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
 	if err != nil {
-		log.Printf("PlaceStore.GetAll: db error: %s\n", err)
+		log.Error().Msgf("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("PlaceStore.GetAll: decoding error: %s\n", err)
+		log.Error().Msgf("PlaceStore.GetAll: %v", err)
 		return nil, err
 	}
 
@@ -55,7 +80,7 @@ func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 
 	_, err := p.coll.InsertOne(ctx, place)
 	if err != nil {
-		log.Printf("PlaceStore.Create: DB error: %s\n", err)
+		log.Warn().Msgf("PlaceStore.Create: %v", err)
 		return err
 	}
 
@@ -68,24 +93,23 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		log.Printf("PlaceStore.Delete: db error: %s\n", err)
+		log.Warn().Msgf("PlaceStore.Delete: %v", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		log.Printf("PlaceStore.Delete: db error: %s\n", irepository.ErrPlaceNotFound)
+		log.Warn().Msgf("PlaceStore.Delete: %v", irepository.ErrPlaceNotFound)
 		return irepository.ErrPlaceNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		log.Printf("PlaceStore.Delete: db error: %s\n", irepository.ErrUUIDDuplicate)
+		log.Error().Msgf("PlaceStore.Delete: %v", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
-
 	return nil
 }
 
-// GetByID returns place with given UUID.
+// Get returns place with given UUID.
 func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error) {
 	res := p.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
@@ -93,19 +117,19 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("PlaceStore.Get: db error: %s\n", err)
+		log.Info().Msgf("PlaceStore.Get: %v", err)
 		return nil, irepository.ErrPlaceNotFound
 	}
 
 	if err != nil {
-		log.Printf("PlaceStore.Get: db error: %s\n", err)
+		log.Warn().Msgf("PlaceStore.Get: %v", err)
 		return nil, err
 	}
 
 	var place *place.Place
 	err = res.Decode(&place)
 	if err != nil {
-		log.Printf("PlaceStore.Get: decoding error: %s\n", err)
+		log.Error().Msgf("PlaceStore.Get: %v", err)
 		return nil, err
 	}
 
@@ -117,15 +141,60 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 	cursor, err := p.coll.Find(ctx, bson.M{
 		"category.main_category": category.MainCategoryString(), // TODO: add aggregation by subCategory
 	})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("PlaceStore.GetByCategory: %v", err)
+		return nil, irepository.ErrPlaceNotFound
+	}
 	if err != nil {
-		log.Printf("PlaceStore.GetByCategory: db error: %s\n", err)
+		log.Warn().Msgf("PlaceStore.GetByCategory: %v", err)
 		return nil, err
 	}
 
 	var places []place.Place
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("PlaceStore.GetByCategory: decoding error: %s\n", err)
+		log.Error().Msgf("PlaceStore.GetByCategory: %v", err)
+		return nil, err
+	}
+
+	return places, nil
+}
+
+// GetNearby returns places from nearest to farthest.
+func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Place, error) {
+	gCenterJSON := bson.M{
+		"type":        "Point",
+		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
+	}
+	if geoQ.Max == 0 {
+		geoQ.Max = irepository.DefaultMaxDistance
+	}
+	if geoQ.Min == 0 {
+		geoQ.Min = irepository.DefaultMinDistance
+	}
+
+	cursor, err := p.coll.Find(ctx, bson.M{
+		"location.geo": bson.M{
+			"$near": bson.M{
+				"$geometry":    gCenterJSON,
+				"$minDistance": geoQ.Min,
+				"$maxDistance": geoQ.Max,
+			},
+		},
+	})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("PlaceStore.GetNearby: %v", err)
+		return nil, irepository.ErrPlaceNotFound
+	}
+	if err != nil {
+		log.Warn().Msgf("PlaceStore.GetNearby: %v", err)
+		return nil, err
+	}
+
+	var places []place.Place
+	err = cursor.All(ctx, &places) // FIXME: may be an overflow
+	if err != nil {
+		log.Error().Msgf("PlaceStore.GetNearby: %v", err)
 		return nil, err
 	}
 

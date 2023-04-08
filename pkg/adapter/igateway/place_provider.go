@@ -1,4 +1,4 @@
-package icontroller
+package igateway
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 )
 
-type ControllerI interface {
-	GetAchievements(context.Context, string) (*util.Achievements, error)
-	GetPlaces(context.Context, category.Category, util.LatLng) ([]place.Place, error)
+type PlaceProviderI interface {
+	Get(ctx context.Context, category category.Category,
+		ll *util.LatLng, resultN uint32, skipN uint32) ([]place.Place, error)
 }

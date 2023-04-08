@@ -3,19 +3,20 @@ package user
 import (
 	"time"
 
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
+	"github.com/google/uuid"
 )
 
 type User struct {
-	UUID               string `bson:"_id"`
-	TinkoffID          string `bson:"tinkoff_id"`
-	TinkoffAccessToken string `bson:"tinkoff_access_token"`
+	// TODO: split Account repo & User repo
+	UUID        string `bson:"_id"`
+	OAuthID     string `bson:"oauth_id"`
+	OAuthAToken string `bson:"oauth_access_token"`
 
-	Premium      bool              `bson:"premium"`
-	Tester       bool              `bson:"tester"`
-	Admin        bool              `bson:"admin"`
-	Blocked      bool              `bson:"blocked"`
-	Achievements util.Achievements `bson:"achievements"`
+	Premium      bool          `bson:"premium"`
+	Tester       bool          `bson:"tester"`
+	Admin        bool          `bson:"admin"`
+	Blocked      bool          `bson:"blocked"`
+	Achievements []Achievement `bson:"achievements"`
 
 	LastActivity time.Time `bson:"last_activity"`
 }
@@ -26,12 +27,12 @@ func WithUUID(uuid string) Options {
 	return func(u *User) { u.UUID = uuid }
 }
 
-func WithTinkoffID(tinkoffID string) Options {
-	return func(u *User) { u.TinkoffID = tinkoffID }
+func WithOAuthID(oAuthID string) Options {
+	return func(u *User) { u.OAuthID = oAuthID }
 }
 
-func WithTinkoffAccessToken(tinkoffAccessToken string) Options {
-	return func(u *User) { u.TinkoffAccessToken = tinkoffAccessToken }
+func WithOAuthAToken(oAuthAToken string) Options {
+	return func(u *User) { u.OAuthAToken = oAuthAToken }
 }
 
 func WithPremium(premium bool) Options {
@@ -50,12 +51,26 @@ func WithBlocked(blocked bool) Options {
 	return func(u *User) { u.Blocked = blocked }
 }
 
+func WithAchievements(achs []Achievement) Options {
+	return func(u *User) { u.Achievements = achs }
+}
+
 func WithLastActivity(lastActivity time.Time) Options {
 	return func(u *User) { u.LastActivity = lastActivity }
 }
 
 func New(opts ...Options) *User {
-	u := &User{}
+	u := &User{
+		UUID:        uuid.New().String(),
+		OAuthID:     "",
+		OAuthAToken: "",
+		Premium:     false,
+		Tester:      false,
+		Admin:       false,
+		Blocked:     false,
+		// FIXME: make compatible with MongoDB precision
+		// LastActivity:           time.Time{},
+	}
 
 	for _, opt := range opts {
 		opt(u)

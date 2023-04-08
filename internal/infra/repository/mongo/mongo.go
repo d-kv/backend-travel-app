@@ -2,28 +2,31 @@ package mongo
 
 import (
 	"context"
-	"log"
 	"time"
 
+	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const connTimeout = 10
-
-func NewClient(uri string) (*mongo.Client, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), connTimeout*time.Second)
-
-	log.Println("Connect: attempt to connect to mongoDB")
-
+func NewClient(uri string, connTimeout time.Duration) (*mongo.Client, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), connTimeout)
 	defer cancel()
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 
+	log.Info().Msgf("NewClient: mongoDB uri: %s", uri)
+
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
 	if err != nil {
-		log.Printf("Connect: mongoDB connection error:, %s\n", err)
+		log.Error().Msgf("NewClient: %v", err)
 		return nil, err
 	}
 
-	log.Println("Connect: mongoDB successful connection")
+	err = client.Ping(ctx, nil)
+	if err != nil {
+		log.Error().Msgf("NewClient: %v", err)
+		return nil, err
+	}
+
+	log.Info().Msg("NewClient: Connected to MongoDB")
 	return client, nil
 }

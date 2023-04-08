@@ -7,10 +7,11 @@ import (
 )
 
 type UserI interface {
-	GetAll(context.Context) ([]user.User, error)
-	Create(context.Context, *user.User) error
-	Delete(context.Context, string) error
+	GetAll(ctx context.Context) ([]user.User, error)
+	Create(ctx context.Context, user *user.User) error
+	Delete(ctx context.Context, id string) error
 
-	GetByID(context.Context, string) (*user.User, error)
-	GetByTinkoffID(context.Context, string) (*user.User, error)
+	Get(ctx context.Context, id string) (*user.User, error)
+	GetByOAuthID(ctx context.Context, id string) (*user.User, error)
+	GetByOAuthAToken(ctx context.Context, accessToken string) (*user.User, error)
 }

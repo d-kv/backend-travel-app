@@ -5,13 +5,20 @@ import (
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
+)
+
+const (
+	DefaultMinDistance = 0
+	DefaultMaxDistance = 5000
 )
 
 type PlaceI interface {
-	GetAll(context.Context) ([]place.Place, error)
-	Create(context.Context, *place.Place) error
-	Delete(context.Context, string) error
+	GetAll(ctx context.Context) ([]place.Place, error)
+	Create(ctx context.Context, place *place.Place) error
+	Delete(ctx context.Context, id string) error
 
-	Get(context.Context, string) (*place.Place, error)
-	GetByCategory(context.Context, category.Category) ([]place.Place, error)
+	Get(ctx context.Context, id string) (*place.Place, error)
+	GetByCategory(ctx context.Context, category category.Category) ([]place.Place, error)
+	GetNearby(ctx context.Context, getQuery query.Geo) ([]place.Place, error)
 }

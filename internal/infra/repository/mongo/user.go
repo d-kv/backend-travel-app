@@ -4,13 +4,13 @@ package mongo
 import (
 	"context"
 	"errors"
-	"log"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
+	"github.com/rs/zerolog/log"
 )
 
 // UserStore with CRUD-like operations on the User object.
@@ -30,15 +30,19 @@ func NewUserStore(coll *mongo.Collection) *UserStore {
 // GetAll returns all users.
 func (u *UserStore) GetAll(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("UserStore.GetByID: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
 	if err != nil {
-		log.Printf("UserStore.GetAll: db error: %s\n", err)
+		log.Error().Msgf("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
 	var users []user.User
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
-		log.Printf("UserStore.GetAll: decoding error: %s\n", err)
+		log.Error().Msgf("UserStore.GetAll: %v", err)
 		return nil, err
 	}
 
@@ -55,7 +59,7 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 
 	_, err := u.coll.InsertOne(ctx, user)
 	if err != nil {
-		log.Printf("UserStore.Create: DB error: %s\n", err)
+		log.Warn().Msgf("UserStore.Create: %v", err)
 		return err
 	}
 
@@ -68,71 +72,98 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		log.Printf("UserStore.Delete: db error: %s\n", err)
+		log.Warn().Msgf("UserStore.Delete: %v", err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		log.Printf("UserStore.Delete: db error: %s\n", irepository.ErrUserNotFound)
+		log.Warn().Msgf("UserStore.Delete: %v", irepository.ErrUserNotFound)
 		return irepository.ErrUserNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		log.Printf("UserStore.Delete: db error: %s\n", irepository.ErrUUIDDuplicate)
+		log.Error().Msgf("UserStore.Delete: %v", irepository.ErrUUIDDuplicate)
 		return irepository.ErrUUIDDuplicate
 	}
 
 	return nil
 }
 
-// GetByID returns user with given UUID.
-func (u *UserStore) GetByID(ctx context.Context, uuid string) (*user.User, error) {
+// Get returns user with given UUID.
+func (u *UserStore) Get(ctx context.Context, uuid string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("UserStore.GetByID: db error: %s\n", err)
+		log.Info().Msgf("UserStore.GetByID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Printf("UserStore.GetByID: db error: %s\n", err)
+		log.Warn().Msgf("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Printf("UserStore.GetByID: decoding error: %s\n", err)
+		log.Error().Msgf("UserStore.GetByID: %v", err)
 		return nil, err
 	}
 
 	return user, nil
 }
 
-// GetByTinkoffID returns user with given Tinkoff UUID.
-func (u *UserStore) GetByTinkoffID(ctx context.Context, tinkoffUUID string) (*user.User, error) {
+// GetByOAuthID returns user with given OAuth Provider ID.
+func (u *UserStore) GetByOAuthID(ctx context.Context, oAuthID string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
-		"tinkoff_id": tinkoffUUID,
+		"oauth_id": oAuthID,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Printf("UserStore.GetByTinkoffID: db error: %s\n", err)
+		log.Info().Msgf("UserStore.GetByOAuthID: %v", err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Printf("UserStore.GetByTinkoffID: db error: %s\n", err)
+		log.Warn().Msgf("UserStore.GetByOAuthID: %v", err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Printf("UserStore.GetByTinkoffID: decoding error: %s\n", err)
+		log.Error().Msgf("UserStore.GetByOAuthID: %v", err)
+		return nil, err
+	}
+
+	return user, nil
+}
+
+// GetByOAuthAToken returns user with given OAuth Provider Access Token.
+func (u UserStore) GetByOAuthAToken(ctx context.Context, oAuthAToken string) (*user.User, error) {
+	res := u.coll.FindOne(ctx, bson.M{
+		"oauth_access_token": oAuthAToken,
+	})
+
+	err := res.Err()
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("UserStore.GetByOAuthAToken: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
+
+	if err != nil {
+		log.Warn().Msgf("UserStore.GetByOAuthAToken: %v", err)
+		return nil, err
+	}
+
+	var user *user.User
+	err = res.Decode(&user)
+	if err != nil {
+		log.Error().Msgf("UserStore.GetByOAuthAToken: %v", err)
 		return nil, err
 	}
 

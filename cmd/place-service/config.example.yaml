@@ -1,9 +1,15 @@
 DB:
   Mongo:
     URI: "mongodb://username:password@host1:port"
-    DBName: "MyDBName"
-    CollName:
-      Place: "Places"
+    DB: "my_db_name"
+    Coll:
+      Place: "places"
+      User: "users"
+OAuthProvider:
+  Tinkoff:
+    ID: "<ID>"
+    Secret: "<Secret>"
 Server:
-  RPC:
-    Port: 19005
+  REST:
+    IP: "0.0.0.0"
+    Port: "9090"
