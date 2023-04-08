@@ -12,7 +12,7 @@ type Version struct {
 }
 
 func (v Version) Less(otherV Version) bool {
-	return v.Patch > otherV.Patch
+	return v.Patch < otherV.Patch
 }
 
 func NewVersion(patch uint64) *Version {
