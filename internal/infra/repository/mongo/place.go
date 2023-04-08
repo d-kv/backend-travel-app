@@ -3,7 +3,6 @@ package mongo
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -38,9 +37,9 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 			indexModel,
 		)
 
-	log.Info().Msgf("NewPlaceStore: Index building done:", name)
+	log.Info().Msgf("NewPlaceStore: Index building done: %s", name)
 	if err != nil {
-		panic(fmt.Sprint("NewPlaceStore: unable to create", name, "index"))
+		log.Panic().Msgf("NewPlaceStore: unable to create %s index", name)
 	}
 
 	return &PlaceStore{
