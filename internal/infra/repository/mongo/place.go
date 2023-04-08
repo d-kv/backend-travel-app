@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
-	"github.com/rs/zerolog/log"
 )
 
 const IndexCreationTimeout = 10
