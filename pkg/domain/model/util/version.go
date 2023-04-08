@@ -5,12 +5,6 @@ import (
 	"strings"
 )
 
-const (
-	precision = 6
-	bitSize   = 64
-	base      = 10
-)
-
 type Version struct {
 	// TODO: use standard Major.Minor.Path versioning
 	// TODO: Patch might be a string like rc
