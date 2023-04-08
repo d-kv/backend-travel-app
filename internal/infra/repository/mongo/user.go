@@ -5,12 +5,12 @@ import (
 	"context"
 	"errors"
 
+	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
-	"github.com/rs/zerolog/log"
 )
 
 // UserStore with CRUD-like operations on the User object.

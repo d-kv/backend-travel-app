@@ -5,6 +5,8 @@ import (
 	"context"
 	"errors"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/d-kv/backend-travel-app/pkg/adapter/igateway"
 	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/icontroller/v0"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
@@ -12,7 +14,6 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
-	"github.com/rs/zerolog/log"
 )
 
 // Controller defines a place service controller.
