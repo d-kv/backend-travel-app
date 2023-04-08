@@ -3,7 +3,6 @@ package mongo //nolint:testpackage // Need internals of repository
 import (
 	"context"
 	"fmt"
-	"log"
 	"testing"
 	"time"
 
@@ -11,7 +10,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"github.com/d-kv/backend-travel-app/internal/infra/logger/deflog"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
@@ -27,10 +25,9 @@ const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
 
 func initEmptyPlaceStore() {
-	l := deflog.New(log.Default())
-	cl, err := NewClient(l, mongoURI, 3*time.Second)
+	cl, err := NewClient(mongoURI, 3*time.Second)
 	if err != nil {
-		panic(fmt.Sprintf("init: %v", err))
+		panic(fmt.Sprintf("initEmptyPlaceStore: %v", err))
 	}
 	coll := cl.
 		Database(mongoDB).
@@ -38,7 +35,7 @@ func initEmptyPlaceStore() {
 
 	_ = coll.Database().Drop(context.Background())
 
-	plStore = NewPlaceStore(l, coll)
+	plStore = NewPlaceStore(coll)
 }
 
 func TestCreateIntegration(t *testing.T) {

@@ -11,7 +11,6 @@ import (
 	"net/http"
 
 	"github.com/d-kv/backend-travel-app/pkg/adapter/igateway"
-	"github.com/d-kv/backend-travel-app/pkg/infra/ilogger"
 )
 
 const introspectURL = "https://id.tinkoff.ru/auth/introspect"
@@ -19,13 +18,11 @@ const introspectURL = "https://id.tinkoff.ru/auth/introspect"
 type OAuthProvider struct {
 	id     string
 	secret string
-	log    ilogger.LoggerI
 	clt    *http.Client
 }
 
-func New(l ilogger.LoggerI, c *http.Client) *OAuthProvider {
+func New(c *http.Client) *OAuthProvider {
 	return &OAuthProvider{
-		log: l,
 		clt: c,
 	}
 }
