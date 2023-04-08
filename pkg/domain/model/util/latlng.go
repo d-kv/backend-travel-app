@@ -1,3 +1,5 @@
+// TODO: use explicit naming for langitude & longitude
+// For instance, we can use prefixes, such as: "lat_56.34564,lng_46.2356"
 package util
 
 import (
@@ -5,11 +7,13 @@ import (
 	"strings"
 )
 
+// LatLng stores latitude & longitude.
 type LatLng struct {
 	Latitude  float64 `bson:"latitude"`
 	Longitude float64 `bson:"longitude"`
 }
 
+// NewLatLng creates a new LatLng with given lat & lng values.
 func NewLatLng(lat, lng float64) *LatLng {
 	return &LatLng{
 		Latitude:  lat,
@@ -17,6 +21,7 @@ func NewLatLng(lat, lng float64) *LatLng {
 	}
 }
 
+// NewLatLngFromString creates a new LatLng from a string of the form "<latitude>,<longitude>".
 func NewLatLngFromString(llStr string) (*LatLng, error) {
 	ll := &LatLng{}
 	if err := parseLatLngFromString(ll, llStr); err != nil {
@@ -26,7 +31,6 @@ func NewLatLngFromString(llStr string) (*LatLng, error) {
 	return ll, nil
 }
 
-// parseLatLngFromString populates LatLng from a string of the form "<latitude>,<longitude>".
 func parseLatLngFromString(ll *LatLng, rawStr string) error {
 	parts := strings.Split(rawStr, ",")
 
