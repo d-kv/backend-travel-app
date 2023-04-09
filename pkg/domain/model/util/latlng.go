@@ -1,15 +1,25 @@
+// TODO: use explicit naming for langitude & longitude
+// For instance, we can use prefixes, such as: "lat_56.34564,lng_46.2356"
 package util
 
 import (
+	"errors"
 	"strconv"
 	"strings"
 )
 
+var (
+	ErrUnableToParseLatLng = errors.New("unable to parse LatLng from string")
+	ErrInvalidLatLng       = errors.New("latLng parameter is invalid")
+)
+
+// LatLng stores latitude & longitude.
 type LatLng struct {
 	Latitude  float64 `bson:"latitude"`
 	Longitude float64 `bson:"longitude"`
 }
 
+// NewLatLng creates a new LatLng with given lat & lng values.
 func NewLatLng(lat, lng float64) *LatLng {
 	return &LatLng{
 		Latitude:  lat,
@@ -17,30 +27,67 @@ func NewLatLng(lat, lng float64) *LatLng {
 	}
 }
 
+// NewLatLngFromString creates a new LatLng from a string of the form "<latitude>,<longitude>".
 func NewLatLngFromString(llStr string) (*LatLng, error) {
-	ll := &LatLng{}
-	if err := parseLatLngFromString(ll, llStr); err != nil {
-		return nil, err
+	lat, lng, err := parseLatLngFromString(llStr)
+	if err != nil {
+		return nil, ErrUnableToParseLatLng
+	}
+
+	if lat > 90 || lat < -90 {
+		return nil, ErrInvalidLatLng
+	}
+
+	if lng > 180 || lng < -180 {
+		return nil, ErrInvalidLatLng
+	}
+
+	ll := &LatLng{
+		Latitude:  lat,
+		Longitude: lng,
 	}
 
 	return ll, nil
 }
 
-// parseLatLngFromString populates LatLng from a string of the form "<latitude>,<longitude>".
-func parseLatLngFromString(ll *LatLng, rawStr string) error {
+// NewLatLngFromRString creates a new LatLng from a string of the form "<longitude>,<latitude>".
+func NewLatLngFromRString(llStr string) (*LatLng, error) {
+	lng, lat, err := parseLatLngFromString(llStr)
+	if err != nil {
+		return nil, ErrUnableToParseLatLng
+	}
+
+	if lat > 90 || lat < -90 {
+		return nil, ErrInvalidLatLng
+	}
+
+	if lng > 180 || lng < -180 {
+		return nil, ErrInvalidLatLng
+	}
+
+	ll := &LatLng{
+		Latitude:  lat,
+		Longitude: lng,
+	}
+
+	return ll, nil
+}
+
+func parseLatLngFromString(rawStr string) (float64, float64, error) {
 	parts := strings.Split(rawStr, ",")
-
-	lat, err := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
-	if err != nil {
-		return err
+	if len(parts) != 2 { //nolint:gomnd // latitude & longitude
+		return 0, 0, ErrUnableToParseLatLng
 	}
-	ll.Latitude = lat
 
-	lng, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+	l, err := strconv.ParseFloat(strings.TrimSpace(parts[0]), bitSize)
 	if err != nil {
-		return err
+		return 0, 0, err
 	}
-	ll.Longitude = lng
 
-	return nil
+	ll, err := strconv.ParseFloat(strings.TrimSpace(parts[1]), bitSize)
+	if err != nil {
+		return 0, 0, err
+	}
+
+	return l, ll, nil
 }
