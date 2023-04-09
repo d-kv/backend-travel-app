@@ -67,8 +67,8 @@ func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, e
 	if err != nil {
 		return "", err
 	}
-	if !respJSON.Active || respJSON.CliendID != p.id {
+	if !respJSON.Active || respJSON.CliendAppID != p.id {
 		return "", igateway.ErrTokenIsExpired
 	}
-	return respJSON.CliendID, nil
+	return respJSON.UserID, nil
 }
