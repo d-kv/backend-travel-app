@@ -3,10 +3,10 @@ module github.com/d-kv/backend-travel-app/tools
 go 1.20
 
 require (
-	github.com/golang/mock v1.4.4
+	github.com/golang/mock v1.6.0
+	github.com/golangci/golangci-lint v1.52.2
 	github.com/incu6us/goimports-reviser/v3 v3.3.1
 	golang.org/x/tools v0.7.0
-	github.com/golangci/golangci-lint v1.52.2
 )
 
 require (
