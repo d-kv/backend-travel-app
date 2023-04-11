@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -23,6 +24,10 @@ var plStore *PlaceStore
 const mongoURI = "mongodb://localhost:27017"
 const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
+
+func init() {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+}
 
 func initEmptyPlaceStore() {
 	cl, err := NewClient(mongoURI, 3*time.Second)
@@ -48,6 +53,7 @@ func TestCreateIntegration(t *testing.T) {
 	p1 := place.New(
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
+		place.WithMainCategories(category.MC_CULTURE, category.MC_HOSPITALITY),
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
@@ -59,6 +65,7 @@ func TestCreateIntegration(t *testing.T) {
 		place.WithUUID(duplID),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
+		place.WithSubCategories(category.SC_CINEMA, category.SC_BAR),
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p2),
@@ -68,6 +75,7 @@ func TestCreateIntegration(t *testing.T) {
 		place.WithUUID(duplID),
 		place.WithAddress("Street 2A"),
 		place.WithName("MyPlace"),
+		place.WithMainCategories(category.MC_FOOD),
 	)
 
 	assert.True(mongo.IsDuplicateKeyError(plStore.Create(context.Background(), p3)),
@@ -173,19 +181,22 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	p1 := place.New(
 		place.WithAddress("Street 2A"),
 		place.WithName("My culture place #1"),
-		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
+		place.WithMainCategories(
+			category.MC_CULTURE,
+			category.MC_HOSPITALITY,
+		),
 	)
 
 	p2 := place.New(
 		place.WithAddress("Street 2B"),
 		place.WithName("My culture place #2"),
-		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
+		place.WithMainCategories(category.MC_CULTURE),
 	)
 
 	p3 := place.New(
 		place.WithAddress("Street 2C"),
 		place.WithName("My food Place"),
-		place.WithCategory(category.NewFood(category.FC_BAR)),
+		place.WithMainCategories(category.MC_FOOD),
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
@@ -197,7 +208,11 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p3),
 		"must create without any error")
 
-	cultPlGot, err := plStore.GetByCategory(context.Background(), category.NewCulture(category.CC_UNSPECIFIED))
+	cultPlGot, err := plStore.GetByCategory(
+		context.Background(),
+		[]category.MainCategory{category.MC_CULTURE},
+		nil,
+	)
 
 	assert.NoError(err,
 		"must return all places without any error")
@@ -206,7 +221,11 @@ func TestGetByCategoryIntegration(t *testing.T) {
 
 	assert.Equal(cultPlaceWant, cultPlGot)
 
-	foodPlGot, err := plStore.GetByCategory(context.Background(), category.NewFood(category.FC_UNSPECIFIED))
+	foodPlGot, err := plStore.GetByCategory(
+		context.Background(),
+		[]category.MainCategory{category.MC_FOOD},
+		nil,
+	)
 
 	assert.NoError(err,
 		"must return all places without any error")
@@ -226,21 +245,18 @@ func TestGetNearbyIntegration(t *testing.T) {
 	p1 := place.New(
 		place.WithAddress("Street 2A"),
 		place.WithName("My culture place #1"),
-		place.WithCategory(category.NewCulture(category.CC_GALLERY)),
 		place.WithLatLng(55.0, 55.0),
 	)
 
 	p2 := place.New(
 		place.WithAddress("Street 2B"),
 		place.WithName("My culture place #2"),
-		place.WithCategory(category.NewCulture(category.CC_LIBRARY)),
 		place.WithLatLng(50.0, 50.0),
 	)
 
 	p3 := place.New(
 		place.WithAddress("Street 2C"),
 		place.WithName("My food Place"),
-		place.WithCategory(category.NewFood(category.FC_BAR)),
 		place.WithLatLng(60.0, 60.0),
 	)
 
@@ -253,7 +269,7 @@ func TestGetNearbyIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p3),
 		"must create without any error")
 
-	geoQ := query.Geo{
+	geoQ := &query.Geo{
 		Center: util.NewLatLng(51, 51),
 		Max:    10000000000,
 	}

@@ -136,10 +136,24 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 }
 
 // GetByCategory returns places with given category.
-func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Category) ([]place.Place, error) {
-	cursor, err := p.coll.Find(ctx, bson.M{
-		"category.main_category": category.MainCategoryString(), // TODO: add aggregation by subCategory
-	})
+func (p *PlaceStore) GetByCategory(ctx context.Context,
+	mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error) {
+
+	if mCtgs == nil {
+		mCtgs = []category.MainCategory{}
+	}
+
+	if sCtgs == nil {
+		sCtgs = []category.SubCategory{}
+	}
+
+	filter := bson.D{{
+		Key: "$or", Value: []interface{}{
+			bson.M{"category.main": bson.D{{Key: "$in", Value: mCtgs}}},
+			bson.M{"category.sub": bson.D{{Key: "$in", Value: sCtgs}}},
+		}}}
+
+	cursor, err := p.coll.Find(ctx, filter)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().Msgf("PlaceStore.GetByCategory: %v", err)
 		return nil, irepository.ErrPlaceNotFound
@@ -160,7 +174,7 @@ func (p *PlaceStore) GetByCategory(ctx context.Context, category category.Catego
 }
 
 // GetNearby returns places from nearest to farthest.
-func (p *PlaceStore) GetNearby(ctx context.Context, geoQ query.Geo) ([]place.Place, error) {
+func (p *PlaceStore) GetNearby(ctx context.Context, geoQ *query.Geo) ([]place.Place, error) {
 	gCenterJSON := bson.M{
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
