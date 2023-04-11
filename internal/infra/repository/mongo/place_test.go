@@ -255,6 +255,7 @@ func TestGetNearbyIntegration(t *testing.T) {
 
 	geoQ := query.Geo{
 		Center: util.NewLatLng(51, 51),
+		Max:    10000000000,
 	}
 	plsGot, err := plStore.GetNearby(context.Background(), geoQ)
 
