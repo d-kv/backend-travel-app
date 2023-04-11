@@ -65,7 +65,7 @@ func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]pla
 		Center: gCenter,
 	}
 
-	places, err := c.placeStore.GetNearby(ctx, geoQ)
+	places, err := c.placeStore.GetNearby(ctx, &geoQ)
 	if err != nil {
 		log.Info().Msgf("Controller.GetPlaces: %v\n", err)
 		return nil, err

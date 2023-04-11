@@ -19,6 +19,6 @@ type PlaceI interface {
 	Delete(ctx context.Context, id string) error
 
 	Get(ctx context.Context, id string) (*place.Place, error)
-	GetByCategory(ctx context.Context, category category.Category) ([]place.Place, error)
-	GetNearby(ctx context.Context, getQuery query.Geo) ([]place.Place, error)
+	GetByCategory(ctx context.Context, mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error)
+	GetNearby(ctx context.Context, getQuery *query.Geo) ([]place.Place, error)
 }
