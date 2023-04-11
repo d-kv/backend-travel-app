@@ -138,7 +138,6 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 // GetByCategory returns places with given category.
 func (p *PlaceStore) GetByCategory(ctx context.Context,
 	mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error) {
-
 	if mCtgs == nil {
 		mCtgs = []category.MainCategory{}
 	}

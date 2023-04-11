@@ -6,11 +6,6 @@ type Category struct {
 	Sub  []SubCategory  `json:"sub" bson:"sub"`
 }
 
-type bsonCategory struct {
-	Main []string `json:"main" bson:"main"`
-	Sub  []string `json:"sub" bson:"sub"`
-}
-
 // Options to build Category.
 type Options func(*Category)
 

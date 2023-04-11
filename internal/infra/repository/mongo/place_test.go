@@ -25,7 +25,7 @@ const mongoURI = "mongodb://localhost:27017"
 const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
 
-func init() {
+func init() { //nolint:gochecknoinits // Using init for tests
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 }
 
