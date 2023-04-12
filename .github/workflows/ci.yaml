@@ -91,3 +91,24 @@ jobs:
         uses: pre-commit/action@v3.0.0
         with:
           extra_args: detect-private-key --all-files
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          # https://github.com/actions/setup-go#supported-version-syntax
+          # ex:
+          # - 1.18beta1 -> 1.18.0-beta.1
+          # - 1.18rc1 -> 1.18.0-rc.1
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build code
+        run: go build -v ./...
+
+      - name: Run unit tests
+        run: make short-test.run
