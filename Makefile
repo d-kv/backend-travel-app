@@ -40,12 +40,12 @@ _lint_golangci:
 .SILENT: lint
 lint: _lint_vet _lint_imports _lint_golangci
 
-.SILENT: test
-test:
-	@go test ./... -short -count=1
+.SILENT: short-test.run
+short-test.run:
+	@go test ./... -count=1 -short
 
-.SILENT: test.full
-test.full:
+.SILENT: test.run
+test.run:
 	@go test ./... -count=1
 
 .SILENT: build
