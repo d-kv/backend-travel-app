@@ -42,11 +42,11 @@ lint: _lint_vet _lint_imports _lint_golangci
 
 .SILENT: short-test.run
 short-test.run:
-	@go test ./... -count=1 -short
+	@go test ./... -count=1 -v -short
 
 .SILENT: test.run
 test.run:
-	@go test ./... -count=1
+	@go test ./... -count=1 -v
 
 .SILENT: build
 build:
