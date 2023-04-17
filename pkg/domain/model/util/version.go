@@ -1,6 +1,7 @@
 package util
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -23,6 +24,10 @@ func NewVersion(patch uint64) *Version {
 	return &Version{
 		Patch: patch,
 	}
+}
+
+func (v Version) String() string {
+	return fmt.Sprint(v.Patch)
 }
 
 // NewVersionFromString creates a new Version from a string of the form: "<Patch>".
