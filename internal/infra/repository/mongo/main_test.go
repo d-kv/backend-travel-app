@@ -1,4 +1,4 @@
-package mongo
+package mongo //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+//nolint:gochecknoglobals // Using global var in tests
 var dbClient *mongo.Client
 
 const mongoURI = "mongodb://localhost"
