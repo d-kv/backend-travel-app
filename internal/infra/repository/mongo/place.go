@@ -178,12 +178,6 @@ func (p *PlaceStore) GetNearby(ctx context.Context, geoQ *query.Geo) ([]place.Pl
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
 	}
-	if geoQ.Max == 0 {
-		geoQ.Max = irepository.DefaultMaxDistance
-	}
-	if geoQ.Min == 0 {
-		geoQ.Min = irepository.DefaultMinDistance
-	}
 
 	cursor, err := p.coll.Find(ctx, bson.M{
 		"location.geo": bson.M{
