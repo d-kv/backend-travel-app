@@ -2,9 +2,7 @@ package mongo //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
-	"fmt"
 	"testing"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/rs/zerolog"
@@ -21,8 +19,6 @@ import (
 //nolint:gochecknoglobals // Using global var in tests
 var plStore *PlaceStore
 
-const mongoURI = "mongodb://localhost:27017"
-const mongoDB = "afterwork_test"
 const mongoCollName = "Places"
 
 func init() { //nolint:gochecknoinits // Using init for tests
@@ -30,11 +26,7 @@ func init() { //nolint:gochecknoinits // Using init for tests
 }
 
 func initEmptyPlaceStore() {
-	cl, err := NewClient(mongoURI, 3*time.Second)
-	if err != nil {
-		panic(fmt.Sprintf("initEmptyPlaceStore: %v", err))
-	}
-	coll := cl.
+	coll := dbClient.
 		Database(mongoDB).
 		Collection(mongoCollName)
 
