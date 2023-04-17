@@ -95,3 +95,11 @@ func New(opts ...Options) *Place {
 
 	return p
 }
+
+func (p *Place) Latitude() float64 {
+	return p.Location.Latitude()
+}
+
+func (p *Place) Longitude() float64 {
+	return p.Location.Longitude()
+}
