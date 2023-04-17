@@ -12,6 +12,4 @@ type UserI interface {
 	Delete(ctx context.Context, id string) error
 
 	Get(ctx context.Context, id string) (*user.User, error)
-	GetByOAuthID(ctx context.Context, id string) (*user.User, error)
-	GetByOAuthAToken(ctx context.Context, accessToken string) (*user.User, error)
 }
