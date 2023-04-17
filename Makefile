@@ -57,6 +57,5 @@ mock.gen:
 	@mockgen -source=pkg/adapter/igateway/oauth_provider.go -destination=internal/adapter/gateway/oauth_provider/mock/oauth_provider.go
 	@mockgen -source=pkg/adapter/igateway/place_provider.go -destination=internal/adapter/gateway/place_provider/mock/place_provider.go
 	@mockgen -source=pkg/app/icontroller/v0/controller.go -destination=internal/app/controller/v0/mock/controller.go
-	@mockgen -source=pkg/infra/ilogger/logger.go -destination=internal/infra/logger/mock/logger.go
 	@mockgen -source=pkg/infra/irepository/place.go -destination=internal/infra/repository/mock/place.go
 	@mockgen -source=pkg/infra/irepository/user.go -destination=internal/infra/repository/mock/user.go
