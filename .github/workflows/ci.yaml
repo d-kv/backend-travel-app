@@ -112,3 +112,6 @@ jobs:
 
       - name: Run unit tests
         run: make short-test.run
+
+      - name: Run all tests
+        run: make test.run
