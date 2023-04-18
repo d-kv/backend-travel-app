@@ -1,4 +1,4 @@
-package redis
+package redis //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+//nolint:gochecknoglobals // Using global var in tests
 var dbClient *redis.Client
 
 const redisURI = "localhost"

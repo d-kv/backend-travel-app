@@ -1,4 +1,4 @@
-package mongo
+package mongo //nolint:testpackage // Need internals of repository
 
 import (
 	"context"

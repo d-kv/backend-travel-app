@@ -14,6 +14,7 @@ type PlaceI interface {
 	Delete(ctx context.Context, id string) error
 
 	Place(ctx context.Context, id string) (*place.Place, error)
-	PlacesByCategory(ctx context.Context, mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error)
+	PlacesByCategory(ctx context.Context,
+		mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error)
 	PlacesByDistance(ctx context.Context, getQuery *query.Geo) ([]place.Place, error)
 }
