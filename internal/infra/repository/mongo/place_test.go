@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/google/uuid"
-	"github.com/rs/zerolog"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 
@@ -19,23 +18,19 @@ import (
 //nolint:gochecknoglobals // Using global var in tests
 var plStore *PlaceStore
 
-const mongoCollName = "Places"
-
-func init() { //nolint:gochecknoinits // Using init for tests
-	zerolog.SetGlobalLevel(zerolog.Disabled)
-}
+const PlaceColl = "Places"
 
 func initEmptyPlaceStore() {
 	coll := dbClient.
 		Database(mongoDB).
-		Collection(mongoCollName)
+		Collection(PlaceColl)
 
 	_ = coll.Database().Drop(context.Background())
 
 	plStore = NewPlaceStore(coll)
 }
 
-func TestCreateIntegration(t *testing.T) {
+func TestPlaceCreateIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -79,7 +74,7 @@ func TestCreateIntegration(t *testing.T) {
 	assert.Equal(p2, p2Expected, "must be the same place which was inserted")
 }
 
-func TestDeleteIntegration(t *testing.T) {
+func TestPlaceDeleteIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -104,7 +99,7 @@ func TestDeleteIntegration(t *testing.T) {
 		"must be irepository.ErrPlaceNotFound")
 }
 
-func TestGetByIDIntegration(t *testing.T) {
+func TestPlaceGetByIDIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -130,7 +125,7 @@ func TestGetByIDIntegration(t *testing.T) {
 	assert.Equal(p, pExpected)
 }
 
-func TestGetAllIntegration(t *testing.T) {
+func TestPlaceGetAllIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -163,7 +158,7 @@ func TestGetAllIntegration(t *testing.T) {
 	assert.Equal(ps, psExpected)
 }
 
-func TestGetByCategoryIntegration(t *testing.T) {
+func TestPlaceGetByCategoryIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -227,7 +222,7 @@ func TestGetByCategoryIntegration(t *testing.T) {
 	assert.Equal(foodPlaceWant, foodPlGot)
 }
 
-func TestGetNearbyIntegration(t *testing.T) {
+func TestPlaceGetNearbyIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}

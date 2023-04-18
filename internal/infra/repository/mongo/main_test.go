@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/ory/dockertest/v3"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 //nolint:gochecknoglobals // Using global var in tests
@@ -17,8 +18,11 @@ var dbClient *mongo.Client
 
 const mongoURI = "mongodb://localhost"
 const mongoDB = "afterwork_test"
+const connTimeout = 3 * time.Second
 
 func TestMain(m *testing.M) {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Error().Msgf("Could not construct pool: %v", err)
@@ -36,12 +40,9 @@ func TestMain(m *testing.M) {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	err = pool.Retry(func() error {
-		var err error
-		dbClient, err = mongo.Connect(
-			context.TODO(),
-			options.Client().ApplyURI(
-				fmt.Sprintf("%s:%s", mongoURI, resource.GetPort("27017/tcp")),
-			),
+		dbClient, err = NewClient(
+			fmt.Sprintf("%s:%s", mongoURI, resource.GetPort("27017/tcp")),
+			connTimeout,
 		)
 		if err != nil {
 			return err
