@@ -8,9 +8,7 @@ import (
 
 type User struct {
 	// TODO: split Account repo & User repo
-	UUID        string `bson:"_id"`
-	OAuthID     string `bson:"oauth_id"`
-	OAuthAToken string `bson:"oauth_access_token"`
+	UUID string `bson:"_id"`
 
 	Premium      bool          `bson:"premium"`
 	Tester       bool          `bson:"tester"`
@@ -25,14 +23,6 @@ type Options func(*User)
 
 func WithUUID(uuid string) Options {
 	return func(u *User) { u.UUID = uuid }
-}
-
-func WithOAuthID(oAuthID string) Options {
-	return func(u *User) { u.OAuthID = oAuthID }
-}
-
-func WithOAuthAToken(oAuthAToken string) Options {
-	return func(u *User) { u.OAuthAToken = oAuthAToken }
 }
 
 func WithPremium(premium bool) Options {
@@ -61,13 +51,11 @@ func WithLastActivity(lastActivity time.Time) Options {
 
 func New(opts ...Options) *User {
 	u := &User{
-		UUID:        uuid.New().String(),
-		OAuthID:     "",
-		OAuthAToken: "",
-		Premium:     false,
-		Tester:      false,
-		Admin:       false,
-		Blocked:     false,
+		UUID:    uuid.New().String(),
+		Premium: false,
+		Tester:  false,
+		Admin:   false,
+		Blocked: false,
 		// FIXME: make compatible with MongoDB precision
 		// LastActivity:           time.Time{},
 	}
