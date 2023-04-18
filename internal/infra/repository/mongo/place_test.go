@@ -68,7 +68,7 @@ func TestPlaceCreateIntegration(t *testing.T) {
 	assert.True(mongo.IsDuplicateKeyError(plStore.Create(context.Background(), p3)),
 		"must be primitive.ObjectID duplicate error")
 
-	p2Expected, err := plStore.Get(context.Background(), duplID)
+	p2Expected, err := plStore.Place(context.Background(), duplID)
 
 	assert.NoError(err, "must return place without error")
 	assert.Equal(p2, p2Expected, "must be the same place which was inserted")
@@ -117,7 +117,7 @@ func TestPlaceGetByIDIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p),
 		"must create without any error")
 
-	pExpected, err := plStore.Get(context.Background(), id)
+	pExpected, err := plStore.Place(context.Background(), id)
 
 	assert.NoError(err,
 		"must return place without any error")
@@ -148,7 +148,7 @@ func TestPlaceGetAllIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p2),
 		"must create without any error")
 
-	psExpected, err := plStore.GetAll(context.Background())
+	psExpected, err := plStore.Places(context.Background())
 
 	assert.NoError(err,
 		"must return all places without any error")
@@ -195,7 +195,7 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p3),
 		"must create without any error")
 
-	cultPlGot, err := plStore.GetByCategory(
+	cultPlGot, err := plStore.PlacesByCategory(
 		context.Background(),
 		[]category.MainCategory{category.MC_CULTURE},
 		nil,
@@ -208,7 +208,7 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 
 	assert.Equal(cultPlaceWant, cultPlGot)
 
-	foodPlGot, err := plStore.GetByCategory(
+	foodPlGot, err := plStore.PlacesByCategory(
 		context.Background(),
 		[]category.MainCategory{category.MC_FOOD},
 		nil,
@@ -260,7 +260,7 @@ func TestPlaceGetNearbyIntegration(t *testing.T) {
 		Center: util.NewLatLng(51, 51),
 		Max:    10000000000,
 	}
-	plsGot, err := plStore.GetNearby(context.Background(), geoQ)
+	plsGot, err := plStore.PlacesByDistance(context.Background(), geoQ)
 
 	assert.NoError(err,
 		"must return all places without any error")

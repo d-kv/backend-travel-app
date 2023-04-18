@@ -41,7 +41,7 @@ func TestUserCreateIntegration(t *testing.T) {
 	err := uStore.Create(context.Background(), wantU)
 	assert.NoError(err,
 		"must create without any error")
-	gotU, err := uStore.Get(context.Background(), id)
+	gotU, err := uStore.User(context.Background(), id)
 	assert.NoError(err,
 		"must return without any error")
 
@@ -65,7 +65,7 @@ func TestUserUpdateIntegration(t *testing.T) {
 	err := uStore.Create(context.Background(), wantU)
 	assert.NoError(err,
 		"must create without any error")
-	gotU, err := uStore.Get(context.Background(), id)
+	gotU, err := uStore.User(context.Background(), id)
 	assert.NoError(err,
 		"must return without any error")
 
@@ -76,7 +76,7 @@ func TestUserUpdateIntegration(t *testing.T) {
 	err = uStore.Update(context.Background(), id, wantU)
 	assert.NoError(err,
 		"must update without any error")
-	gotU, err = uStore.Get(context.Background(), id)
+	gotU, err = uStore.User(context.Background(), id)
 	assert.NoError(err,
 		"must return without any error")
 	assert.Equal(wantU, gotU)

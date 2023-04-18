@@ -9,11 +9,11 @@ import (
 )
 
 type PlaceI interface {
-	GetAll(ctx context.Context) ([]place.Place, error)
+	Places(ctx context.Context) ([]place.Place, error)
 	Create(ctx context.Context, place *place.Place) error
 	Delete(ctx context.Context, id string) error
 
-	Get(ctx context.Context, id string) (*place.Place, error)
-	GetByCategory(ctx context.Context, mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error)
-	GetNearby(ctx context.Context, getQuery *query.Geo) ([]place.Place, error)
+	Place(ctx context.Context, id string) (*place.Place, error)
+	PlacesByCategory(ctx context.Context, mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error)
+	PlacesByDistance(ctx context.Context, getQuery *query.Geo) ([]place.Place, error)
 }

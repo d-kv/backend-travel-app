@@ -47,8 +47,8 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 	}
 }
 
-// GetAll returns all places.
-func (p *PlaceStore) GetAll(ctx context.Context) ([]place.Place, error) {
+// Places returns all places.
+func (p *PlaceStore) Places(ctx context.Context) ([]place.Place, error) {
 	cursor, err := p.coll.Find(ctx, bson.D{})
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().Msgf("UserStore.GetByID: %v", err)
@@ -108,8 +108,8 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 	return nil
 }
 
-// Get returns place with given UUID.
-func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error) {
+// Place returns place with given UUID.
+func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, error) {
 	res := p.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
@@ -135,8 +135,8 @@ func (p *PlaceStore) Get(ctx context.Context, uuid string) (*place.Place, error)
 	return place, nil
 }
 
-// GetByCategory returns places with given category.
-func (p *PlaceStore) GetByCategory(ctx context.Context,
+// PlacesByCategory returns places with given category.
+func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 	mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error) {
 	if mCtgs == nil {
 		mCtgs = []category.MainCategory{}
@@ -172,8 +172,8 @@ func (p *PlaceStore) GetByCategory(ctx context.Context,
 	return places, nil
 }
 
-// GetNearby returns places from nearest to farthest.
-func (p *PlaceStore) GetNearby(ctx context.Context, geoQ *query.Geo) ([]place.Place, error) {
+// PlacesByDistance returns places from nearest to farthest.
+func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo) ([]place.Place, error) {
 	gCenterJSON := bson.M{
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},

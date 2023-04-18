@@ -27,8 +27,8 @@ func NewUserStore(coll *mongo.Collection) *UserStore {
 	}
 }
 
-// GetAll returns all users.
-func (u *UserStore) GetAll(ctx context.Context) ([]user.User, error) {
+// Users returns all users.
+func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().Msgf("UserStore.GetByID: %v", err)
@@ -98,8 +98,8 @@ func (u *UserStore) Update(ctx context.Context, uuid string, user *user.User) er
 	return nil
 }
 
-// Get returns user with given UUID.
-func (u *UserStore) Get(ctx context.Context, uuid string) (*user.User, error) {
+// User returns user with given UUID.
+func (u *UserStore) User(ctx context.Context, uuid string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
