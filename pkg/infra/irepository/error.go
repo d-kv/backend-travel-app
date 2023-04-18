@@ -12,6 +12,11 @@ var (
 	ErrUserNotFound = errors.New("user is not found")
 )
 
+// TokenStore errors.
+var (
+	ErrRefreshTokenNotFound = errors.New("refresh token is not found")
+)
+
 // Common errors.
 var (
 	ErrUUIDDuplicate    = errors.New("entity with the same uuid already exists")

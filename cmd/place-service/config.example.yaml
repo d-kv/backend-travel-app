@@ -5,6 +5,9 @@ DB:
     Coll:
       Place: "places"
       User: "users"
+Cache:
+  Redis:
+    URI: "host1:port"
 OAuthProvider:
   Tinkoff:
     ID: "<ID>"

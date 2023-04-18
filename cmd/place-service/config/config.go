@@ -16,6 +16,12 @@ type (
 		}
 	}
 
+	Cache struct {
+		Redis struct {
+			URI string
+		}
+	}
+
 	OAuthProvider struct {
 		Tinkoff struct {
 			ID     string
@@ -33,6 +39,7 @@ type (
 
 type Config struct {
 	DB            DB
+	Cache         Cache
 	OAuthProvider OAuthProvider
 	Server        Server
 }

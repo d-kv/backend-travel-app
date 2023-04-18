@@ -9,6 +9,13 @@ services:
     ports:
       - 27017:27017
 
+  rediscache:
+    image: redis:latest
+    container_name: "rediscache"
+    restart: always
+    ports:
+      - 6379:6379
+
   afterwork-backend:
     build: ../.
     image: afterwork:latest
