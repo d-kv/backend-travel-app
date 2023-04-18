@@ -89,6 +89,15 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 	return nil
 }
 
+func (u *UserStore) Update(ctx context.Context, uuid string, user *user.User) error {
+	_, err := u.coll.ReplaceOne(ctx, bson.M{"_id": uuid}, user)
+	if err != nil {
+		log.Warn().Msgf("UserStore.Update: %v", err)
+		return err
+	}
+	return nil
+}
+
 // Get returns user with given UUID.
 func (u *UserStore) Get(ctx context.Context, uuid string) (*user.User, error) {
 	res := u.coll.FindOne(ctx, bson.M{
