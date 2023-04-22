@@ -7,6 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
@@ -45,28 +46,6 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 	return &PlaceStore{
 		coll: coll,
 	}
-}
-
-// Places returns all places.
-func (p *PlaceStore) Places(ctx context.Context) ([]place.Place, error) {
-	cursor, err := p.coll.Find(ctx, bson.D{})
-	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Info().Msgf("UserStore.GetByID: %v", err)
-		return nil, irepository.ErrUserNotFound
-	}
-	if err != nil {
-		log.Error().Msgf("UserStore.GetAll: %v", err)
-		return nil, err
-	}
-
-	var places []place.Place
-	err = cursor.All(ctx, &places) // FIXME: may be an overflow
-	if err != nil {
-		log.Error().Msgf("PlaceStore.GetAll: %v", err)
-		return nil, err
-	}
-
-	return places, nil
 }
 
 // Create creates a new place.
@@ -135,9 +114,36 @@ func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, erro
 	return place, nil
 }
 
+// Places returns places.
+func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]place.Place, error) {
+	opts := options.
+		Find().
+		SetLimit(resN).
+		SetSkip(skipN)
+
+	cursor, err := p.coll.Find(ctx, bson.D{}, opts)
+	if errors.Is(err, mongo.ErrNoDocuments) {
+		log.Info().Msgf("UserStore.GetByID: %v", err)
+		return nil, irepository.ErrUserNotFound
+	}
+	if err != nil {
+		log.Error().Msgf("UserStore.GetAll: %v", err)
+		return nil, err
+	}
+
+	var places []place.Place
+	err = cursor.All(ctx, &places) // FIXME: may be an overflow
+	if err != nil {
+		log.Error().Msgf("PlaceStore.GetAll: %v", err)
+		return nil, err
+	}
+
+	return places, nil
+}
+
 // PlacesByCategory returns places with given category.
 func (p *PlaceStore) PlacesByCategory(ctx context.Context,
-	mCtgs []category.MainCategory, sCtgs []category.SubCategory) ([]place.Place, error) {
+	mCtgs []category.MainCategory, sCtgs []category.SubCategory, skipN int64, resN int64) ([]place.Place, error) {
 	if mCtgs == nil {
 		mCtgs = []category.MainCategory{}
 	}
@@ -146,13 +152,18 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 		sCtgs = []category.SubCategory{}
 	}
 
+	opts := options.
+		Find().
+		SetLimit(resN).
+		SetSkip(skipN)
+
 	filter := bson.D{{
 		Key: "$or", Value: []interface{}{
 			bson.M{"category.main": bson.D{{Key: "$in", Value: mCtgs}}},
 			bson.M{"category.sub": bson.D{{Key: "$in", Value: sCtgs}}},
 		}}}
 
-	cursor, err := p.coll.Find(ctx, filter)
+	cursor, err := p.coll.Find(ctx, filter, opts)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().Msgf("PlaceStore.GetByCategory: %v", err)
 		return nil, irepository.ErrPlaceNotFound
@@ -173,11 +184,16 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 }
 
 // PlacesByDistance returns places from nearest to farthest.
-func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo) ([]place.Place, error) {
+func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo, skipN int64, resN int64) ([]place.Place, error) {
 	gCenterJSON := bson.M{
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
 	}
+
+	opts := options.
+		Find().
+		SetLimit(resN).
+		SetSkip(skipN)
 
 	cursor, err := p.coll.Find(ctx, bson.M{
 		"location.geo": bson.M{
@@ -187,7 +203,7 @@ func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo) ([]p
 				"$maxDistance": geoQ.Max,
 			},
 		},
-	})
+	}, opts)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().Msgf("PlaceStore.GetNearby: %v", err)
 		return nil, irepository.ErrPlaceNotFound

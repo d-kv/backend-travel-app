@@ -148,7 +148,7 @@ func TestPlaceGetAllIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p2),
 		"must create without any error")
 
-	psExpected, err := plStore.Places(context.Background())
+	psExpected, err := plStore.Places(context.Background(), 0, 0)
 
 	assert.NoError(err,
 		"must return all places without any error")
@@ -199,6 +199,8 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 		context.Background(),
 		[]category.MainCategory{category.MC_CULTURE},
 		nil,
+		0,
+		0,
 	)
 
 	assert.NoError(err,
@@ -212,6 +214,8 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 		context.Background(),
 		[]category.MainCategory{category.MC_FOOD},
 		nil,
+		0,
+		0,
 	)
 
 	assert.NoError(err,
@@ -260,7 +264,7 @@ func TestPlaceGetNearbyIntegration(t *testing.T) {
 		Center: util.NewLatLng(51, 51),
 		Max:    10000000000,
 	}
-	plsGot, err := plStore.PlacesByDistance(context.Background(), geoQ)
+	plsGot, err := plStore.PlacesByDistance(context.Background(), geoQ, 0, 0)
 
 	assert.NoError(err,
 		"must return all places without any error")
