@@ -2,6 +2,7 @@ package redis //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"testing"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/ory/dockertest/v3"
 	"github.com/redis/go-redis/v9"
+	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
 
@@ -19,6 +21,13 @@ const redisURI = "localhost"
 const connTimeout = 3 * time.Second
 
 func TestMain(m *testing.M) {
+	zerolog.SetGlobalLevel(zerolog.Disabled)
+
+	flag.Parse()
+	if testing.Short() {
+		os.Exit(m.Run())
+	}
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Error().Msgf("Could not construct pool: %v", err)

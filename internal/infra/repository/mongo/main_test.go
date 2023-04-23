@@ -2,6 +2,7 @@ package mongo //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"os"
 	"testing"
@@ -23,6 +24,11 @@ const connTimeout = 3 * time.Second
 func TestMain(m *testing.M) {
 	zerolog.SetGlobalLevel(zerolog.Disabled)
 
+	flag.Parse()
+	if testing.Short() {
+		os.Exit(m.Run())
+	}
+
 	pool, err := dockertest.NewPool("")
 	if err != nil {
 		log.Error().Msgf("Could not construct pool: %v", err)
@@ -30,12 +36,12 @@ func TestMain(m *testing.M) {
 
 	err = pool.Client.Ping()
 	if err != nil {
-		log.Error().Msgf("Could not connect to Docker: %s", err)
+		log.Error().Msgf("Could not connect to Docker: %v", err)
 	}
 
 	resource, err := pool.Run("mongo", "6.0.5", nil)
 	if err != nil {
-		log.Error().Msgf("Could not start resource: %s", err)
+		log.Error().Msgf("Could not start resource: %v", err)
 	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
@@ -51,7 +57,7 @@ func TestMain(m *testing.M) {
 	})
 
 	if err != nil {
-		log.Error().Msgf("Could not connect to docker: %s", err)
+		log.Error().Msgf("Could not connect to docker: %v", err)
 	}
 
 	// run tests
@@ -62,7 +68,7 @@ func TestMain(m *testing.M) {
 	}
 
 	if err = pool.Purge(resource); err != nil {
-		log.Error().Msgf("Could not purge resource: %s", err)
+		log.Error().Msgf("Could not purge resource: %v", err)
 	}
 
 	os.Exit(code)
