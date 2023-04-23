@@ -31,18 +31,21 @@ func NewUserStore(coll *mongo.Collection) *UserStore {
 func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 	cursor, err := u.coll.Find(ctx, bson.D{})
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Info().Msgf("UserStore.GetByID: %v", err)
+		log.Info().
+			Err(err)
 		return nil, irepository.ErrUserNotFound
 	}
 	if err != nil {
-		log.Error().Msgf("UserStore.GetAll: %v", err)
+		log.Error().
+			Err(err)
 		return nil, err
 	}
 
 	var users []user.User
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
-		log.Error().Msgf("UserStore.GetAll: %v", err)
+		log.Error().
+			Err(err)
 		return nil, err
 	}
 
@@ -59,7 +62,8 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 
 	_, err := u.coll.InsertOne(ctx, user)
 	if err != nil {
-		log.Warn().Msgf("UserStore.Create: %v", err)
+		log.Warn().
+			Err(err)
 		return err
 	}
 
@@ -72,17 +76,20 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 		"_id": uuid,
 	})
 	if err != nil {
-		log.Warn().Msgf("UserStore.Delete: %v", err)
+		log.Warn().
+			Err(err)
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		log.Warn().Msgf("UserStore.Delete: %v", irepository.ErrUserNotFound)
+		log.Warn().
+			Err(err)
 		return irepository.ErrUserNotFound
 	}
 
 	if res.DeletedCount > 1 {
-		log.Error().Msgf("UserStore.Delete: %v", irepository.ErrUUIDDuplicate)
+		log.Error().
+			Err(err)
 		return irepository.ErrUUIDDuplicate
 	}
 
@@ -92,7 +99,8 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 func (u *UserStore) Update(ctx context.Context, uuid string, user *user.User) error {
 	_, err := u.coll.ReplaceOne(ctx, bson.M{"_id": uuid}, user)
 	if err != nil {
-		log.Warn().Msgf("UserStore.Update: %v", err)
+		log.Warn().
+			Err(err)
 		return err
 	}
 	return nil
@@ -106,19 +114,22 @@ func (u *UserStore) User(ctx context.Context, uuid string) (*user.User, error) {
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Info().Msgf("UserStore.GetByID: %v", err)
+		log.Info().
+			Err(err)
 		return nil, irepository.ErrUserNotFound
 	}
 
 	if err != nil {
-		log.Warn().Msgf("UserStore.GetByID: %v", err)
+		log.Warn().
+			Err(err)
 		return nil, err
 	}
 
 	var user *user.User
 	err = res.Decode(&user)
 	if err != nil {
-		log.Error().Msgf("UserStore.GetByID: %v", err)
+		log.Error().
+			Err(err)
 		return nil, err
 	}
 
