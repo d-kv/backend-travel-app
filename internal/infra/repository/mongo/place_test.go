@@ -44,7 +44,7 @@ func TestPlaceCreateIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
-		"must create without any error")
+		"must create place without errors")
 
 	duplID := uuid.New().String()
 
@@ -56,7 +56,7 @@ func TestPlaceCreateIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p2),
-		"must create without any error")
+		"must create place without errors")
 
 	p3 := place.New(
 		place.WithUUID(duplID),
@@ -70,8 +70,10 @@ func TestPlaceCreateIntegration(t *testing.T) {
 
 	p2Expected, err := plStore.Place(context.Background(), duplID)
 
-	assert.NoError(err, "must return place without error")
-	assert.Equal(p2, p2Expected, "must be the same place which was inserted")
+	assert.NoError(err,
+		"must return place without errors")
+	assert.Equal(p2, p2Expected,
+		"must be the same place which was inserted")
 }
 
 func TestPlaceDeleteIntegration(t *testing.T) {
@@ -90,16 +92,16 @@ func TestPlaceDeleteIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Delete(context.Background(), id),
-		"must delete without any error")
+		"must delete place without errors")
 
 	assert.ErrorIs(plStore.Delete(context.Background(), id), irepository.ErrPlaceNotFound,
-		"must be irepository.ErrPlaceNotFound")
+		"must be %v", irepository.ErrPlaceNotFound)
 }
 
-func TestPlaceGetByIDIntegration(t *testing.T) {
+func TestPlacePlaceIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -115,17 +117,17 @@ func TestPlaceGetByIDIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p),
-		"must create without any error")
+		"must create place without errors")
 
 	pExpected, err := plStore.Place(context.Background(), id)
 
 	assert.NoError(err,
-		"must return place without any error")
+		"must return place without errors")
 
 	assert.Equal(p, pExpected)
 }
 
-func TestPlaceGetAllIntegration(t *testing.T) {
+func TestPlacePlacesIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -143,22 +145,22 @@ func TestPlaceGetAllIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Create(context.Background(), p2),
-		"must create without any error")
+		"must create place without errors")
 
 	psExpected, err := plStore.Places(context.Background(), 0, 0)
 
 	assert.NoError(err,
-		"must return all places without any error")
+		"must return all places without errors")
 
 	ps := []place.Place{*p1, *p2}
 
 	assert.Equal(ps, psExpected)
 }
 
-func TestPlaceGetByCategoryIntegration(t *testing.T) {
+func TestPlacePlacesByCategoryIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -187,13 +189,13 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Create(context.Background(), p2),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Create(context.Background(), p3),
-		"must create without any error")
+		"must create place without errors")
 
 	cultPlGot, err := plStore.PlacesByCategory(
 		context.Background(),
@@ -204,7 +206,7 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 	)
 
 	assert.NoError(err,
-		"must return all places without any error")
+		"must return all places without errors")
 
 	cultPlaceWant := []place.Place{*p1, *p2}
 
@@ -219,14 +221,14 @@ func TestPlaceGetByCategoryIntegration(t *testing.T) {
 	)
 
 	assert.NoError(err,
-		"must return all places without any error")
+		"must return all places without errors")
 
 	foodPlaceWant := []place.Place{*p3}
 
 	assert.Equal(foodPlaceWant, foodPlGot)
 }
 
-func TestPlaceGetNearbyIntegration(t *testing.T) {
+func TestPlacePlacesByDistanceIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -252,13 +254,13 @@ func TestPlaceGetNearbyIntegration(t *testing.T) {
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Create(context.Background(), p2),
-		"must create without any error")
+		"must create place without errors")
 
 	assert.NoError(plStore.Create(context.Background(), p3),
-		"must create without any error")
+		"must create place without errors")
 
 	geoQ := &query.Geo{
 		Center: util.NewLatLng(51, 51),
@@ -267,7 +269,7 @@ func TestPlaceGetNearbyIntegration(t *testing.T) {
 	plsGot, err := plStore.PlacesByDistance(context.Background(), geoQ, 0, 0)
 
 	assert.NoError(err,
-		"must return all places without any error")
+		"must return all places without errors")
 
 	plsWant := []place.Place{*p2, *p1, *p3}
 

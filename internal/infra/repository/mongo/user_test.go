@@ -40,10 +40,10 @@ func TestUserCreateIntegration(t *testing.T) {
 
 	err := uStore.Create(context.Background(), wantU)
 	assert.NoError(err,
-		"must create without any error")
+		"must create user without errors")
 	gotU, err := uStore.User(context.Background(), id)
 	assert.NoError(err,
-		"must return without any error")
+		"must return user without errors")
 
 	assert.Equal(wantU, gotU)
 }
@@ -64,10 +64,10 @@ func TestUserUpdateIntegration(t *testing.T) {
 
 	err := uStore.Create(context.Background(), wantU)
 	assert.NoError(err,
-		"must create without any error")
+		"must create user without errors")
 	gotU, err := uStore.User(context.Background(), id)
 	assert.NoError(err,
-		"must return without any error")
+		"must return user without errors")
 
 	assert.Equal(wantU, gotU)
 
@@ -78,6 +78,7 @@ func TestUserUpdateIntegration(t *testing.T) {
 		"must update without any error")
 	gotU, err = uStore.User(context.Background(), id)
 	assert.NoError(err,
-		"must return without any error")
-	assert.Equal(wantU, gotU)
+		"must return user without errors")
+	assert.Equal(wantU, gotU,
+		"must be new user with premium disabled")
 }

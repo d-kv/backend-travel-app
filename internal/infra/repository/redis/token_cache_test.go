@@ -28,7 +28,7 @@ func initEmptyTokenStore() {
 	tStore = NewTokenStore(dbClient)
 }
 
-func TestSetUserIDIntegration(t *testing.T) {
+func TestTokenSetUserIDIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -41,14 +41,14 @@ func TestSetUserIDIntegration(t *testing.T) {
 
 	assert.NoError(tStore.SetUserID(
 		context.Background(), gotRToken, gotUUID),
-		"must insert without any error")
+		"must insert without errors")
 
 	assert.NoError(tStore.SetUserID(
 		context.Background(), gotRToken, gotUUID2),
-		"must replace without any error")
+		"must replace without errors")
 }
 
-func TestUserIDIntegration(t *testing.T) {
+func TestTokenUserIDIntegration(t *testing.T) {
 	if testing.Short() {
 		t.Skip()
 	}
@@ -61,25 +61,25 @@ func TestUserIDIntegration(t *testing.T) {
 
 	_, err := tStore.UserID(context.Background(), wantRToken)
 	assert.ErrorIs(err, irepository.ErrRefreshTokenNotFound,
-		"must return ErrRefreshTokenNotFound")
+		"must return %v", irepository.ErrRefreshTokenNotFound)
 
 	assert.NoError(tStore.SetUserID(
 		context.Background(), wantRToken, wantUUID),
-		"must insert without any error")
+		"must insert without errors")
 
 	gotUUID, err := tStore.UserID(context.Background(), wantRToken)
 	assert.NoError(err,
-		"must return uuid without any error")
+		"must return uuid without errors")
 	assert.Equal(wantUUID, gotUUID,
 		"must be the same")
 
 	assert.NoError(tStore.SetUserID(
 		context.Background(), wantRToken, wantUUID2),
-		"must replace without any error")
+		"must replace without errors")
 
 	gotUUID2, err := tStore.UserID(context.Background(), wantRToken)
 	assert.NoError(err,
-		"must return uuid without any error")
+		"must return uuid without errors")
 	assert.Equal(wantUUID2, gotUUID2,
 		"must be the same")
 }
