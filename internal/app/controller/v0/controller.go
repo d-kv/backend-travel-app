@@ -3,73 +3,49 @@ package controllerv0
 
 import (
 	"context"
-	"errors"
 
-	"github.com/rs/zerolog/log"
-
-	"github.com/d-kv/backend-travel-app/pkg/adapter/igateway"
-	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/icontroller/v0"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 )
 
-// Controller defines a place service controller.
-type Controller struct {
-	placeStore    irepository.PlaceI
-	userStore     irepository.UserI
-	oAuthProvider igateway.OAuthProviderI
-}
+//go:generate go run github.com/vektra/mockery/v2@v2.25.1 --name=PlaceProvider --output=mock --case=underscore --disable-version-string --outpkg=mock
+//go:generate go run github.com/vektra/mockery/v2@v2.25.1 --name=UserProvider --output=mock --case=underscore --disable-version-string --outpkg=mock
+//go:generate go run github.com/vektra/mockery/v2@v2.25.1 --name=OAuthProvider --output=mock --case=underscore --disable-version-string --outpkg=mock
+//go:generate go run github.com/vektra/mockery/v2@v2.25.1 --name=TokenCache --output=mock --case=underscore --disable-version-string --outpkg=mock
 
-var _ icontrollerv0.ControllerI = (*Controller)(nil)
+type (
+	PlaceProvider interface {
+		PlacesByDistance(ctx context.Context, geoQ *query.Geo, skipN int64, resN int64) ([]place.Place, error)
+	}
+	UserProvider interface {
+		Update(ctx context.Context, uuid string, user *user.User) error
+		User(ctx context.Context, uuid string) (*user.User, error)
+	}
+
+	OAuthProvider interface {
+		UserID(ctx context.Context, accessToken string) (userUUID string, err error)
+	}
+
+	TokenCache interface {
+		SetUserID(ctx context.Context, refreshToken, userUUID string) error
+		UserID(ctx context.Context, refreshToken string) (userUUID string, err error)
+	}
+)
+
+type Controller struct {
+	placeProvider PlaceProvider
+	userProvider  UserProvider
+	TokenCache    TokenCache
+	oAuthProvider OAuthProvider
+}
 
 // New is a default ctor for Controller.
-func New(pStore irepository.PlaceI, uStore irepository.UserI) *Controller {
+func New(placeP PlaceProvider, userP UserProvider, tokenC TokenCache, oAuthP OAuthProvider) *Controller {
 	return &Controller{
-		placeStore: pStore,
-		userStore:  uStore,
+		placeProvider: placeP,
+		userProvider:  userP,
+		oAuthProvider: oAuthP,
+		TokenCache:    tokenC,
 	}
-}
-
-func (c *Controller) GetUser(ctx context.Context, oAuthAToken string) (*user.User, error) {
-	u, err := c.userStore.GetByOAuthAToken(ctx, oAuthAToken)
-	if errors.Is(err, irepository.ErrUserNotFound) {
-		oAuthID, err := c.oAuthProvider.GetUserID(ctx, oAuthAToken)
-		if err != nil {
-			log.Info().Msgf("Controller.GetUser: %v", err)
-			return nil, err
-		}
-
-		newU := user.New(
-			user.WithOAuthAToken(oAuthAToken),
-			user.WithOAuthID(oAuthID),
-		)
-
-		err = c.userStore.Create(ctx, newU)
-		if err != nil {
-			log.Info().Msgf("Controller.GetUser: %v", err)
-		}
-		return newU, nil
-	} else if err != nil {
-		log.Info().Msgf("Controller.GetUser: %v", err)
-		return nil, err
-	}
-
-	return u, nil
-}
-
-func (c *Controller) GetPlaces(ctx context.Context, gCenter *util.LatLng) ([]place.Place, error) {
-	geoQ := query.Geo{ // TODO: receive min & max parameters from request
-		Center: gCenter,
-	}
-
-	places, err := c.placeStore.GetNearby(ctx, &geoQ)
-	if err != nil {
-		log.Info().Msgf("Controller.GetPlaces: %v\n", err)
-		return nil, err
-	}
-
-	return places, nil
 }
