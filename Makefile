@@ -11,7 +11,6 @@ tools.install: tools.download
 	@go mod download
 	@cd docs && $(MAKE) --no-print-directory install-tools
 
-.SILENT: docker.build
 docker.build:
 	@docker build \
 		--file Dockerfile \
@@ -19,12 +18,12 @@ docker.build:
 		.
 
 .SILENT: docker-compose.up
-docker-compose.up: docker.build
-	@(cd deployment && docker-compose up -d)
+docker-compose.up:
+	@(cd deployment/place-service && docker-compose up --build -d)
 
 .SILENT: docker-compose.down
 docker-compose.down:
-	@(cd deployment && docker-compose down)
+	@(cd deployment/place-service && docker-compose down)
 
 _lint_vet:
 	@(cd cmd && go vet ./...)

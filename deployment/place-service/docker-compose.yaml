@@ -17,7 +17,9 @@ services:
       - 6379:6379
 
   afterwork-backend:
-    build: ../.
+    build:
+      context: ../../
+      dockerfile: ./Dockerfile
     image: afterwork:latest
     container_name: "afterwork-backend"
     restart: always
