@@ -1,14 +1,15 @@
-package redis //nolint:testpackage // Need internals of repository
+package redistoken //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
 	"fmt"
 	"testing"
 
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/stretchr/testify/assert"
+
+	tokencache "github.com/d-kv/backend-travel-app/pkg/infra/cache/token"
 )
 
 //nolint:gochecknoglobals // Using global var in tests
@@ -25,7 +26,7 @@ func initEmptyTokenStore() {
 	}
 	log.Info().Msgf("initEmptyTokenStore: %s", res)
 
-	tStore = NewTokenStore(dbClient)
+	tStore = NewTokenCache(dbClient)
 }
 
 func TestTokenSetUserIDIntegration(t *testing.T) {
@@ -60,8 +61,8 @@ func TestTokenUserIDIntegration(t *testing.T) {
 	wantUUID2 := "MyUUID2"
 
 	_, err := tStore.UserID(context.Background(), wantRToken)
-	assert.ErrorIs(err, irepository.ErrRefreshTokenNotFound,
-		"must return %v", irepository.ErrRefreshTokenNotFound)
+	assert.ErrorIs(err, tokencache.ErrRefreshTokenNotFound,
+		"must return %v", tokencache.ErrRefreshTokenNotFound)
 
 	assert.NoError(tStore.SetUserID(
 		context.Background(), wantRToken, wantUUID),

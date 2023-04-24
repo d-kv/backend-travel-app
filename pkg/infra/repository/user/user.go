@@ -1,4 +1,4 @@
-package irepository
+package userstore
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 )
 
-type UserI interface {
+type UserProvider interface {
 	Users(ctx context.Context) ([]user.User, error)
 	Create(ctx context.Context, user *user.User) error
 	Update(ctx context.Context, id string, user *user.User) error

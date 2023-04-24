@@ -1,4 +1,4 @@
-package irepository
+package placestore
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 )
 
-type PlaceI interface {
+type PlaceProvider interface {
 	Create(ctx context.Context, place *place.Place) error
 	Delete(ctx context.Context, id string) error
 	Place(ctx context.Context, id string) (*place.Place, error)

@@ -1,4 +1,4 @@
-package icontrollerv0
+package controllerv0
 
 import (
 	"errors"

@@ -1,12 +1,13 @@
-package mongo //nolint:testpackage // Need internals of repository
+package mongouser //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
 	"testing"
 
-	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 )
 
 //nolint:gochecknoglobals // Using global var in tests

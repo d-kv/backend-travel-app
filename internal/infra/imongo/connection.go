@@ -1,4 +1,4 @@
-package mongo
+package imongo
 
 import (
 	"context"

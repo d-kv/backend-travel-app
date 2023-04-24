@@ -1,21 +1,22 @@
-package redis
+package redistoken
 
 import (
 	"context"
 	"errors"
 
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog/log"
+
+	tokencache "github.com/d-kv/backend-travel-app/pkg/infra/cache/token"
 )
 
 type TokenCache struct {
 	db *redis.Client
 }
 
-var _ irepository.TokenI = (*TokenCache)(nil)
+var _ tokencache.TokenCacher = (*TokenCache)(nil)
 
-func NewTokenStore(cl *redis.Client) *TokenCache {
+func NewTokenCache(cl *redis.Client) *TokenCache {
 	return &TokenCache{
 		db: cl,
 	}
@@ -37,7 +38,7 @@ func (t *TokenCache) UserID(ctx context.Context, rToken string) (string, error) 
 		if errors.Is(err, redis.Nil) {
 			log.Info().
 				Err(err)
-			return "", irepository.ErrRefreshTokenNotFound
+			return "", tokencache.ErrRefreshTokenNotFound
 		}
 
 		log.Error().

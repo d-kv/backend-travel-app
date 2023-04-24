@@ -1,5 +1,4 @@
-// TODO: add tests
-package mongo
+package mongouser
 
 import (
 	"context"
@@ -10,7 +9,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
+	"github.com/d-kv/backend-travel-app/pkg/infra/repository"
+	userrepo "github.com/d-kv/backend-travel-app/pkg/infra/repository/user"
 )
 
 // UserStore with CRUD-like operations on the User object.
@@ -18,7 +18,7 @@ type UserStore struct {
 	coll *mongo.Collection
 }
 
-var _ irepository.UserI = (*UserStore)(nil)
+var _ userrepo.UserProvider = (*UserStore)(nil)
 
 // NewUserStore is a default ctor.
 func NewUserStore(coll *mongo.Collection) *UserStore {
@@ -33,7 +33,7 @@ func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrUserNotFound
+		return nil, userrepo.ErrUserNotFound
 	}
 	if err != nil {
 		log.Error().
@@ -57,7 +57,7 @@ func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 // UUID field must be populated.
 func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 	if user.UUID == "" {
-		return irepository.ErrUUIDNotPopulated
+		return repository.ErrUUIDNotPopulated
 	}
 
 	_, err := u.coll.InsertOne(ctx, user)
@@ -84,13 +84,13 @@ func (u *UserStore) Delete(ctx context.Context, uuid string) error {
 	if res.DeletedCount == 0 {
 		log.Warn().
 			Err(err)
-		return irepository.ErrUserNotFound
+		return userrepo.ErrUserNotFound
 	}
 
 	if res.DeletedCount > 1 {
 		log.Error().
 			Err(err)
-		return irepository.ErrUUIDDuplicate
+		return repository.ErrUUIDDuplicate
 	}
 
 	return nil
@@ -116,7 +116,7 @@ func (u *UserStore) User(ctx context.Context, uuid string) (*user.User, error) {
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrUserNotFound
+		return nil, userrepo.ErrUserNotFound
 	}
 
 	if err != nil {

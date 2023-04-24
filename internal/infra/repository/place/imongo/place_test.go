@@ -1,4 +1,4 @@
-package mongo //nolint:testpackage // Need internals of repository
+package mongoplace //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/util"
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
+	placerepo "github.com/d-kv/backend-travel-app/pkg/infra/repository/place"
 )
 
 //nolint:gochecknoglobals // Using global var in tests
@@ -97,8 +97,8 @@ func TestPlaceDeleteIntegration(t *testing.T) {
 	assert.NoError(plStore.Delete(context.Background(), id),
 		"must delete place without errors")
 
-	assert.ErrorIs(plStore.Delete(context.Background(), id), irepository.ErrPlaceNotFound,
-		"must be %v", irepository.ErrPlaceNotFound)
+	assert.ErrorIs(plStore.Delete(context.Background(), id), placerepo.ErrPlaceNotFound,
+		"must be %v", placerepo.ErrPlaceNotFound)
 }
 
 func TestPlacePlaceIntegration(t *testing.T) {

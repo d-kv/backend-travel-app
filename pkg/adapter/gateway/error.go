@@ -1,4 +1,4 @@
-package igateway
+package gateway
 
 import "errors"
 

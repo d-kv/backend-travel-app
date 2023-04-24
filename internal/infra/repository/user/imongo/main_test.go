@@ -1,4 +1,4 @@
-package mongo //nolint:testpackage // Need internals of repository
+package mongouser //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
@@ -12,6 +12,8 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/d-kv/backend-travel-app/internal/infra/imongo"
 )
 
 //nolint:gochecknoglobals // Using global var in tests
@@ -46,7 +48,7 @@ func TestMain(m *testing.M) {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	err = pool.Retry(func() error {
-		dbClient, err = NewClient(
+		dbClient, err = imongo.NewClient(
 			fmt.Sprintf("%s:%s", mongoURI, resource.GetPort("27017/tcp")),
 			connTimeout,
 		)

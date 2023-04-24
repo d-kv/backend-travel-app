@@ -1,4 +1,4 @@
-package mongo
+package mongoplace
 
 import (
 	"context"
@@ -12,7 +12,8 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
-	"github.com/d-kv/backend-travel-app/pkg/infra/irepository"
+	"github.com/d-kv/backend-travel-app/pkg/infra/repository"
+	placerepo "github.com/d-kv/backend-travel-app/pkg/infra/repository/place"
 )
 
 const IndexCreationTimeout = 10
@@ -22,7 +23,7 @@ type PlaceStore struct {
 	coll *mongo.Collection
 }
 
-var _ irepository.PlaceI = (*PlaceStore)(nil)
+var _ placerepo.PlaceProvider = (*PlaceStore)(nil)
 
 // NewPlaceStore is a default ctor.
 func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
@@ -57,7 +58,7 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 // UUID field must be populated.
 func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 	if place.UUID == "" {
-		return irepository.ErrUUIDNotPopulated
+		return repository.ErrUUIDNotPopulated
 	}
 
 	_, err := p.coll.InsertOne(ctx, place)
@@ -83,14 +84,14 @@ func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
 
 	if res.DeletedCount == 0 {
 		log.Info().
-			Err(irepository.ErrPlaceNotFound)
-		return irepository.ErrPlaceNotFound
+			Err(placerepo.ErrPlaceNotFound)
+		return placerepo.ErrPlaceNotFound
 	}
 
 	if res.DeletedCount > 1 {
 		log.Error().
-			Err(irepository.ErrUUIDDuplicate)
-		return irepository.ErrUUIDDuplicate
+			Err(repository.ErrUUIDDuplicate)
+		return repository.ErrUUIDDuplicate
 	}
 	return nil
 }
@@ -105,7 +106,7 @@ func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, erro
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrPlaceNotFound
+		return nil, placerepo.ErrPlaceNotFound
 	}
 
 	if err != nil {
@@ -136,7 +137,7 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]pla
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrUserNotFound
+		return nil, placerepo.ErrPlaceNotFound
 	}
 	if err != nil {
 		log.Error().
@@ -181,7 +182,7 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrPlaceNotFound
+		return nil, placerepo.ErrPlaceNotFound
 	}
 	if err != nil {
 		log.Warn().
@@ -201,7 +202,8 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 }
 
 // PlacesByDistance returns places from nearest to farthest.
-func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo, skipN int64, resN int64) ([]place.Place, error) {
+func (p *PlaceStore) PlacesByDistance(ctx context.Context,
+	geoQ *query.Geo, skipN int64, resN int64) ([]place.Place, error) {
 	gCenterJSON := bson.M{
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
@@ -224,7 +226,7 @@ func (p *PlaceStore) PlacesByDistance(ctx context.Context, geoQ *query.Geo, skip
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
 			Err(err)
-		return nil, irepository.ErrPlaceNotFound
+		return nil, placerepo.ErrPlaceNotFound
 	}
 	if err != nil {
 		log.Warn().

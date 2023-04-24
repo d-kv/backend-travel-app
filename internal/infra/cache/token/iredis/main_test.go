@@ -1,4 +1,4 @@
-package redis //nolint:testpackage // Need internals of repository
+package redistoken //nolint:testpackage // Need internals of repository
 
 import (
 	"context"
@@ -12,6 +12,8 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+
+	"github.com/d-kv/backend-travel-app/internal/infra/iredis"
 )
 
 //nolint:gochecknoglobals // Using global var in tests
@@ -44,7 +46,7 @@ func TestMain(m *testing.M) {
 	}
 
 	if err = pool.Retry(func() error {
-		dbClient, err = NewClient(
+		dbClient, err = iredis.NewClient(
 			fmt.Sprintf("%s:%s", redisURI, resource.GetPort("6379/tcp")),
 			connTimeout,
 		)
