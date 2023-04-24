@@ -1,5 +1,4 @@
 // TODO: use singletones for permanent request parameters
-// TODO: add logging
 package tinkoff
 
 import (
@@ -9,9 +8,23 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"time"
 
-	"github.com/d-kv/backend-travel-app/pkg/adapter/igateway"
+	"github.com/d-kv/backend-travel-app/pkg/adapter/gateway"
+	"github.com/rs/zerolog/log"
 )
+
+type Response struct {
+	Active      bool      `json:"active"`
+	Scope       []string  `json:"scope"`
+	CliendAppID string    `json:"cliend_id"`
+	TokenType   string    `json:"token_type"`
+	ExpireAt    time.Time `json:"exp"`
+	IssuedAt    time.Time `json:"iat"`
+	UserID      string    `json:"sub"`
+	Audience    []string  `json:"aud"`
+	Issuer      string    `json:"iss"`
+}
 
 const introspectURL = "https://id.tinkoff.ru/auth/introspect"
 
@@ -21,15 +34,17 @@ type OAuthProvider struct {
 	clt    *http.Client
 }
 
-func New(c *http.Client) *OAuthProvider {
+func New(id, secret string, cl *http.Client) *OAuthProvider {
 	return &OAuthProvider{
-		clt: c,
+		id:     id,
+		secret: secret,
+		clt:    cl,
 	}
 }
 
-var _ igateway.OAuthProviderI = (*OAuthProvider)(nil)
+var _ gateway.OAuthProviderI = (*OAuthProvider)(nil)
 
-func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, error) {
+func (p *OAuthProvider) UserID(ctx context.Context, aToken string) (string, error) {
 	bodyRdr := bytes.NewReader([]byte(fmt.Sprintf("token=%s", aToken)))
 	req, err := http.NewRequestWithContext(
 		ctx,
@@ -38,6 +53,8 @@ func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, e
 		bodyRdr,
 	)
 	if err != nil {
+		log.Error().
+			Err(err)
 		return "", err
 	}
 	opaqueCreds := base64.StdEncoding.EncodeToString([]byte(
@@ -56,8 +73,10 @@ func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, e
 		"application/x-www-form-urlencoded",
 	)
 
-	resp, err := p.clt.Do(req) // TODO: add timeout
+	resp, err := p.clt.Do(req)
 	if err != nil {
+		log.Error().
+			Err(err)
 		return "", err
 	}
 	defer resp.Body.Close()
@@ -65,10 +84,16 @@ func (p *OAuthProvider) GetUserID(ctx context.Context, aToken string) (string, e
 	var respJSON Response
 	err = json.NewDecoder(resp.Body).Decode(&respJSON)
 	if err != nil {
+		log.Error().
+			Err(err)
 		return "", err
 	}
 	if !respJSON.Active || respJSON.CliendAppID != p.id {
-		return "", igateway.ErrTokenIsExpired
+		log.Info().
+			Str("user_id", respJSON.UserID).
+			Str("expired_at", respJSON.ExpireAt.String()).
+			Msg("bad auth attempt")
+		return "", gateway.ErrTokenIsExpired
 	}
 	return respJSON.UserID, nil
 }
