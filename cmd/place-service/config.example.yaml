@@ -1,4 +1,4 @@
-DB:
+Storage:
   Mongo:
     URI: "mongodb://username:password@host1:port"
     DB: "my_db_name"
