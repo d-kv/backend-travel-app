@@ -40,7 +40,7 @@ type (
 )
 
 type Config struct {
-	DB            Storage
+	Storage       Storage
 	Cache         Cache
 	OAuthProvider OAuthProvider
 	Server        Server

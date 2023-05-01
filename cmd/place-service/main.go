@@ -39,7 +39,7 @@ func main() {
 			Err(err)
 	}
 
-	mongoCl, err := imongo.NewClient(cfg.DB.Mongo.URI, connTimeout)
+	mongoCl, err := imongo.NewClient(cfg.Storage.Mongo.URI, connTimeout)
 	if err != nil {
 		log.Panic().
 			Err(err)
@@ -53,13 +53,13 @@ func main() {
 
 	userRepo := mongouser.NewUserStore(
 		mongoCl.
-			Database(cfg.DB.Mongo.DB).
-			Collection(cfg.DB.Mongo.Coll.User),
+			Database(cfg.Storage.Mongo.DB).
+			Collection(cfg.Storage.Mongo.Coll.User),
 	)
 	placeRepo := mongoplace.NewPlaceStore(
 		mongoCl.
-			Database(cfg.DB.Mongo.DB).
-			Collection(cfg.DB.Mongo.Coll.Place),
+			Database(cfg.Storage.Mongo.DB).
+			Collection(cfg.Storage.Mongo.Coll.Place),
 	)
 
 	tokenCache := redistoken.NewTokenCache(
