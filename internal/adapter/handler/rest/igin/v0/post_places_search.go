@@ -153,17 +153,23 @@ func (h *HTTPHandler) postPlacesSearch(ctx *gin.Context) {
 		query.WithMax(maxD),
 	)
 
-	var req reqBody
-	err = ctx.BindJSON(&req)
-	if err != nil {
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-			"error":       "internal error",
-			"description": err, // FIXME: do not return raw error
-		})
-		return
+	var mCtgs []category.MainCategory
+	var sCtgs []category.SubCategory
+	if ctx.Request.ContentLength != 0 {
+		var req reqBody
+		err = ctx.BindJSON(&req)
+		if err != nil {
+			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
+				"error": "invalid request body",
+			})
+			return
+		}
+
+		mCtgs = req.Category.Main
+		sCtgs = req.Category.Sub
 	}
 
-	places, err := h.placeCtrl.SearchPlaces(ctx, gQ, req.Category.Main, req.Category.Sub, skipN, resN)
+	places, err := h.placeCtrl.SearchPlaces(ctx, gQ, mCtgs, sCtgs, skipN, resN)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error":       "internal error",
