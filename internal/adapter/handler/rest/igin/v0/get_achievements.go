@@ -19,7 +19,7 @@ func (h *HTTPHandler) getAchievements(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error":       "internal error",
-			"description": err, // FIXME: do not return raw error
+			"description": err.Error(), // FIXME: do not return raw error
 		})
 		return
 	}
@@ -28,7 +28,7 @@ func (h *HTTPHandler) getAchievements(ctx *gin.Context) {
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error":       "internal error",
-			"description": err, // FIXME: do not return raw error
+			"description": err.Error(), // FIXME: do not return raw error
 		})
 
 		return

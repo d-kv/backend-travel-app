@@ -40,7 +40,7 @@ func (h *HTTPHandler) postAuthOAuth(ctx *gin.Context) {
 
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error":       "internal error",
-			"description": err, // FIXME: do not return raw error
+			"description": err.Error(), // FIXME: do not return raw error
 		})
 
 		return
