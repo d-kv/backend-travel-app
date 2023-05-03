@@ -27,6 +27,8 @@ var _ placerepo.PlaceProvider = (*PlaceStore)(nil)
 
 // NewPlaceStore is a default ctor.
 func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
+	const mName = "NewPlaceStore"
+
 	indexModel := mongo.IndexModel{
 		Keys: bson.D{
 			{Key: "location.geo", Value: "2dsphere"},
@@ -41,11 +43,13 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 
 	if err != nil {
 		log.Fatal().
+			Str("method", mName).
 			Err(err).
 			Msgf("unable to create %s index", name)
 	}
 
 	log.Info().
+		Str("method", mName).
 		Msgf("%s index created", name)
 
 	return &PlaceStore{
@@ -57,6 +61,8 @@ func NewPlaceStore(coll *mongo.Collection) *PlaceStore {
 //
 // UUID field must be populated.
 func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
+	const mName = "PlaceStore.Create"
+
 	if place.UUID == "" {
 		return repository.ErrUUIDNotPopulated
 	}
@@ -64,7 +70,10 @@ func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 	_, err := p.coll.InsertOne(ctx, place)
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return err
 	}
 
@@ -73,31 +82,35 @@ func (p *PlaceStore) Create(ctx context.Context, place *place.Place) error {
 
 // Delete deletes place with given UUID.
 func (p *PlaceStore) Delete(ctx context.Context, uuid string) error {
+	const mName = "PlaceStore.Delete"
+
 	res, err := p.coll.DeleteOne(ctx, bson.M{
 		"_id": uuid,
 	})
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return err
 	}
 
 	if res.DeletedCount == 0 {
 		log.Info().
-			Err(placerepo.ErrPlaceNotFound)
-		return placerepo.ErrPlaceNotFound
-	}
+			Str("method", mName).
+			Str("uuid", uuid).
+			Msg("no places with given UUID")
 
-	if res.DeletedCount > 1 {
-		log.Error().
-			Err(repository.ErrUUIDDuplicate)
-		return repository.ErrUUIDDuplicate
+		return placerepo.ErrPlaceNotFound
 	}
 	return nil
 }
 
 // Place returns place with given UUID.
 func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, error) {
+	const mName = "PlaceStore.Place"
+
 	res := p.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
@@ -105,13 +118,20 @@ func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, erro
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
-			Err(err)
+			Str("method", mName).
+			Str("uuid", uuid).
+			Err(err).
+			Msg("no places with given UUID")
+
 		return nil, placerepo.ErrPlaceNotFound
 	}
 
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -119,7 +139,10 @@ func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, erro
 	err = res.Decode(&place)
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 
@@ -128,6 +151,8 @@ func (p *PlaceStore) Place(ctx context.Context, uuid string) (*place.Place, erro
 
 // Places returns places.
 func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]place.Place, error) {
+	const mName = "PlaceStore.Places"
+
 	opts := options.
 		Find().
 		SetLimit(resN).
@@ -141,7 +166,10 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]pla
 	}
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -149,7 +177,10 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]pla
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 
@@ -159,6 +190,8 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]pla
 // PlacesByCategory returns places with given category.
 func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 	mCtgs []category.MainCategory, sCtgs []category.SubCategory, skipN int64, resN int64) ([]place.Place, error) {
+	const mName = "PlaceStore.PlacesByCategory"
+
 	if mCtgs == nil {
 		mCtgs = []category.MainCategory{}
 	}
@@ -181,12 +214,18 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 	cursor, err := p.coll.Find(ctx, filter, opts)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("no places for the given criteria")
+
 		return nil, placerepo.ErrPlaceNotFound
 	}
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -194,7 +233,10 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 
@@ -204,6 +246,8 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 // PlacesByDistance returns places from nearest to farthest.
 func (p *PlaceStore) PlacesByDistance(ctx context.Context,
 	geoQ *query.Geo, skipN int64, resN int64) ([]place.Place, error) {
+	const mName = "PlaceStore.PlacesByDistance"
+
 	gCenterJSON := bson.M{
 		"type":        "Point",
 		"coordinates": []float64{geoQ.Center.Longitude, geoQ.Center.Latitude},
@@ -225,12 +269,18 @@ func (p *PlaceStore) PlacesByDistance(ctx context.Context,
 	}, opts)
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("no places for the given criteria")
+
 		return nil, placerepo.ErrPlaceNotFound
 	}
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -238,7 +288,10 @@ func (p *PlaceStore) PlacesByDistance(ctx context.Context,
 	err = cursor.All(ctx, &places) // FIXME: may be an overflow
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 

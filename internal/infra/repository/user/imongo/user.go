@@ -29,15 +29,23 @@ func NewUserStore(coll *mongo.Collection) *UserStore {
 
 // Users returns all users.
 func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
+	const mName = "UserStore.Users"
+
 	cursor, err := u.coll.Find(ctx, bson.D{})
 	if errors.Is(err, mongo.ErrNoDocuments) {
 		log.Info().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("user db is empty")
+
 		return nil, userrepo.ErrUserNotFound
 	}
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -45,7 +53,10 @@ func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 	err = cursor.All(ctx, &users) // FIXME: may be an overflow
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 
@@ -56,6 +67,8 @@ func (u *UserStore) Users(ctx context.Context) ([]user.User, error) {
 //
 // UUID field must be populated.
 func (u *UserStore) Create(ctx context.Context, user *user.User) error {
+	const mName = "UserStore.Create"
+
 	if user.UUID == "" {
 		return repository.ErrUUIDNotPopulated
 	}
@@ -63,7 +76,10 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 	_, err := u.coll.InsertOne(ctx, user)
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return err
 	}
 
@@ -72,35 +88,37 @@ func (u *UserStore) Create(ctx context.Context, user *user.User) error {
 
 // Delete deletes user with given UUID.
 func (u *UserStore) Delete(ctx context.Context, uuid string) error {
+	const mName = "UserStore.Delete"
+
 	res, err := u.coll.DeleteOne(ctx, bson.M{
 		"_id": uuid,
 	})
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return err
 	}
 
 	if res.DeletedCount == 0 {
-		log.Warn().
-			Err(err)
 		return userrepo.ErrUserNotFound
-	}
-
-	if res.DeletedCount > 1 {
-		log.Error().
-			Err(err)
-		return repository.ErrUUIDDuplicate
 	}
 
 	return nil
 }
 
 func (u *UserStore) Update(ctx context.Context, uuid string, user *user.User) error {
+	const mName = "UserStore.Update"
+
 	_, err := u.coll.ReplaceOne(ctx, bson.M{"_id": uuid}, user)
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return err
 	}
 	return nil
@@ -108,20 +126,23 @@ func (u *UserStore) Update(ctx context.Context, uuid string, user *user.User) er
 
 // User returns user with given UUID.
 func (u *UserStore) User(ctx context.Context, uuid string) (*user.User, error) {
+	const mName = "UserStore.User"
+
 	res := u.coll.FindOne(ctx, bson.M{
 		"_id": uuid,
 	})
 
 	err := res.Err()
 	if errors.Is(err, mongo.ErrNoDocuments) {
-		log.Info().
-			Err(err)
 		return nil, userrepo.ErrUserNotFound
 	}
 
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error from mongoDB driver")
+
 		return nil, err
 	}
 
@@ -129,7 +150,10 @@ func (u *UserStore) User(ctx context.Context, uuid string) (*user.User, error) {
 	err = res.Decode(&user)
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("error while decoding")
+
 		return nil, err
 	}
 

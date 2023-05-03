@@ -9,7 +9,10 @@ import (
 )
 
 func NewClient(uri string, connTimeout time.Duration) (*redis.Client, error) {
+	const mName = "iredis.NewClient"
+
 	log.Info().
+		Str("method", mName).
 		Str("redis uri", uri).
 		Msg("trying to connect to redis")
 
@@ -24,12 +27,15 @@ func NewClient(uri string, connTimeout time.Duration) (*redis.Client, error) {
 	err := cl.Ping(ctx).Err()
 	if err != nil {
 		log.Error().
-			Err(err)
+			Str("method", mName).
+			Err(err).
+			Msg("unable to ping redis")
 
 		return nil, err
 	}
 
 	log.Info().
+		Str("method", mName).
 		Msg("connected to redis")
 
 	return cl, nil
