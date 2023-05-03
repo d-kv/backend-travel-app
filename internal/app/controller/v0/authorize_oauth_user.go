@@ -12,8 +12,8 @@ func (c *Controller) AuthorizeOAuthUser(ctx context.Context, aToken, rToken stri
 	uID, err := c.oAuthProvider.UserID(ctx, aToken)
 	if err != nil {
 		log.Warn().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from oAuthProvider")
 
 		return "", err
@@ -22,8 +22,8 @@ func (c *Controller) AuthorizeOAuthUser(ctx context.Context, aToken, rToken stri
 	err = c.tokenCache.SetUserID(ctx, rToken, uID)
 	if err != nil {
 		log.Error().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from tokenCache")
 
 		return "", err

@@ -14,8 +14,8 @@ func (c *Controller) GetAchievements(ctx context.Context, userUUID string) ([]us
 	u, err := c.userProvider.User(ctx, userUUID)
 	if err != nil {
 		log.Warn().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from userProvider")
 
 		return nil, err

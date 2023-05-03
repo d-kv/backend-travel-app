@@ -14,8 +14,8 @@ func (c *Controller) AddAchievement(ctx context.Context, achievement *user.Achie
 	u, err := c.userProvider.User(ctx, userUUID)
 	if err != nil {
 		log.Warn().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from userProvider")
 
 		return err
@@ -26,8 +26,8 @@ func (c *Controller) AddAchievement(ctx context.Context, achievement *user.Achie
 	err = c.userProvider.Update(ctx, userUUID, u)
 	if err != nil {
 		log.Error().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from userProvider")
 
 		return err

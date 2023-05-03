@@ -17,16 +17,16 @@ func (c *Controller) Authenticate(ctx context.Context, refreshToken string) (str
 	if err != nil {
 		if errors.Is(err, tokencache.ErrRefreshTokenNotFound) {
 			log.Warn().
-				Err(err).
 				Str("method", mName).
+				Err(err).
 				Msg("error from tokenCache")
 
 			return "", icontrollerv0.ErrRefreshTokenNotFound
 		}
 
 		log.Error().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from tokenCache")
 
 		return "", err

@@ -21,16 +21,16 @@ func (c *Controller) SearchPlaces(ctx context.Context, geoQ *query.Geo,
 	if err != nil {
 		if errors.Is(err, placerepo.ErrPlaceNotFound) {
 			log.Info().
-				Err(err).
 				Str("method", mName).
+				Err(err).
 				Msg("no places for the given criteria")
 
 			return nil, icontrollerv0.ErrNoPlaces
 		}
 
 		log.Error().
-			Err(err).
 			Str("method", mName).
+			Err(err).
 			Msg("error from placeProvider")
 
 		return nil, err
