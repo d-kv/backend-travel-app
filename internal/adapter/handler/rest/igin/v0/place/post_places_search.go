@@ -1,4 +1,4 @@
-package iginv0
+package igin_place_v0
 
 import (
 	"context"
@@ -77,7 +77,7 @@ func toResBody(places []place.Place) []resPlace {
 	return ret
 }
 
-func (h *HTTPHandler) postPlacesSearch(ctx *gin.Context) {
+func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 	llStr, ok := ctx.GetQuery("ll")
 	if !ok {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{

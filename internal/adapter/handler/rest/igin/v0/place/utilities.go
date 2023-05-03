@@ -1,4 +1,4 @@
-package iginv0
+package igin_place_v0
 
 const (
 	precision = 6

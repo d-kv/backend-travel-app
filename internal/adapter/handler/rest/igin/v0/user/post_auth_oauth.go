@@ -1,4 +1,4 @@
-package iginv0
+package igin_user_v0
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type userOAuthAuthorizer interface {
 	AuthorizeOAuthUser(ctx context.Context, accessToken, refreshToken string) (userUUID string, err error)
 }
 
-func (h *HTTPHandler) postAuthOAuth(ctx *gin.Context) {
+func (h *UserHandler) postAuthOAuth(ctx *gin.Context) {
 	aT, ok := ctx.GetQuery("access_token")
 	if !ok {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{

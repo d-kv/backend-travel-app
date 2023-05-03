@@ -11,7 +11,8 @@ import (
 
 	"github.com/d-kv/backend-travel-app/cmd/place-service/config"
 	"github.com/d-kv/backend-travel-app/internal/adapter/gateway/oauth_provider/tinkoff"
-	ggonicv0 "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin/v0"
+	igin_place_v0 "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin/v0/place"
+	igin_user_v0 "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin/v0/user"
 	iplace_ctrl_v0 "github.com/d-kv/backend-travel-app/internal/app/controller/v0/place"
 	iuser_ctrl_v0 "github.com/d-kv/backend-travel-app/internal/app/controller/v0/user"
 	redistoken "github.com/d-kv/backend-travel-app/internal/infra/cache/token/iredis"
@@ -91,11 +92,15 @@ func main() {
 	g.Use(gin.Recovery())
 	g.Use(ginzerolog.Logger("gin"))
 
-	restSrv := ggonicv0.New(
+	_ = igin_user_v0.New(
 		userCtrl,
+		g,
+	)
+
+	_ = igin_place_v0.New(
 		placeCtrl,
 		g,
 	)
 
-	_ = restSrv.Run(cfg.Server.REST.IP, cfg.Server.REST.Port)
+	g.Run(cfg.Server.REST.IP + ":" + cfg.Server.REST.Port)
 }

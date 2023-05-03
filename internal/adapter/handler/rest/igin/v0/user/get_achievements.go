@@ -1,4 +1,4 @@
-package iginv0
+package igin_user_v0
 
 import (
 	"context"
@@ -14,7 +14,7 @@ type userAchievementsProvider interface {
 	GetAchievements(ctx context.Context, userUUID string) ([]user.Achievement, error)
 }
 
-func (h *HTTPHandler) getAchievements(ctx *gin.Context) {
+func (h *UserHandler) getAchievements(ctx *gin.Context) {
 	uID, err := igin.UserUUID(ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
