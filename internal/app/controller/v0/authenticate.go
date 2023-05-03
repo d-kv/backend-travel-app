@@ -11,16 +11,24 @@ import (
 )
 
 func (c *Controller) Authenticate(ctx context.Context, refreshToken string) (string, error) {
-	uID, err := c.TokenCache.UserID(ctx, refreshToken)
+	const mName = "Controller.Authenticate"
+
+	uID, err := c.tokenCache.UserID(ctx, refreshToken)
 	if err != nil {
 		if errors.Is(err, tokencache.ErrRefreshTokenNotFound) {
 			log.Warn().
-				Err(err)
+				Err(err).
+				Str("method", mName).
+				Msg("error from tokenCache")
+
 			return "", icontrollerv0.ErrRefreshTokenNotFound
 		}
 
 		log.Error().
-			Err(err)
+			Err(err).
+			Str("method", mName).
+			Msg("error from tokenCache")
+
 		return "", err
 	}
 	return uID, nil

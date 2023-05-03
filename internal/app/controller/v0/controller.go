@@ -36,7 +36,7 @@ type (
 type Controller struct {
 	placeProvider PlaceProvider
 	userProvider  UserProvider
-	TokenCache    TokenCache
+	tokenCache    TokenCache
 	oAuthProvider OAuthProvider
 }
 
@@ -46,6 +46,6 @@ func New(placeP PlaceProvider, userP UserProvider, tokenC TokenCache, oAuthP OAu
 		placeProvider: placeP,
 		userProvider:  userP,
 		oAuthProvider: oAuthP,
-		TokenCache:    tokenC,
+		tokenCache:    tokenC,
 	}
 }

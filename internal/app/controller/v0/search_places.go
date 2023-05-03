@@ -15,16 +15,24 @@ import (
 
 func (c *Controller) SearchPlaces(ctx context.Context, geoQ *query.Geo,
 	_ []category.MainCategory, _ []category.SubCategory, skipN int64, resN int64) ([]place.Place, error) {
+	const mName = "Controller.SearchPlaces"
+
 	places, err := c.placeProvider.PlacesByDistance(ctx, geoQ, skipN, resN)
 	if err != nil {
 		if errors.Is(err, placerepo.ErrPlaceNotFound) {
 			log.Info().
-				Err(err)
+				Err(err).
+				Str("method", mName).
+				Msg("no places for the given criteria")
+
 			return nil, icontrollerv0.ErrNoPlaces
 		}
 
 		log.Error().
-			Err(err)
+			Err(err).
+			Str("method", mName).
+			Msg("error from placeProvider")
+
 		return nil, err
 	}
 

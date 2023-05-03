@@ -9,10 +9,15 @@ import (
 )
 
 func (c *Controller) AddAchievement(ctx context.Context, achievement *user.Achievement, userUUID string) error {
+	const mName = "Controller.AddAchievement"
+
 	u, err := c.userProvider.User(ctx, userUUID)
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Err(err).
+			Str("method", mName).
+			Msg("error from userProvider")
+
 		return err
 	}
 
@@ -21,7 +26,10 @@ func (c *Controller) AddAchievement(ctx context.Context, achievement *user.Achie
 	err = c.userProvider.Update(ctx, userUUID, u)
 	if err != nil {
 		log.Error().
-			Err(err)
+			Err(err).
+			Str("method", mName).
+			Msg("error from userProvider")
+
 		return err
 	}
 

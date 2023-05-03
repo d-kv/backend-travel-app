@@ -9,10 +9,15 @@ import (
 )
 
 func (c *Controller) GetAchievements(ctx context.Context, userUUID string) ([]user.Achievement, error) {
+	const mName = "Controller.GetAchievements"
+
 	u, err := c.userProvider.User(ctx, userUUID)
 	if err != nil {
 		log.Warn().
-			Err(err)
+			Err(err).
+			Str("method", mName).
+			Msg("error from userProvider")
+
 		return nil, err
 	}
 
