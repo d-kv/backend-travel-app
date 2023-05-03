@@ -1,4 +1,4 @@
-package controllerv0
+package iuser_ctrl_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"context"
@@ -6,12 +6,12 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0"
+	user_controller_v0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0/user"
 	tokencache "github.com/d-kv/backend-travel-app/pkg/infra/cache/token"
 )
 
-func (c *Controller) Authenticate(ctx context.Context, refreshToken string) (string, error) {
-	const mName = "Controller.Authenticate"
+func (c *UserController) Authenticate(ctx context.Context, refreshToken string) (string, error) {
+	const mName = "UserController.Authenticate"
 
 	uID, err := c.tokenCache.UserID(ctx, refreshToken)
 	if err != nil {
@@ -21,7 +21,7 @@ func (c *Controller) Authenticate(ctx context.Context, refreshToken string) (str
 				Err(err).
 				Msg("error from tokenCache")
 
-			return "", icontrollerv0.ErrRefreshTokenNotFound
+			return "", user_controller_v0.ErrRefreshTokenNotFound
 		}
 
 		log.Error().

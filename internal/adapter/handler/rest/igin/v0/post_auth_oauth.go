@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0"
+	user_ctrl_v0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0/user"
 )
 
 type userOAuthAuthorizer interface {
@@ -32,7 +32,7 @@ func (h *HTTPHandler) postAuthOAuth(ctx *gin.Context) {
 
 	uID, err := h.userCtrl.AuthorizeOAuthUser(ctx, aT, rT)
 	if err != nil {
-		if errors.Is(err, icontrollerv0.ErrUserIsBlocked) {
+		if errors.Is(err, user_ctrl_v0.ErrUserIsBlocked) {
 			ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{
 				"error": "user account is blocked",
 			})

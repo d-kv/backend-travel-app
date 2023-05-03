@@ -1,4 +1,4 @@
-package controllerv0
+package iuser_ctrl_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"context"
@@ -8,8 +8,8 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 )
 
-func (c *Controller) AddAchievement(ctx context.Context, achievement *user.Achievement, userUUID string) error {
-	const mName = "Controller.AddAchievement"
+func (c *UserController) AddAchievement(ctx context.Context, achievement *user.Achievement, userUUID string) error {
+	const mName = "UserController.AddAchievement"
 
 	u, err := c.userProvider.User(ctx, userUUID)
 	if err != nil {

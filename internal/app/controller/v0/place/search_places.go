@@ -1,4 +1,4 @@
-package controllerv0
+package iplace_ctrl_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"context"
@@ -6,16 +6,16 @@ import (
 
 	"github.com/rs/zerolog/log"
 
-	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0"
+	place_controller_v0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/place/category"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/query"
 	placerepo "github.com/d-kv/backend-travel-app/pkg/infra/repository/place"
 )
 
-func (c *Controller) SearchPlaces(ctx context.Context, geoQ *query.Geo,
+func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *query.Geo,
 	_ []category.MainCategory, _ []category.SubCategory, skipN int64, resN int64) ([]place.Place, error) {
-	const mName = "Controller.SearchPlaces"
+	const mName = "PlaceController.SearchPlaces"
 
 	places, err := c.placeProvider.PlacesByDistance(ctx, geoQ, skipN, resN)
 	if err != nil {
@@ -25,7 +25,7 @@ func (c *Controller) SearchPlaces(ctx context.Context, geoQ *query.Geo,
 				Err(err).
 				Msg("no places for the given criteria")
 
-			return nil, icontrollerv0.ErrNoPlaces
+			return nil, place_controller_v0.ErrNoPlaces
 		}
 
 		log.Error().

@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 
 	igin "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin"
-	icontrollerv0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0"
+	user_ctrl_v0 "github.com/d-kv/backend-travel-app/pkg/app/controller/v0/user"
 	"github.com/d-kv/backend-travel-app/pkg/domain/model/user"
 )
 
@@ -38,11 +38,11 @@ func (h *HTTPHandler) postAchievement(ctx *gin.Context) {
 	err = h.userCtrl.AddAchievement(ctx, &ach, uID)
 	if err != nil {
 		//nolint:gocritic // switch on an error will fail on wrapped errors
-		if errors.Is(err, icontrollerv0.ErrAchievementAlreadyExists) {
+		if errors.Is(err, user_ctrl_v0.ErrAchievementAlreadyExists) {
 			ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{
 				"error": "user already has this achievement",
 			})
-		} else if errors.Is(err, icontrollerv0.ErrBadAchievement) {
+		} else if errors.Is(err, user_ctrl_v0.ErrBadAchievement) {
 			ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 				"error": "undefined achievement",
 			})

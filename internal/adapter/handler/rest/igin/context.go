@@ -1,4 +1,4 @@
-package ggonic
+package igin
 
 import (
 	"github.com/gin-gonic/gin"

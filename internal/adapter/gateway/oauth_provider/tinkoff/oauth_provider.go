@@ -10,8 +10,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/d-kv/backend-travel-app/pkg/adapter/gateway"
 	"github.com/rs/zerolog/log"
+
+	"github.com/d-kv/backend-travel-app/pkg/adapter/gateway"
 )
 
 type Response struct {

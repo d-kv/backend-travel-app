@@ -1,4 +1,4 @@
-package controllerv0
+package iuser_ctrl_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"context"
@@ -6,8 +6,8 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func (c *Controller) AuthorizeOAuthUser(ctx context.Context, aToken, rToken string) (string, error) {
-	const mName = "Controller.AuthorizeOAuthUser"
+func (c *UserController) AuthorizeOAuthUser(ctx context.Context, aToken, rToken string) (string, error) {
+	const mName = "UserController.AuthorizeOAuthUser"
 
 	uID, err := c.oAuthProvider.UserID(ctx, aToken)
 	if err != nil {
