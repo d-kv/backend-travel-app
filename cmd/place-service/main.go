@@ -5,21 +5,20 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/d-kv/backend-travel-app/cmd/place-service/config"
+	"github.com/d-kv/backend-travel-app/internal/pkg/infra/imongo"
+	"github.com/d-kv/backend-travel-app/internal/pkg/infra/iredis"
+	iginplacev0 "github.com/d-kv/backend-travel-app/internal/place_service/adapter/handler/rest/igin/v0"
+	ictrlplacev0 "github.com/d-kv/backend-travel-app/internal/place_service/app/controller/v0"
+	imongoplace "github.com/d-kv/backend-travel-app/internal/place_service/infra/repository/imongo"
+	"github.com/d-kv/backend-travel-app/internal/user_service/adapter/gateway/oauth_provider/tinkoff"
+	iginuserv0 "github.com/d-kv/backend-travel-app/internal/user_service/adapter/handler/rest/igin/v0"
+	ictrluserv0 "github.com/d-kv/backend-travel-app/internal/user_service/app/controller/v0"
+	iredistoken "github.com/d-kv/backend-travel-app/internal/user_service/infra/cache/iredis"
+	imongouser "github.com/d-kv/backend-travel-app/internal/user_service/infra/repository/imongo"
 	ginzerolog "github.com/dn365/gin-zerolog"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
-
-	"github.com/d-kv/backend-travel-app/cmd/place-service/config"
-	"github.com/d-kv/backend-travel-app/internal/adapter/gateway/oauth_provider/tinkoff"
-	igin_place_v0 "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin/v0/place"
-	igin_user_v0 "github.com/d-kv/backend-travel-app/internal/adapter/handler/rest/igin/v0/user"
-	iplace_ctrl_v0 "github.com/d-kv/backend-travel-app/internal/app/controller/v0/place"
-	iuser_ctrl_v0 "github.com/d-kv/backend-travel-app/internal/app/controller/v0/user"
-	redistoken "github.com/d-kv/backend-travel-app/internal/infra/cache/token/iredis"
-	"github.com/d-kv/backend-travel-app/internal/infra/imongo"
-	"github.com/d-kv/backend-travel-app/internal/infra/iredis"
-	mongoplace "github.com/d-kv/backend-travel-app/internal/infra/repository/place/imongo"
-	mongouser "github.com/d-kv/backend-travel-app/internal/infra/repository/user/imongo"
 )
 
 const (
@@ -53,18 +52,18 @@ func main() {
 			Err(err)
 	}
 
-	userRepo := mongouser.NewUserStore(
+	userRepo := imongouser.New(
 		mongoCl.
 			Database(cfg.Storage.Mongo.DB).
 			Collection(cfg.Storage.Mongo.Coll.User),
 	)
-	placeRepo := mongoplace.NewPlaceStore(
+	placeRepo := imongoplace.New(
 		mongoCl.
 			Database(cfg.Storage.Mongo.DB).
 			Collection(cfg.Storage.Mongo.Coll.Place),
 	)
 
-	tokenCache := redistoken.NewTokenCache(
+	tokenCache := iredistoken.New(
 		redisCl,
 	)
 
@@ -78,11 +77,11 @@ func main() {
 		httpCl,
 	)
 
-	placeCtrl := iplace_ctrl_v0.New(
+	placeCtrl := ictrlplacev0.New(
 		placeRepo,
 	)
 
-	userCtrl := iuser_ctrl_v0.New(
+	userCtrl := ictrluserv0.New(
 		userRepo,
 		tokenCache,
 		oauthGateway,
@@ -92,12 +91,12 @@ func main() {
 	g.Use(gin.Recovery())
 	g.Use(ginzerolog.Logger("gin"))
 
-	_ = igin_user_v0.New(
+	_ = iginuserv0.New(
 		userCtrl,
 		g,
 	)
 
-	_ = igin_place_v0.New(
+	_ = iginplacev0.New(
 		placeCtrl,
 		g,
 	)
