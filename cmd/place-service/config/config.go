@@ -3,7 +3,7 @@ package config
 import (
 	"github.com/rs/zerolog/log"
 
-	"github.com/d-kv/backend-travel-app/pkg/app/config"
+	"github.com/d-kv/backend-travel-app/pkg/config"
 )
 
 type (
