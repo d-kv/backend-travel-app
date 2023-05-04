@@ -49,4 +49,4 @@ test.run:
 
 .SILENT: build
 build:
-	@go build cmd/afterwork-backend/main.go
+	@go build -v cmd/afterwork-backend/main.go
