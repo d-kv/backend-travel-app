@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/d-kv/backend-travel-app/cmd/place-service/config"
+	"github.com/d-kv/backend-travel-app/cmd/afterwork-backend/config"
 	"github.com/d-kv/backend-travel-app/internal/pkg/imongo"
 	"github.com/d-kv/backend-travel-app/internal/pkg/iredis"
 	ictrlplacev0 "github.com/d-kv/backend-travel-app/internal/place-service/controller/v0"
@@ -31,10 +31,7 @@ func main() {
 	flag.StringVar(&cfgName, "config", "docker", "config to run")
 	flag.Parse()
 
-	log.Info().
-		Str("config", cfgName)
-
-	cfg, err := config.New("cmd/place-service", cfgName)
+	cfg, err := config.New("cmd/afterwork-backend", cfgName)
 	if err != nil {
 		log.Panic().
 			Err(err)

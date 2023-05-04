@@ -19,11 +19,11 @@ docker.build:
 
 .SILENT: docker-compose.up
 docker-compose.up:
-	@(cd deployment/place-service && docker-compose up --build -d)
+	@(cd deployment/afterwork-backend && docker-compose up --build -d)
 
 .SILENT: docker-compose.down
 docker-compose.down:
-	@(cd deployment/place-service && docker-compose down)
+	@(cd deployment/afterwork-backend && docker-compose down)
 
 _lint_vet:
 	@(cd cmd && go vet ./...)
@@ -49,4 +49,4 @@ test.run:
 
 .SILENT: build
 build:
-	@go build cmd/place-service/main.go
+	@go build cmd/afterwork-backend/main.go
