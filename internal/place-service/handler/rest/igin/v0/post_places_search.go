@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -26,54 +25,6 @@ type placeSearcher interface {
 type reqBody struct {
 	Category category.Category `json:"category"`
 	SeenUUID []string          `json:"seen_uuid"`
-}
-
-type location struct {
-	Latitude  float64 `json:"latitude"`
-	Longitude float64 `json:"longitude"`
-}
-
-type resPlace struct {
-	UUID        string `json:"uuid"`
-	Address     string `json:"address"`
-	Name        string `json:"name"`
-	Description string `json:"description,omitempty"`
-	Phone       string `json:"phone,omitempty"`
-	URL         string `json:"url,omitempty"`
-
-	Category category.Category `json:"category"`
-	Location *location         `json:"location"`
-
-	Lifetime  time.Duration `json:"lifetime"`
-	CreatedAt time.Time     `json:"created_at"`
-}
-
-func toResPlace(p *model.Place) *resPlace {
-	return &resPlace{
-		UUID:        p.UUID,
-		Address:     p.Address,
-		Name:        p.Name,
-		Description: p.Description,
-		Phone:       p.Phone,
-		URL:         p.URL,
-		Category:    p.Category,
-		Location: &location{
-			Latitude:  p.Latitude(),
-			Longitude: p.Longitude(),
-		},
-		Lifetime:  p.Lifetime,
-		CreatedAt: p.CreatedAt,
-	}
-}
-
-func toResBody(places []model.Place) []resPlace {
-	ret := make([]resPlace, 0, len(places))
-
-	for i := range places {
-		ret = append(ret, *toResPlace(&places[i]))
-	}
-
-	return ret
 }
 
 func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
@@ -178,5 +129,5 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, toResBody(places))
+	ctx.JSON(http.StatusOK, places)
 }
