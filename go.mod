@@ -9,7 +9,7 @@ require (
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/spf13/viper v1.15.0
 	github.com/stretchr/testify v1.8.2
-	go.mongodb.org/mongo-driver v1.11.4
+	go.mongodb.org/mongo-driver v1.11.6
 )
 
 require (
