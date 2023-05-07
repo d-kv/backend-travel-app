@@ -261,7 +261,7 @@ func TestPlacePlacesByDistanceIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p3),
 		"must create place without errors")
 
-	geoQ := &util.GeoQuery{
+	geoQ := &util.GeoToken{
 		Center: util.NewLatLng(51, 51),
 		Max:    10000000000,
 	}

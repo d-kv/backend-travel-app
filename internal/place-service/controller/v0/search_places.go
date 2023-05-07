@@ -13,7 +13,7 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/place-service/repository"
 )
 
-func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoQuery,
+func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken,
 	_ []category.Main, _ []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceController.SearchPlaces"
 

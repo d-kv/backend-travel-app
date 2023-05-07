@@ -244,7 +244,7 @@ func (p *PlaceStore) PlacesByCategory(ctx context.Context,
 
 // PlacesByDistance returns places from nearest to farthest.
 func (p *PlaceStore) PlacesByDistance(ctx context.Context,
-	geoQ *util.GeoQuery, skipN int64, resN int64) ([]model.Place, error) {
+	geoQ *util.GeoToken, skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceStore.PlacesByDistance"
 
 	gCenterJSON := bson.M{

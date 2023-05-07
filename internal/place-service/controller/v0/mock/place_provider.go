@@ -18,15 +18,15 @@ type PlaceProvider struct {
 }
 
 // PlacesByDistance provides a mock function with given fields: ctx, geoQ, skipN, resN
-func (_m *PlaceProvider) PlacesByDistance(ctx context.Context, geoQ *util.GeoQuery, skipN int64, resN int64) ([]model.Place, error) {
+func (_m *PlaceProvider) PlacesByDistance(ctx context.Context, geoQ *util.GeoToken, skipN int64, resN int64) ([]model.Place, error) {
 	ret := _m.Called(ctx, geoQ, skipN, resN)
 
 	var r0 []model.Place
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *util.GeoQuery, int64, int64) ([]model.Place, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *util.GeoToken, int64, int64) ([]model.Place, error)); ok {
 		return rf(ctx, geoQ, skipN, resN)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *util.GeoQuery, int64, int64) []model.Place); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *util.GeoToken, int64, int64) []model.Place); ok {
 		r0 = rf(ctx, geoQ, skipN, resN)
 	} else {
 		if ret.Get(0) != nil {
@@ -34,7 +34,7 @@ func (_m *PlaceProvider) PlacesByDistance(ctx context.Context, geoQ *util.GeoQue
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *util.GeoQuery, int64, int64) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *util.GeoToken, int64, int64) error); ok {
 		r1 = rf(ctx, geoQ, skipN, resN)
 	} else {
 		r1 = ret.Error(1)

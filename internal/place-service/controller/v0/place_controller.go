@@ -12,7 +12,7 @@ import (
 
 type (
 	PlaceProvider interface {
-		PlacesByDistance(ctx context.Context, geoQ *util.GeoQuery, skipN int64, resN int64) ([]model.Place, error)
+		PlacesByDistance(ctx context.Context, geoQ *util.GeoToken, skipN int64, resN int64) ([]model.Place, error)
 	}
 )
 

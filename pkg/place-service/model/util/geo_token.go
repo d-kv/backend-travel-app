@@ -5,25 +5,25 @@ const (
 	DefaultMaxDistance = 5000
 )
 
-type GeoQuery struct {
+type GeoToken struct {
 	Center *LatLng
 	Min    int64
 	Max    int64
 }
 
-type Options func(*GeoQuery)
+type Options func(*GeoToken)
 
 func WithMin(min int64) Options {
-	return func(p *GeoQuery) { p.Min = min }
+	return func(p *GeoToken) { p.Min = min }
 }
 
 func WithMax(max int64) Options {
-	return func(p *GeoQuery) { p.Max = max }
+	return func(p *GeoToken) { p.Max = max }
 }
 
-// NewGeoQuery creates a new GeoQuery.
-func NewGeoQuery(ll *LatLng, opts ...Options) *GeoQuery {
-	g := &GeoQuery{
+// NewGeoToken creates a new GeoQuery.
+func NewGeoToken(ll *LatLng, opts ...Options) *GeoToken {
+	g := &GeoToken{
 		Center: ll,
 		Min:    DefaultMinDistance,
 		Max:    DefaultMaxDistance,

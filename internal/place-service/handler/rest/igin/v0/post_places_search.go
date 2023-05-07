@@ -17,7 +17,7 @@ const defaultResN = 50
 
 type placeSearcher interface {
 	SearchPlaces(ctx context.Context,
-		geoQ *util.GeoQuery,
+		geoQ *util.GeoToken,
 		mCats []category.Main, sCats []category.Sub,
 		skipN int64, resN int64) ([]model.Place, error)
 }
@@ -98,7 +98,7 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 		}
 	}
 
-	gQ := util.NewGeoQuery(ll,
+	gQ := util.NewGeoToken(ll,
 		util.WithMin(minD),
 		util.WithMax(maxD),
 	)
