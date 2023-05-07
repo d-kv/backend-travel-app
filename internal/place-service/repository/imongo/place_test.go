@@ -198,7 +198,7 @@ func TestPlacePlacesByCategoryIntegration(t *testing.T) {
 
 	cultPlGot, err := plStore.PlacesByCategory(
 		context.Background(),
-		[]category.MainCategory{category.MC_CULTURE},
+		[]category.Main{category.MC_CULTURE},
 		nil,
 		0,
 		0,
@@ -213,7 +213,7 @@ func TestPlacePlacesByCategoryIntegration(t *testing.T) {
 
 	foodPlGot, err := plStore.PlacesByCategory(
 		context.Background(),
-		[]category.MainCategory{category.MC_FOOD},
+		[]category.Main{category.MC_FOOD},
 		nil,
 		0,
 		0,

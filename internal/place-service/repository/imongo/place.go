@@ -188,15 +188,15 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]mod
 
 // PlacesByCategory returns places with given category.
 func (p *PlaceStore) PlacesByCategory(ctx context.Context,
-	mCtgs []category.MainCategory, sCtgs []category.SubCategory, skipN int64, resN int64) ([]model.Place, error) {
+	mCtgs []category.Main, sCtgs []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceStore.PlacesByCategory"
 
 	if mCtgs == nil {
-		mCtgs = []category.MainCategory{}
+		mCtgs = []category.Main{}
 	}
 
 	if sCtgs == nil {
-		sCtgs = []category.SubCategory{}
+		sCtgs = []category.Sub{}
 	}
 
 	opts := options.

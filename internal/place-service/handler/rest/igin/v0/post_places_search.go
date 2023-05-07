@@ -18,7 +18,7 @@ const defaultResN = 50
 type placeSearcher interface {
 	SearchPlaces(ctx context.Context,
 		geoQ *util.GeoQuery,
-		mCats []category.MainCategory, sCats []category.SubCategory,
+		mCats []category.Main, sCats []category.Sub,
 		skipN int64, resN int64) ([]model.Place, error)
 }
 
@@ -103,8 +103,8 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 		util.WithMax(maxD),
 	)
 
-	var mCtgs []category.MainCategory
-	var sCtgs []category.SubCategory
+	var mCtgs []category.Main
+	var sCtgs []category.Sub
 	if ctx.Request.ContentLength != 0 {
 		var req reqBody
 		err = ctx.BindJSON(&req)

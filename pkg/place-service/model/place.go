@@ -60,11 +60,11 @@ func WithLatLng(lat float64, lng float64) Options {
 	}
 }
 
-func WithMainCategories(cat ...category.MainCategory) Options {
+func WithMainCategories(cat ...category.Main) Options {
 	return func(p *Place) { p.Category.Main = append(p.Category.Main, cat...) }
 }
 
-func WithSubCategories(cat ...category.SubCategory) Options {
+func WithSubCategories(cat ...category.Sub) Options {
 	return func(p *Place) { p.Category.Sub = append(p.Category.Sub, cat...) }
 }
 

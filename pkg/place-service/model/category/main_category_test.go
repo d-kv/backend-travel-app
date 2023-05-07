@@ -21,7 +21,7 @@ func TestMainCategorySerialization(t *testing.T) {
 		{"json", json.Marshal, json.Unmarshal},
 	}
 
-	inCtgs := []category.MainCategory{
+	inCtgs := []category.Main{
 		category.MC_UNSPECIFIED,
 		category.MC_CULTURE,
 		category.MC_ENTERTAINMENT,
@@ -33,7 +33,7 @@ func TestMainCategorySerialization(t *testing.T) {
 			jsonRepr, err := sFmt.Marshal(c)
 			assert.NoErrorf(err, "must be serialized into %s without errors", sFmt.Name)
 
-			var gotCtg category.MainCategory
+			var gotCtg category.Main
 			err = sFmt.Unmarshal(jsonRepr, &gotCtg)
 			assert.NoErrorf(err, "must be deserialized from %s without errors", sFmt.Name)
 

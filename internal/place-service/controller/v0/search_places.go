@@ -14,7 +14,7 @@ import (
 )
 
 func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoQuery,
-	_ []category.MainCategory, _ []category.SubCategory, skipN int64, resN int64) ([]model.Place, error) {
+	_ []category.Main, _ []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceController.SearchPlaces"
 
 	places, err := c.placeProvider.PlacesByDistance(ctx, geoQ, skipN, resN)

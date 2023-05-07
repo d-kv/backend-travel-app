@@ -2,22 +2,22 @@ package category
 
 // Category stores info about category in arrays of enums.
 type Category struct {
-	Main []MainCategory `json:"main" bson:"main"`
-	Sub  []SubCategory  `json:"sub" bson:"sub"`
+	Main []Main `json:"main" bson:"main"`
+	Sub  []Sub  `json:"sub" bson:"sub"`
 }
 
 // Options to build Category.
 type Options func(*Category)
 
 // WithMainCategories appends given main categories to Category.
-func WithMainCategories(mc ...MainCategory) Options {
+func WithMainCategories(mc ...Main) Options {
 	return func(c *Category) {
 		c.Main = append(c.Main, mc...)
 	}
 }
 
 // WithSubCategories appends given main categories to Category.
-func WithSubCategories(sc ...SubCategory) Options {
+func WithSubCategories(sc ...Sub) Options {
 	return func(c *Category) {
 		c.Sub = append(c.Sub, sc...)
 	}

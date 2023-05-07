@@ -6,67 +6,67 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-// SubCategory is a enum type.
-type SubCategory int32
+// Sub is a enum type.
+type Sub int32
 
 type bsonSubCategory struct {
 	String string
 }
 
-var _ bson.Marshaler = (*SubCategory)(nil)
-var _ bson.Unmarshaler = (*SubCategory)(nil)
-var _ json.Marshaler = (*SubCategory)(nil)
-var _ json.Unmarshaler = (*SubCategory)(nil)
+var _ bson.Marshaler = (*Sub)(nil)
+var _ bson.Unmarshaler = (*Sub)(nil)
+var _ json.Marshaler = (*Sub)(nil)
+var _ json.Unmarshaler = (*Sub)(nil)
 
-func (s SubCategory) String() string {
+func (s Sub) String() string {
 	return subCategoryName[s]
 }
 
-func SubCategoryFromString(scRaw string) SubCategory {
+func SubCategoryFromString(scRaw string) Sub {
 	return subCategoryValue[scRaw]
 }
 
 //nolint:revive, stylecheck // Using SNAKE_CASE for enums
 const (
-	SC_UNSPECIFIED             SubCategory = 0
-	SC_RUSSIAN_CUISINE         SubCategory = 1
-	SC_ITALIAN_CUISINE         SubCategory = 2
-	SC_APARTMENTS              SubCategory = 3
-	SC_BOWLING                 SubCategory = 4
-	SC_CAMPING                 SubCategory = 5
-	SC_GALLERY                 SubCategory = 6
-	SC_AMUSEMENT_PARK          SubCategory = 7
-	SC_ARCHITECTURAL_MONUMENTS SubCategory = 8
-	SC_BEER_HOUSE              SubCategory = 9
-	SC_PAB                     SubCategory = 10
-	SC_VEGAN_MENU              SubCategory = 11
-	SC_OPEN_MIC                SubCategory = 12
-	SC_NIGHTCLUB               SubCategory = 13
-	SC_COFFEE_HOUSE            SubCategory = 14
-	SC_LIBRARY                 SubCategory = 15
-	SC_RESORT                  SubCategory = 16
-	SC_MOTEL                   SubCategory = 17
-	SC_CONFECTIONERY           SubCategory = 18
-	SC_JAPANESE_CUISINE        SubCategory = 19
-	SC_TRAMPOLINE_PARK         SubCategory = 20
-	SC_THEATRE                 SubCategory = 21
-	SC_WATER_PARK              SubCategory = 22
-	SC_QUEST_ROOM              SubCategory = 23
-	SC_FESTIVAL                SubCategory = 24
-	SC_KAFE                    SubCategory = 25
-	SC_MUSEUM                  SubCategory = 26
-	SC_GEORGIAN_CUISINE        SubCategory = 27
-	SC_HOTEL                   SubCategory = 28
-	SC_BILLIARD_CLUB           SubCategory = 29
-	SC_CINEMA                  SubCategory = 30
-	SC_AMERICAN_CUISINE        SubCategory = 31
-	SC_BAR                     SubCategory = 32
-	SC_STEAK                   SubCategory = 33
-	SC_HOSTEL                  SubCategory = 34
+	SC_UNSPECIFIED             Sub = 0
+	SC_RUSSIAN_CUISINE         Sub = 1
+	SC_ITALIAN_CUISINE         Sub = 2
+	SC_APARTMENTS              Sub = 3
+	SC_BOWLING                 Sub = 4
+	SC_CAMPING                 Sub = 5
+	SC_GALLERY                 Sub = 6
+	SC_AMUSEMENT_PARK          Sub = 7
+	SC_ARCHITECTURAL_MONUMENTS Sub = 8
+	SC_BEER_HOUSE              Sub = 9
+	SC_PAB                     Sub = 10
+	SC_VEGAN_MENU              Sub = 11
+	SC_OPEN_MIC                Sub = 12
+	SC_NIGHTCLUB               Sub = 13
+	SC_COFFEE_HOUSE            Sub = 14
+	SC_LIBRARY                 Sub = 15
+	SC_RESORT                  Sub = 16
+	SC_MOTEL                   Sub = 17
+	SC_CONFECTIONERY           Sub = 18
+	SC_JAPANESE_CUISINE        Sub = 19
+	SC_TRAMPOLINE_PARK         Sub = 20
+	SC_THEATRE                 Sub = 21
+	SC_WATER_PARK              Sub = 22
+	SC_QUEST_ROOM              Sub = 23
+	SC_FESTIVAL                Sub = 24
+	SC_KAFE                    Sub = 25
+	SC_MUSEUM                  Sub = 26
+	SC_GEORGIAN_CUISINE        Sub = 27
+	SC_HOTEL                   Sub = 28
+	SC_BILLIARD_CLUB           Sub = 29
+	SC_CINEMA                  Sub = 30
+	SC_AMERICAN_CUISINE        Sub = 31
+	SC_BAR                     Sub = 32
+	SC_STEAK                   Sub = 33
+	SC_HOSTEL                  Sub = 34
 )
 
 var (
-	subCategoryName = map[SubCategory]string{ //nolint:gochecknoglobals // Using global maps for enums
+	subCategoryName = map[Sub]string{ //nolint:gochecknoglobals // Using global maps for enums
 		SC_UNSPECIFIED:             "SC_UNSPECIFIED",
 		SC_RUSSIAN_CUISINE:         "SC_RUSSIAN_CUISINE",
 		SC_ITALIAN_CUISINE:         "SC_ITALIAN_CUISINE",
@@ -103,7 +103,7 @@ var (
 		SC_STEAK:                   "SC_STEAK",
 		SC_HOSTEL:                  "SC_HOSTEL",
 	}
-	subCategoryValue = map[string]SubCategory{ //nolint:gochecknoglobals // Using global maps for enums
+	subCategoryValue = map[string]Sub{ //nolint:gochecknoglobals // Using global maps for enums
 		"SC_UNSPECIFIED":             SC_UNSPECIFIED,
 		"SC_RUSSIAN_CUISINE":         SC_RUSSIAN_CUISINE,
 		"SC_ITALIAN_CUISINE":         SC_ITALIAN_CUISINE,
@@ -142,13 +142,13 @@ var (
 	}
 )
 
-func (s SubCategory) MarshalBSON() ([]byte, error) {
+func (s Sub) MarshalBSON() ([]byte, error) {
 	return bson.Marshal(bsonSubCategory{
 		String: subCategoryName[s],
 	})
 }
 
-func (s *SubCategory) UnmarshalBSON(d []byte) error {
+func (s *Sub) UnmarshalBSON(d []byte) error {
 	var bsonRepr bsonSubCategory
 	err := bson.Unmarshal(d, &bsonRepr)
 	if err != nil {
@@ -158,11 +158,11 @@ func (s *SubCategory) UnmarshalBSON(d []byte) error {
 	return nil
 }
 
-func (s SubCategory) MarshalJSON() ([]byte, error) {
+func (s Sub) MarshalJSON() ([]byte, error) {
 	return json.Marshal(subCategoryName[s])
 }
 
-func (s *SubCategory) UnmarshalJSON(d []byte) error {
+func (s *Sub) UnmarshalJSON(d []byte) error {
 	var jsonRepr string
 
 	if err := json.Unmarshal(d, &jsonRepr); err != nil {
