@@ -11,18 +11,18 @@ type GeoToken struct {
 	Max    int64
 }
 
-type Options func(*GeoToken)
+type GeoTokenOptions func(*GeoToken)
 
-func WithMin(min int64) Options {
+func WithMin(min int64) GeoTokenOptions {
 	return func(p *GeoToken) { p.Min = min }
 }
 
-func WithMax(max int64) Options {
+func WithMax(max int64) GeoTokenOptions {
 	return func(p *GeoToken) { p.Max = max }
 }
 
-// NewGeoToken creates a new GeoQuery.
-func NewGeoToken(ll *LatLng, opts ...Options) *GeoToken {
+// NewGeoToken creates a new GeoToken.
+func NewGeoToken(ll *LatLng, opts ...GeoTokenOptions) *GeoToken {
 	g := &GeoToken{
 		Center: ll,
 		Min:    DefaultMinDistance,
