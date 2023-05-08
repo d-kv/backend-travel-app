@@ -226,7 +226,6 @@ func BenchmarkCategoryBSONDecoding(b *testing.B) {
 		b.StartTimer()
 		_ = bson.Unmarshal(data, &gotCtg)
 	}
-
 }
 
 func BenchmarkCategoryJSONEncoding(b *testing.B) {

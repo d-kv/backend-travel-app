@@ -39,7 +39,10 @@ func TestPlaceCreateIntegration(t *testing.T) {
 	p1 := model.New(
 		model.WithAddress("Street 2A"),
 		model.WithName("MyPlace"),
-		model.WithMainCategories(category.MC_CULTURE, category.MC_HOSPITALITY),
+		model.WithMainCategories(
+			category.MC_CULTURE,
+			category.MC_HOSPITALITY,
+		),
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p1),
@@ -51,7 +54,10 @@ func TestPlaceCreateIntegration(t *testing.T) {
 		model.WithUUID(duplID),
 		model.WithAddress("Street 2A"),
 		model.WithName("MyPlace"),
-		model.WithSubCategories(category.SC_CINEMA, category.SC_BAR),
+		model.WithSubCategories(
+			category.SC_CINEMA,
+			category.SC_BAR,
+		),
 	)
 
 	assert.NoError(plStore.Create(context.Background(), p2),

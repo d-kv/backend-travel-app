@@ -15,6 +15,6 @@ type PlaceProvider interface {
 
 	Places(ctx context.Context, skipN int64, resN int64) ([]model.Place, error)
 	PlacesByCategory(ctx context.Context,
-		mCtgs []category.Main, sCtgs []category.Sub, skipN int64, resN int64) ([]model.Place, error)
+		mainCtgs []category.Main, subCtgs []category.Sub, skipN int64, resN int64) ([]model.Place, error)
 	PlacesByDistance(ctx context.Context, getQuery *util.GeoToken, skipN int64, resN int64) ([]model.Place, error)
 }

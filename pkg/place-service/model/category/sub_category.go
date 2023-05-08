@@ -1,22 +1,7 @@
 package category
 
-import (
-	"encoding/json"
-
-	"go.mongodb.org/mongo-driver/bson"
-)
-
 // Sub is a enum type.
 type Sub int32
-
-type bsonSubCategory struct {
-	String string
-}
-
-var _ bson.Marshaler = (*Sub)(nil)
-var _ bson.Unmarshaler = (*Sub)(nil)
-var _ json.Marshaler = (*Sub)(nil)
-var _ json.Unmarshaler = (*Sub)(nil)
 
 func (s Sub) String() string {
 	return subCategoryName[s]
@@ -141,33 +126,3 @@ var (
 		"SC_HOSTEL":                  SC_HOSTEL,
 	}
 )
-
-func (s Sub) MarshalBSON() ([]byte, error) {
-	return bson.Marshal(bsonSubCategory{
-		String: subCategoryName[s],
-	})
-}
-
-func (s *Sub) UnmarshalBSON(d []byte) error {
-	var bsonRepr bsonSubCategory
-	err := bson.Unmarshal(d, &bsonRepr)
-	if err != nil {
-		return err
-	}
-	*s = subCategoryValue[bsonRepr.String]
-	return nil
-}
-
-func (s Sub) MarshalJSON() ([]byte, error) {
-	return json.Marshal(subCategoryName[s])
-}
-
-func (s *Sub) UnmarshalJSON(d []byte) error {
-	var jsonRepr string
-
-	if err := json.Unmarshal(d, &jsonRepr); err != nil {
-		return err
-	}
-	*s = subCategoryValue[jsonRepr]
-	return nil
-}
