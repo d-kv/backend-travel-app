@@ -8,10 +8,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"golang.org/x/exp/slices"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
-	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/repository"
 )
@@ -184,33 +182,6 @@ func (p *PlaceStore) Places(ctx context.Context, skipN int64, resN int64) ([]mod
 		return nil, err
 	}
 
-	return places, nil
-}
-
-// PlacesByCategory returns places with given category.
-func (p *PlaceStore) PlacesByCategory(ctx context.Context, mainCtgs []category.Main, subCtgs []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
-	const mName = "PlaceStore.PlacesByCategory"
-
-	unsortedPlaces, err := p.Places(ctx, skipN, resN)
-	if err != nil {
-		return nil, err
-	}
-
-	var places []model.Place
-
-	for _, pl := range unsortedPlaces {
-		for _, cat := range mainCtgs {
-			if slices.Contains(pl.Category.Main, cat) {
-				places = append(places, pl)
-			}
-		}
-
-		for _, cat := range subCtgs {
-			if slices.Contains(pl.Category.Sub, cat) {
-				places = append(places, pl)
-			}
-		}
-	}
 	return places, nil
 }
 

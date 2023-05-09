@@ -15,5 +15,4 @@ var (
 	errInvalidResN  = errors.New("invalid res_n parameter")
 
 	errInvalidBody = errors.New("invalid categories")
-	errEmptyBody   = errors.New("empty body")
 )

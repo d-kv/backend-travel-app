@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
-	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/util"
 )
 
@@ -14,7 +13,5 @@ type PlaceProvider interface {
 	Place(ctx context.Context, id string) (*model.Place, error)
 
 	Places(ctx context.Context, skipN int64, resN int64) ([]model.Place, error)
-	PlacesByCategory(ctx context.Context,
-		mainCtgs []category.Main, subCtgs []category.Sub, skipN int64, resN int64) ([]model.Place, error)
 	PlacesByDistance(ctx context.Context, getQuery *util.GeoToken, skipN int64, resN int64) ([]model.Place, error)
 }

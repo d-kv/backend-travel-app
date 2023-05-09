@@ -14,17 +14,12 @@ import (
 )
 
 func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken,
-	_ []category.Main, _ []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
+	main []category.Main, sub []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceController.SearchPlaces"
 
 	places, err := c.placeProvider.PlacesByDistance(ctx, geoQ, skipN, resN)
 	if err != nil {
 		if errors.Is(err, repository.ErrPlaceNotFound) {
-			log.Info().
-				Str("method", mName).
-				Err(err).
-				Msg("no places for the given criteria")
-
 			return nil, ctrl_v0.ErrNoPlaces
 		}
 
@@ -36,5 +31,7 @@ func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken,
 		return nil, err
 	}
 
-	return places, nil
+	suitablePlaces := filterByCategory(places, main, sub)
+
+	return suitablePlaces, nil
 }

@@ -2,10 +2,10 @@ package igin_v0 //nolint:revive,stylecheck // using underscore in package name f
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
@@ -42,7 +42,7 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 	}
 
 	ctgs, err := parseCategories(ctx)
-	if err != nil && !errors.Is(err, errEmptyBody) {
+	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
 		})
