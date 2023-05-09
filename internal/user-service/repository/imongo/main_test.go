@@ -8,11 +8,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/d-kv/backend-travel-app/internal/pkg/imongo"
 	"github.com/ory/dockertest/v3"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"go.mongodb.org/mongo-driver/mongo"
+
+	"github.com/d-kv/backend-travel-app/internal/pkg/imongo"
 )
 
 //nolint:gochecknoglobals // Using global var in tests

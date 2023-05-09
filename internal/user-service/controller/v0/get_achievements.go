@@ -3,8 +3,9 @@ package ictrl_v0 //nolint:revive,stylecheck // using underscore in package name 
 import (
 	"context"
 
-	"github.com/d-kv/backend-travel-app/pkg/user-service/model"
 	"github.com/rs/zerolog/log"
+
+	"github.com/d-kv/backend-travel-app/pkg/user-service/model"
 )
 
 func (c *UserController) GetAchievements(ctx context.Context, userUUID string) ([]model.Achievement, error) {

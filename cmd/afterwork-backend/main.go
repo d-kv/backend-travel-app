@@ -5,6 +5,10 @@ import (
 	"net/http"
 	"time"
 
+	ginzerolog "github.com/dn365/gin-zerolog"
+	"github.com/gin-gonic/gin"
+	"github.com/rs/zerolog/log"
+
 	"github.com/d-kv/backend-travel-app/cmd/afterwork-backend/config"
 	"github.com/d-kv/backend-travel-app/internal/pkg/imongo"
 	"github.com/d-kv/backend-travel-app/internal/pkg/iredis"
@@ -16,9 +20,6 @@ import (
 	"github.com/d-kv/backend-travel-app/internal/user-service/gateway/oauth_provider/tinkoff"
 	iginuserv0 "github.com/d-kv/backend-travel-app/internal/user-service/handler/rest/igin/v0"
 	imongouser "github.com/d-kv/backend-travel-app/internal/user-service/repository/imongo"
-	ginzerolog "github.com/dn365/gin-zerolog"
-	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 )
 
 const (

@@ -8,7 +8,6 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/d-kv/backend-travel-app/internal/user-service/handler/rest/igin"
-
 	ctrl_v0 "github.com/d-kv/backend-travel-app/pkg/user-service/controller/v0"
 	"github.com/d-kv/backend-travel-app/pkg/user-service/model"
 )

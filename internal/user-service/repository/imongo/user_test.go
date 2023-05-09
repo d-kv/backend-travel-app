@@ -4,9 +4,10 @@ import (
 	"context"
 	"testing"
 
-	"github.com/d-kv/backend-travel-app/pkg/user-service/model"
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/d-kv/backend-travel-app/pkg/user-service/model"
 )
 
 //nolint:gochecknoglobals // Using global var in tests

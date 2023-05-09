@@ -4,9 +4,10 @@ import (
 	"context"
 	"errors"
 
+	"github.com/rs/zerolog/log"
+
 	"github.com/d-kv/backend-travel-app/pkg/user-service/cache"
 	ctrl_v0 "github.com/d-kv/backend-travel-app/pkg/user-service/controller/v0"
-	"github.com/rs/zerolog/log"
 )
 
 func (c *UserController) Authenticate(ctx context.Context, refreshToken string) (string, error) {

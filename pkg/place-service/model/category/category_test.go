@@ -4,9 +4,10 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/bson"
+
+	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 )
 
 func TestCategorySerialization(t *testing.T) {

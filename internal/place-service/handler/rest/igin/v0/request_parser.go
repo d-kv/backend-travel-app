@@ -4,11 +4,11 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog/log"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/util"
-	"github.com/gin-gonic/gin"
 )
 
 const (

@@ -4,14 +4,14 @@ import (
 	"context"
 	"testing"
 
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/util"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/repository"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
 )
 
 //nolint:gochecknoglobals // Using global var in tests

@@ -1,9 +1,10 @@
 package ictrl_v0
 
 import (
+	"golang.org/x/exp/slices"
+
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
-	"golang.org/x/exp/slices"
 )
 
 func filterByCategory(pls []model.Place, m []category.Main, s []category.Sub) []model.Place {
