@@ -10,7 +10,7 @@ env:
   GO_VERSION: "1.20"
 
 jobs:
-  check-go-mod-diff:
+  check-go-mod:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
@@ -25,10 +25,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Check go mod
+      - name: Check go mod deps
         run: |
           go mod tidy
           git diff --exit-code go.mod
+
+      - name: Download go mod deps
+        run: |
+          go mod download
+
+      - name: Verify go mod deps
+        run: |
+            go mod verify
 
   build:
     runs-on: ubuntu-latest
