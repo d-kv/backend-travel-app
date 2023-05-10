@@ -81,7 +81,7 @@ func New(opts ...Options) *Place {
 		Description: "",
 		Phone:       "",
 		URL:         "",
-		Location:    *util.NewLocation(*util.NewLatLng(0, 0)),
+		Location:    *util.NewLocation(util.LatLng{}),
 		Category:    *category.New(),
 		Lifetime:    0,
 		// FIXME: make compatible with MongoDB precision

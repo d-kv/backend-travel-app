@@ -3,8 +3,8 @@ package igin_v0 //nolint:revive,stylecheck // using underscore in package name f
 import "errors"
 
 var (
-	errMissingLatLng = errors.New("missing ll parameter")
-	errInvalidLatLng = errors.New("invalid ll parameter")
+	errLatLngCoupling = errors.New("lat & lng are required")
+	errInvalidLatLng  = errors.New("invalid ll parameter")
 
 	errMinDMaxDCoupling    = errors.New("min_d & min_d must either be both present or both absent")
 	errInvalidMinD         = errors.New("invalid min_d parameter")

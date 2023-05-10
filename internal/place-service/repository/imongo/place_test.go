@@ -199,8 +199,12 @@ func TestPlacePlacesByDistanceIntegration(t *testing.T) {
 	assert.NoError(plStore.Create(context.Background(), p3),
 		"must create place without errors")
 
+	ll, err := util.NewLatLng(51, 51)
+	assert.NoError(err,
+		"must create LatLng without errors")
+
 	geoQ := &util.GeoToken{
-		Center: util.NewLatLng(51, 51),
+		Center: ll,
 		Max:    10000000000,
 	}
 	plsGot, err := plStore.PlacesByDistance(context.Background(), geoQ, 0, 0)

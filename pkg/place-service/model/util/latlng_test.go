@@ -15,10 +15,10 @@ func TestLatLngParsing(t *testing.T) {
 		input        string
 		outputLatLng *util.LatLng
 	}{
-		{"37.7749,-122.4194", util.NewLatLng(37.7749, -122.4194)},
-		{"39.9526,-75.1652", util.NewLatLng(39.9526, -75.1652)},
-		{"54.5260,-105.2551", util.NewLatLng(54.5260, -105.2551)},
-		{"51.5074,-0.1278", util.NewLatLng(51.5074, -0.1278)},
+		{"37.7749,-122.4194", &util.LatLng{37.7749, -122.4194}},
+		{"39.9526,-75.1652", &util.LatLng{39.9526, -75.1652}},
+		{"54.5260,-105.2551", &util.LatLng{54.5260, -105.2551}},
+		{"51.5074,-0.1278", &util.LatLng{51.5074, -0.1278}},
 	}
 
 	for _, tc := range testCases {
