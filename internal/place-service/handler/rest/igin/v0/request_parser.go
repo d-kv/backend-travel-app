@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/util"
@@ -21,10 +20,7 @@ const (
 
 func parseCategories(ctx *gin.Context) (*category.Category, error) {
 	if ctx.Request.ContentLength == 0 {
-		return category.New(
-			category.WithMainCategories(category.MC_UNSPECIFIED),
-			category.WithSubCategories(category.SC_UNSPECIFIED),
-		), nil
+		return category.NewAnyCategory(), nil
 	}
 
 	var req requestBody

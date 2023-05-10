@@ -7,7 +7,11 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
 )
 
-func filterByCategory(pls []model.Place, m []category.Main, s []category.Sub) []model.Place {
+func filterByCategory(pls []model.Place, c *category.Category) []model.Place {
+	if c.IsAnyCategory() {
+		return pls
+	}
+
 	var places []model.Place
 	var isAdded bool
 
@@ -15,7 +19,7 @@ func filterByCategory(pls []model.Place, m []category.Main, s []category.Sub) []
 
 		isAdded = false
 
-		for _, c := range m {
+		for _, c := range c.Main {
 			if slices.Contains(p.Category.Main, c) {
 				places = append(places, p)
 				isAdded = true
@@ -28,7 +32,7 @@ func filterByCategory(pls []model.Place, m []category.Main, s []category.Sub) []
 			continue
 		}
 
-		for _, cat := range s {
+		for _, cat := range c.Sub {
 			if slices.Contains(p.Category.Sub, cat) {
 				places = append(places, p)
 			}

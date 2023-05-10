@@ -53,6 +53,18 @@ func New(opts ...Options) *Category {
 	return p
 }
 
+func NewAnyCategory() *Category {
+	return &Category{
+		Main: []Main{MC_UNSPECIFIED},
+		Sub:  []Sub{SC_UNSPECIFIED},
+	}
+}
+
+func (c *Category) IsAnyCategory() bool {
+	return len(c.Main) == 1 && c.Main[0] == MC_UNSPECIFIED &&
+		len(c.Sub) == 1 && c.Sub[0] == SC_UNSPECIFIED
+}
+
 func (c Category) MarshalBSON() ([]byte, error) {
 	m := make([]string, 0, len(c.Main))
 	s := make([]string, 0, len(c.Sub))

@@ -13,8 +13,8 @@ import (
 	"github.com/d-kv/backend-travel-app/pkg/place-service/repository"
 )
 
-func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken,
-	main []category.Main, sub []category.Sub, skipN int64, resN int64) ([]model.Place, error) {
+func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken, category *category.Category,
+	skipN int64, resN int64) ([]model.Place, error) {
 	const mName = "PlaceController.SearchPlaces"
 
 	places, err := c.placeProvider.PlacesByDistance(ctx, geoQ, skipN, resN)
@@ -31,7 +31,7 @@ func (c *PlaceController) SearchPlaces(ctx context.Context, geoQ *util.GeoToken,
 		return nil, err
 	}
 
-	suitablePlaces := filterByCategory(places, main, sub)
+	suitablePlaces := filterByCategory(places, category)
 
 	return suitablePlaces, nil
 }

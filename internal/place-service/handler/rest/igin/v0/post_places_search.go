@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/rs/zerolog/log"
 
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model"
 	"github.com/d-kv/backend-travel-app/pkg/place-service/model/category"
@@ -15,7 +14,7 @@ import (
 type placeSearcher interface {
 	SearchPlaces(ctx context.Context,
 		geoQ *util.GeoToken,
-		mCats []category.Main, sCats []category.Sub,
+		category *category.Category,
 		skipN int64, resN int64) ([]model.Place, error)
 }
 
@@ -41,7 +40,7 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 		return
 	}
 
-	ctgs, err := parseCategories(ctx)
+	ctg, err := parseCategories(ctx)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusBadRequest, gin.H{
 			"error": err.Error(),
@@ -49,7 +48,7 @@ func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
 		return
 	}
 
-	places, err := h.placeCtrl.SearchPlaces(ctx, geoT, ctgs.Main, ctgs.Sub, paginT.SkipN, paginT.ResN)
+	places, err := h.placeCtrl.SearchPlaces(ctx, geoT, ctg, paginT.SkipN, paginT.ResN)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error":       "internal error",
