@@ -1,3 +1,5 @@
+# syntax = docker/dockerfile:1-experimental
+
 # Builder
 FROM golang:1.19.4-alpine3.17 as builder
 
@@ -13,7 +15,8 @@ RUN go mod download
 
 COPY . .
 
-RUN make build
+RUN --mount=type=cache,target=${GOCACHE} \
+    make build
 
 # Distribution
 FROM alpine:latest
