@@ -20,3 +20,6 @@ go.work.sum
 
 # npm cache
 node_modules
+
+# macOS
+.DS_Store

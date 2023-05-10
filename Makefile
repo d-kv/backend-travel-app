@@ -11,7 +11,6 @@ tools.install: tools.download
 	@go mod download
 	@cd docs && $(MAKE) --no-print-directory install-tools
 
-.SILENT: docker.build
 docker.build:
 	@docker build \
 		--file Dockerfile \
@@ -19,12 +18,12 @@ docker.build:
 		.
 
 .SILENT: docker-compose.up
-docker-compose.up: docker.build
-	@(cd deployment && docker-compose up -d)
+docker-compose.up:
+	@(cd deployment/afterwork-backend && docker-compose up --build -d)
 
 .SILENT: docker-compose.down
 docker-compose.down:
-	@(cd deployment && docker-compose down)
+	@(cd deployment/afterwork-backend && docker-compose down)
 
 _lint_vet:
 	@(cd cmd && go vet ./...)
@@ -50,13 +49,4 @@ test.run:
 
 .SILENT: build
 build:
-	@go build cmd/place-service/main.go
-
-.SILENT: mock.gen
-mock.gen:
-	@mockgen -source=pkg/adapter/igateway/oauth_provider.go -destination=internal/adapter/gateway/oauth_provider/mock/oauth_provider.go
-	@mockgen -source=pkg/adapter/igateway/place_provider.go -destination=internal/adapter/gateway/place_provider/mock/place_provider.go
-	@mockgen -source=pkg/app/icontroller/v0/controller.go -destination=internal/app/controller/v0/mock/controller.go
-	@mockgen -source=pkg/infra/ilogger/logger.go -destination=internal/infra/logger/mock/logger.go
-	@mockgen -source=pkg/infra/irepository/place.go -destination=internal/infra/repository/mock/place.go
-	@mockgen -source=pkg/infra/irepository/user.go -destination=internal/infra/repository/mock/user.go
+	@go build -v cmd/afterwork-backend/main.go

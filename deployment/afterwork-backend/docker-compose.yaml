@@ -1,0 +1,31 @@
+version: '3.9'
+
+services:
+
+  mongodb:
+    image: mongo:6.0.5
+    container_name: "mongodb"
+    restart: always
+    ports:
+      - 27017:27017
+
+  rediscache:
+    image: redis:7.0.10
+    container_name: "rediscache"
+    restart: always
+    ports:
+      - 6379:6379
+
+  afterwork-backend:
+    build:
+      context: ../../
+      dockerfile: ./Dockerfile
+    image: afterwork:latest
+    container_name: "afterwork-backend"
+    restart: always
+    environment:
+      - GIN_MODE=release
+    ports:
+      - 9090:9090
+    depends_on:
+      - mongodb

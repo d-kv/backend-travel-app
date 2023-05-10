@@ -1,0 +1,18 @@
+Storage:
+  Mongo:
+    URI: "mongodb://username:password@host1:port"
+    DB: "my_db_name"
+    Coll:
+      Place: "places"
+      User: "users"
+Cache:
+  Redis:
+    URI: "host1:port"
+OAuthProvider:
+  Tinkoff:
+    ID: "<ID>"
+    Secret: "<Secret>"
+Server:
+  REST:
+    IP: "0.0.0.0"
+    Port: "9090"
