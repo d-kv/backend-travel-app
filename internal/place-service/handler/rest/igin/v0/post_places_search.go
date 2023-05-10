@@ -19,8 +19,8 @@ type placeSearcher interface {
 }
 
 type requestBody struct {
-	Category category.Category `json:"category"`
-	SeenUUID []string          `json:"seen_uuid"`
+	Category category.Category `json:"category,omitempty"`
+	SeenUUID []string          `json:"seen_uuid,omitempty"`
 }
 
 func (h *PlaceHandler) postPlacesSearch(ctx *gin.Context) {
