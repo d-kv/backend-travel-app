@@ -84,6 +84,15 @@ jobs:
 
   pre-commit:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        hook_id: [
+          trailing-whitespace,
+          end-of-file-fixer,
+          check-yaml,
+          detect-private-key
+        ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -91,22 +100,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v4
 
-      - name: Run [trailing-whitespace]
+      - name: Run [${{ matrix.hook_id }}]
         uses: pre-commit/action@v3.0.0
         with:
-          extra_args: trailing-whitespace --all-files
-
-      - name: Run [end-of-file-fixer]
-        uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: end-of-file-fixer --all-files
-
-      - name: Run [check-yaml]
-        uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: check-yaml --all-files
-
-      - name: Run [detect-private-key]
-        uses: pre-commit/action@v3.0.0
-        with:
-          extra_args: detect-private-key --all-files
+          extra_args: ${{ matrix.hook_id }} --all-files
