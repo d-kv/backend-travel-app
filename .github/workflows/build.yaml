@@ -12,15 +12,17 @@ env:
 jobs:
   check-go-mod:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
     steps:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          # https://github.com/actions/setup-go#supported-version-syntax
-          # ex:
-          # - 1.18beta1 -> 1.18.0-beta.1
-          # - 1.18rc1 -> 1.18.0-rc.1
-          go-version: ${{ env.GO_VERSION }}
+          go-version: ${{ matrix.go }}
+          check-latest: true
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -40,15 +42,17 @@ jobs:
 
   check-go-generate:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
     steps:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          # https://github.com/actions/setup-go#supported-version-syntax
-          # ex:
-          # - 1.18beta1 -> 1.18.0-beta.1
-          # - 1.18rc1 -> 1.18.0-rc.1
-          go-version: ${{ env.GO_VERSION }}
+          go-version: ${{ matrix.go }}
+          check-latest: true
 
       - name: Checkout code
         uses: actions/checkout@v3
@@ -60,15 +64,17 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
     steps:
       - name: Install Go
         uses: actions/setup-go@v4
         with:
-          # https://github.com/actions/setup-go#supported-version-syntax
-          # ex:
-          # - 1.18beta1 -> 1.18.0-beta.1
-          # - 1.18rc1 -> 1.18.0-rc.1
-          go-version: ${{ env.GO_VERSION }}
+          go-version: ${{ matrix.go }}
+          check-latest: true
 
       - name: Checkout code
         uses: actions/checkout@v3
