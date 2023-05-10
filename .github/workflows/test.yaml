@@ -1,0 +1,37 @@
+name: test
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  GO_VERSION: "1.20"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build code
+        run: go build -v ./...
+
+      - name: Run unit tests
+        run: make short-test.run
+
+      - name: Run all tests
+        run: make test.run

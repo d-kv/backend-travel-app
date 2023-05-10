@@ -1,0 +1,83 @@
+name: build
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+env:
+  GO_VERSION: "1.20"
+
+jobs:
+  go-mod:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check go mod deps
+        run: |
+          go mod tidy
+          git diff --exit-code go.mod
+
+      - name: Download go mod deps
+        run: |
+          go mod download
+
+      - name: Verify go mod deps
+        run: |
+            go mod verify
+
+  go-generate:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Check go generate
+        run: |
+          go generate ./...
+          git diff --exit-code
+
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        go: ['stable', 'oldstable']
+
+    steps:
+      - name: Install Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ matrix.go }}
+          check-latest: true
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build code
+        run: go build -v ./...

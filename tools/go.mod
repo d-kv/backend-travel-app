@@ -1,6 +1,6 @@
 module github.com/d-kv/backend-travel-app/tools
 
-go 1.20
+go 1.19
 
 require (
 	github.com/golang/mock v1.6.0
