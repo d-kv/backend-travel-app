@@ -1,4 +1,4 @@
-package igin_v0
+package igin_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"strconv"

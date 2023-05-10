@@ -99,5 +99,8 @@ func main() {
 		g,
 	)
 
-	g.Run(cfg.Server.REST.IP + ":" + cfg.Server.REST.Port)
+	err = g.Run(cfg.Server.REST.IP + ":" + cfg.Server.REST.Port)
+	if err != nil {
+		panic(err)
+	}
 }

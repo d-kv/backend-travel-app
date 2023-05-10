@@ -1,4 +1,4 @@
-package ictrl_v0
+package ictrl_v0 //nolint:revive,stylecheck // using underscore in package name for better readability
 
 import (
 	"golang.org/x/exp/slices"
@@ -16,7 +16,6 @@ func filterByCategory(pls []model.Place, c *category.Category) []model.Place {
 	var isAdded bool
 
 	for _, p := range pls {
-
 		isAdded = false
 
 		for _, c := range c.Main {
@@ -37,7 +36,6 @@ func filterByCategory(pls []model.Place, c *category.Category) []model.Place {
 				places = append(places, p)
 			}
 		}
-
 	}
 
 	return places
