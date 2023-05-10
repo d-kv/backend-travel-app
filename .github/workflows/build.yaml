@@ -10,7 +10,7 @@ env:
   GO_VERSION: "1.20"
 
 jobs:
-  check-go-mod:
+  go-mod:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
@@ -40,7 +40,7 @@ jobs:
         run: |
             go mod verify
 
-  check-go-generate:
+  go-generate:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
