@@ -11,11 +11,12 @@ import (
 )
 
 const (
-	qlatLng = "ll"
-	qMinD   = "min_d"
-	qMaxD   = "max_d"
-	qSkipN  = "skip_n"
-	qResN   = "result_n"
+	qLat   = "lat"
+	qLng   = "lng"
+	qMinD  = "min_d"
+	qMaxD  = "max_d"
+	qSkipN = "skip_n"
+	qResN  = "result_n"
 )
 
 func parseCategories(ctx *gin.Context) (*category.Category, error) {
@@ -38,12 +39,26 @@ func parseCategories(ctx *gin.Context) (*category.Category, error) {
 }
 
 func parseLatLng(ctx *gin.Context) (*util.LatLng, error) {
-	llStr, ok := ctx.GetQuery(qlatLng)
-	if !ok {
-		return nil, errMissingLatLng
+	latStr, hasLat := ctx.GetQuery(qLat)
+	lngStr, hasLng := ctx.GetQuery(qLng)
+
+	hasBoth := hasLat && hasLng
+
+	if !hasBoth {
+		return nil, errLatLngCoupling
 	}
 
-	ll, err := util.NewLatLngFromString(llStr)
+	lat, err := strconv.ParseFloat(strings.TrimSpace(latStr), bitSize)
+	if err != nil {
+		return nil, err
+	}
+
+	lng, err := strconv.ParseFloat(strings.TrimSpace(lngStr), bitSize)
+	if err != nil {
+		return nil, err
+	}
+
+	ll, err := util.NewLatLng(lat, lng)
 	if err != nil {
 		return nil, errInvalidLatLng
 	}

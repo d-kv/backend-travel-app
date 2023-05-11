@@ -1,5 +1,3 @@
-// TODO: use explicit naming for langitude & longitude
-// For instance, we can use prefixes, such as: "lat_56.34564,lng_46.2356"
 package util
 
 import (
@@ -13,6 +11,13 @@ var (
 	ErrInvalidLatLng       = errors.New("latLng parameter is invalid")
 )
 
+const (
+	minLatitude  = -90
+	maxLatitude  = 90
+	minLongitude = -180
+	maxLongitude = 180
+)
+
 // LatLng stores latitude & longitude.
 type LatLng struct {
 	Latitude  float64 `bson:"latitude"`
@@ -20,11 +25,22 @@ type LatLng struct {
 }
 
 // NewLatLng creates a new LatLng with given lat & lng values.
-func NewLatLng(lat, lng float64) *LatLng {
+func NewLatLng(lat, lng float64) (*LatLng, error) {
+	if !IsValidLatitude(lat) || !IsValidLongitude(lng) {
+		return nil, ErrInvalidLatLng
+	}
 	return &LatLng{
 		Latitude:  lat,
 		Longitude: lng,
-	}
+	}, nil
+}
+
+func IsValidLatitude(lat float64) bool {
+	return lat > minLatitude || lat < maxLatitude
+}
+
+func IsValidLongitude(lng float64) bool {
+	return lng > minLongitude || lng < maxLongitude
 }
 
 // NewLatLngFromString creates a new LatLng from a string of the form "<latitude>,<longitude>".
@@ -34,20 +50,14 @@ func NewLatLngFromString(llStr string) (*LatLng, error) {
 		return nil, ErrUnableToParseLatLng
 	}
 
-	if lat > 90 || lat < -90 {
+	if !IsValidLatitude(lat) || !IsValidLongitude(lng) {
 		return nil, ErrInvalidLatLng
 	}
 
-	if lng > 180 || lng < -180 {
-		return nil, ErrInvalidLatLng
-	}
-
-	ll := &LatLng{
+	return &LatLng{
 		Latitude:  lat,
 		Longitude: lng,
-	}
-
-	return ll, nil
+	}, nil
 }
 
 // NewLatLngFromRString creates a new LatLng from a string of the form "<longitude>,<latitude>".
@@ -57,20 +67,14 @@ func NewLatLngFromRString(llStr string) (*LatLng, error) {
 		return nil, ErrUnableToParseLatLng
 	}
 
-	if lat > 90 || lat < -90 {
+	if !IsValidLatitude(lat) || !IsValidLongitude(lng) {
 		return nil, ErrInvalidLatLng
 	}
 
-	if lng > 180 || lng < -180 {
-		return nil, ErrInvalidLatLng
-	}
-
-	ll := &LatLng{
+	return &LatLng{
 		Latitude:  lat,
 		Longitude: lng,
-	}
-
-	return ll, nil
+	}, nil
 }
 
 func parseLatLngFromString(rawStr string) (float64, float64, error) {
