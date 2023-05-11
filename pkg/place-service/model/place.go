@@ -22,9 +22,7 @@ type Place struct {
 	Location util.Location     `bson:"location"`
 	Category category.Category `bson:"category"`
 
-	Lifetime  time.Duration `bson:"lifetime"`
-	CreatedAt time.Time     `bson:"created_at"`
-	UpdatedAt time.Time     `bson:"updated_at"`
+	CreatedAt time.Time `bson:"created_at"`
 }
 
 type Options func(*Place)
@@ -68,10 +66,6 @@ func WithSubCategories(cat ...category.Sub) Options {
 	return func(p *Place) { p.Category.Sub = append(p.Category.Sub, cat...) }
 }
 
-func WithLifetime(ttl time.Duration) Options {
-	return func(p *Place) { p.Lifetime = ttl }
-}
-
 // New creates a new Place.
 func New(opts ...Options) *Place {
 	p := &Place{
@@ -83,10 +77,8 @@ func New(opts ...Options) *Place {
 		URL:         "",
 		Location:    *util.NewLocation(util.LatLng{}),
 		Category:    *category.New(),
-		Lifetime:    0,
 		// FIXME: make compatible with MongoDB precision
 		// CreatedAt:   time.Now().UTC(),
-		// UpdatedAt:   time.Now().UTC(),
 	}
 
 	for _, opt := range opts {
